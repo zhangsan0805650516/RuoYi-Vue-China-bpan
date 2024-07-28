@@ -1,0 +1,320 @@
+package com.ruoyi.web.controller.api.strategy;
+
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.biz.strategy.domain.FaStrategy;
+import com.ruoyi.biz.strategy.service.IFaStrategyService;
+import com.ruoyi.common.annotation.AppLog;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 股票Controller
+ * 
+ * @author ruoyi
+ * @date 2024-01-06
+ */
+@Api(tags = "股票")
+@RestController
+@RequestMapping("/api/stock")
+public class StrategyController extends BaseController
+{
+
+    @Autowired
+    private IFaStrategyService faStrategyService;
+
+    /**
+     * 搜索股票
+     */
+    @ApiOperation("搜索股票")
+    @AppLog(title = "搜索股票", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "queryString", value = "关键字", required = true, dataType = "String")
+    })
+    @PostMapping("/searchStock")
+    public AjaxResult searchStock(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            List<FaStrategy> faStrategyList = faStrategyService.searchStock(faStrategy);
+            return AjaxResult.success(faStrategyList);
+        } catch (ServiceException e) {
+            logger.error("searchStock", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("searchStock", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询股票详情
+     */
+    @ApiOperation("查询股票详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "股票id", dataType = "Integer"),
+            @ApiImplicitParam(name = "code", value = "股票代码", dataType = "String")
+    })
+    @PostMapping("/getStockDetail")
+    public AjaxResult getStockDetail(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            FaStrategy strategy = faStrategyService.getStockDetail(faStrategy);
+            return AjaxResult.success(strategy);
+        } catch (ServiceException e) {
+            logger.error("getStockDetail", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getStockDetail", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询大宗交易
+     */
+    @ApiOperation("查询大宗交易")
+    @AppLog(title = "查询大宗交易", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "当页条数", required = true, dataType = "Integer")})
+    @PostMapping("/getDZStrategy")
+    public AjaxResult getDZStrategy(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            if (null == faStrategy.getPage()) {
+                faStrategy.setPage(1);
+            }
+            if (null == faStrategy.getSize()) {
+                faStrategy.setSize(10);
+            }
+            IPage<FaStrategy> faStrategyIPage = faStrategyService.getDZStrategy(faStrategy);
+            return AjaxResult.success(faStrategyIPage);
+        } catch (ServiceException e) {
+            logger.error("getDZStrategy", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getDZStrategy", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询抢筹列表(VIP调研)
+     */
+    @ApiOperation("查询抢筹列表(VIP调研)")
+    @AppLog(title = "查询抢筹列表", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "当页条数", required = true, dataType = "Integer")})
+    @PostMapping("/getQCStrategy")
+    public AjaxResult getQCStrategy(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            if (null == faStrategy.getPage()) {
+                faStrategy.setPage(1);
+            }
+            if (null == faStrategy.getSize()) {
+                faStrategy.setSize(10);
+            }
+            IPage<FaStrategy> faStrategyIPage = faStrategyService.getQCStrategy(faStrategy);
+            return AjaxResult.success(faStrategyIPage);
+        } catch (ServiceException e) {
+            logger.error("getQCStrategy", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getQCStrategy", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询首页5大指数
+     */
+    @ApiOperation("查询首页5大指数")
+    @AppLog(title = "查询首页5大指数", businessType = BusinessType.OTHER)
+    @PostMapping("/getIndexList")
+    public AjaxResult getIndexList(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            List<FaStrategy> list = faStrategyService.getIndexList(faStrategy);
+            return AjaxResult.success(list);
+        } catch (ServiceException e) {
+            logger.error("getIndexList", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getIndexList", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询股票列表
+     */
+    @ApiOperation("查询股票列表")
+    @AppLog(title = "查询股票列表", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "当页条数", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "type", value = "交易所(1沪 2深 3创业 4北交 5科创)", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "sortBy", value = "排序字段(1现价 2涨跌 3涨跌幅 4成交额 5换手率)", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "sort", value = "顺序(1正序 2倒序)", required = true, dataType = "Integer")
+    })
+    @PostMapping("/getStrategyList")
+    public AjaxResult getStrategyList(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            if (null == faStrategy.getPage()) {
+                faStrategy.setPage(1);
+            }
+            if (null == faStrategy.getSize()) {
+                faStrategy.setSize(10);
+            }
+            IPage<FaStrategy> faStrategyIPage = faStrategyService.getStrategyList(faStrategy);
+            return AjaxResult.success(faStrategyIPage);
+        } catch (ServiceException e) {
+            logger.error("getStrategyList", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getStrategyList", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询涨跌对比
+     */
+    @ApiOperation("查询涨跌对比")
+    @AppLog(title = "查询涨跌对比", businessType = BusinessType.OTHER)
+    @PostMapping("/getRiseAndFall")
+    public AjaxResult getRiseAndFall(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            Map<String, Integer> map = faStrategyService.getRiseAndFall(faStrategy);
+            return AjaxResult.success(map);
+        } catch (ServiceException e) {
+            logger.error("getRiseAndFall", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getRiseAndFall", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 板块涨跌幅
+     */
+    @ApiOperation("板块涨跌幅")
+    @AppLog(title = "板块涨跌幅", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "bkType", value = "板块类型(1地区 2板块 3概念)", required = true, dataType = "Integer")
+    })
+    @PostMapping("/getBkHotList")
+    public AjaxResult getBkHotList(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            if (null == faStrategy.getBkType()) {
+                // 默认取1
+                faStrategy.setBkType(1);
+            }
+            // 启涨大数据
+            JSONArray jsonArray = faStrategyService.getBkHotList(faStrategy);
+            // 新浪
+//            JSONArray jsonArray = faStrategyService.getBkHotListFromSina(faStrategy);
+            return AjaxResult.success(jsonArray);
+        } catch (ServiceException e) {
+            logger.error("getBkHotList", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getBkHotList", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 资金流向
+     */
+    @ApiOperation("资金流向")
+    @AppLog(title = "资金流向", businessType = BusinessType.OTHER)
+    @PostMapping("/getMoneyFlow")
+    public AjaxResult getMoneyFlow(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            JSONObject jsonObject = faStrategyService.getMoneyFlow(faStrategy);
+            return AjaxResult.success(jsonObject);
+        } catch (ServiceException e) {
+            logger.error("getMoneyFlow", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getMoneyFlow", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询推荐列表
+     */
+    @ApiOperation("查询推荐列表")
+    @AppLog(title = "查询推荐列表", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "当页条数", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "type", value = "交易所", dataType = "Integer")
+    })
+    @PostMapping("/getRecommendStrategy")
+    public AjaxResult getRecommendStrategy(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            if (null == faStrategy.getPage()) {
+                faStrategy.setPage(1);
+            }
+            if (null == faStrategy.getSize()) {
+                faStrategy.setSize(10);
+            }
+            IPage<FaStrategy> faStrategyIPage = faStrategyService.getRecommendStrategy(faStrategy);
+            return AjaxResult.success(faStrategyIPage);
+        } catch (ServiceException e) {
+            logger.error("getRecommendStrategy", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getRecommendStrategy", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 上证指数k线
+     */
+    @ApiOperation("上证指数k线")
+    @AppLog(title = "上证指数k线", businessType = BusinessType.OTHER)
+    @PostMapping("/getSHKline")
+    public AjaxResult getSHKline(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            List<Map<String, String>> list = faStrategyService.getSHKline(faStrategy);
+            return AjaxResult.success(list);
+        } catch (ServiceException e) {
+            logger.error("getSHKline", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getSHKline", e);
+            return AjaxResult.error();
+        }
+    }
+
+}

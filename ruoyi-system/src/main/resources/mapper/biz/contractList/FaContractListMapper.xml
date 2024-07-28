@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.contractList.mapper.FaContractListMapper">
+    
+    <resultMap type="FaContractList" id="FaContractListResult">
+        <result property="id"    column="id"    />
+        <result property="templateId"    column="template_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="name"    column="name"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="address"    column="address"    />
+        <result property="mainContent"    column="main_content"    />
+        <result property="image"    column="image"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="deleteTime"    column="delete_time"    />
+        <result property="weigh"    column="weigh"    />
+        <result property="signStatus"    column="sign_status"    />
+        <result property="signDate"    column="sign_date"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+    </resultMap>
+
+    <sql id="selectFaContractListVo">
+        select id, template_id, user_id, name, id_card, address, main_content, image, create_time, update_time, delete_time, weigh, sign_status, sign_date, delete_flag from fa_contract_list
+    </sql>
+
+    <select id="selectFaContractListList" parameterType="FaContractList" resultMap="FaContractListResult">
+        <include refid="selectFaContractListVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="templateId != null "> and template_id = #{templateId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="idCard != null  and idCard != ''"> and id_card = #{idCard}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="mainContent != null  and mainContent != ''"> and main_content = #{mainContent}</if>
+            <if test="image != null  and image != ''"> and image = #{image}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            <if test="deleteTime != null "> and delete_time = #{deleteTime}</if>
+            <if test="weigh != null "> and weigh = #{weigh}</if>
+            <if test="signStatus != null "> and sign_status = #{signStatus}</if>
+            <if test="signDate != null "> and sign_date = #{signDate}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+        </where>
+        order by id desc
+    </select>
+    
+    <select id="selectFaContractListById" parameterType="Integer" resultMap="FaContractListResult">
+        <include refid="selectFaContractListVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFaContractList" parameterType="FaContractList" useGeneratedKeys="true" keyProperty="id">
+        insert into fa_contract_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">template_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="name != null">name,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="address != null">address,</if>
+            <if test="mainContent != null">main_content,</if>
+            <if test="image != null">image,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="deleteTime != null">delete_time,</if>
+            <if test="weigh != null">weigh,</if>
+            <if test="signStatus != null">sign_status,</if>
+            <if test="signDate != null">sign_date,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">#{templateId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="address != null">#{address},</if>
+            <if test="mainContent != null">#{mainContent},</if>
+            <if test="image != null">#{image},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="deleteTime != null">#{deleteTime},</if>
+            <if test="weigh != null">#{weigh},</if>
+            <if test="signStatus != null">#{signStatus},</if>
+            <if test="signDate != null">#{signDate},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFaContractList" parameterType="FaContractList">
+        update fa_contract_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="mainContent != null">main_content = #{mainContent},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="deleteTime != null">delete_time = #{deleteTime},</if>
+            <if test="weigh != null">weigh = #{weigh},</if>
+            <if test="signStatus != null">sign_status = #{signStatus},</if>
+            <if test="signDate != null">sign_date = #{signDate},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFaContractListById" parameterType="Integer">
+        update fa_contract_list set delete_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteFaContractListByIds" parameterType="String">
+        update fa_contract_list set delete_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

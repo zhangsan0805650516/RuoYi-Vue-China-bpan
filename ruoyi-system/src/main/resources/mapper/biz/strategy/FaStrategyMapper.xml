@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.strategy.mapper.FaStrategyMapper">
+    
+    <resultMap type="FaStrategy" id="FaStrategyResult">
+        <result property="id"    column="id"    />
+        <result property="classifyId"    column="classify_id"    />
+        <result property="title"    column="title"    />
+        <result property="titleEn"    column="title_en"    />
+        <result property="code"    column="code"    />
+        <result property="allCode"    column="all_code"    />
+        <result property="prefixCode"    column="prefix_code"    />
+        <result property="conditionCode"    column="condition_code"    />
+        <result property="today"    column="today"    />
+        <result property="yesterday"    column="yesterday"    />
+        <result property="mostHigh"    column="most_high"    />
+        <result property="mostLow"    column="most_low"    />
+        <result property="stockNum"    column="stock_num"    />
+        <result property="currentPrice"    column="current_price"    />
+        <result property="buyPrice"    column="buy_price"    />
+        <result property="profitPrice"    column="profit_price"    />
+        <result property="stopProfitPrice"    column="stop_profit_price"    />
+        <result property="losePrice"    column="lose_price"    />
+        <result property="stopLosePrice"    column="stop_lose_price"    />
+        <result property="yield"    column="yield"    />
+        <result property="recommendCreditMoney"    column="recommend_credit_money"    />
+        <result property="selectCreditMoney"    column="select_credit_money"    />
+        <result property="multiplying"    column="multiplying"    />
+        <result property="canBuyDesc"    column="can_buy_desc"    />
+        <result property="autoRenewalDesc"    column="auto_renewal_desc"    />
+        <result property="allMoneyDesc"    column="all_money_desc"    />
+        <result property="allMoney"    column="all_money"    />
+        <result property="canBuy"    column="can_buy"    />
+        <result property="makeBargainNum"    column="make_bargain_num"    />
+        <result property="makeBargainMoney"    column="make_bargain_money"    />
+        <result property="cityProfit"    column="city_profit"    />
+        <result property="cityClean"    column="city_clean"    />
+        <result property="changeHands"    column="change_hands"    />
+        <result property="minValue"    column="min_value"    />
+        <result property="isAutoMoney"    column="is_auto_money"    />
+        <result property="cityValue"    column="city_value"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="deleteTime"    column="delete_time"    />
+        <result property="isRise"    column="is_rise"    />
+        <result property="caiTrade"    column="cai_trade"    />
+        <result property="caiPricechange"    column="cai_pricechange"    />
+        <result property="caiChangepercent"    column="cai_changepercent"    />
+        <result property="caiBuy"    column="cai_buy"    />
+        <result property="caiSell"    column="cai_sell"    />
+        <result property="caiSettlement"    column="cai_settlement"    />
+        <result property="caiOpen"    column="cai_open"    />
+        <result property="caiHigh"    column="cai_high"    />
+        <result property="caiLow"    column="cai_low"    />
+        <result property="caiVolume"    column="cai_volume"    />
+        <result property="caiAmount"    column="cai_amount"    />
+        <result property="caiChangeHands"    column="cai_change_hands"    />
+        <result property="caiAverage"    column="cai_average"    />
+        <result property="caiLimitUpPrice"    column="cai_limit_up_price"    />
+        <result property="caiLimitDownPrice"    column="cai_limit_down_price"    />
+        <result property="caiTicktime"    column="cai_ticktime"    />
+        <result property="status"    column="status"    />
+        <result property="lockStatus"    column="lock_status"    />
+        <result property="type"    column="type"    />
+        <result property="currentStatus"    column="current_status"    />
+        <result property="qcStatus"    column="qc_status"    />
+        <result property="vipQcStatus"    column="vip_qc_status"    />
+        <result property="zhiding"    column="zhiding"    />
+        <result property="zsType"    column="zs_type"    />
+        <result property="orderFlag"    column="order_flag"    />
+        <result property="isHot"    column="is_hot"    />
+        <result property="isZs"    column="is_zs"    />
+        <result property="isPz"    column="is_pz"    />
+        <result property="isDz"    column="is_dz"    />
+        <result property="isZfa"    column="is_zfa"    />
+        <result property="pingDay"    column="ping_day"    />
+        <result property="zfaNum"    column="zfa_num"    />
+        <result property="zfaPrice"    column="zfa_price"    />
+        <result property="totalZfaNum"    column="total_zfa_num"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="isHide"    column="is_hide"    />
+        <result property="vipQcPrice"    column="vip_qc_price"    />
+        <result property="vipQcConditionCode"    column="vip_qc_condition_code"    />
+        <result property="totalQcNum"    column="total_qc_num"    />
+        <result property="leftQcNum"    column="left_qc_num"    />
+    </resultMap>
+
+    <sql id="selectFaStrategyVo">
+        select id, classify_id, title, title_en, code, all_code, prefix_code, condition_code, today, yesterday, most_high, most_low, stock_num, current_price, buy_price, profit_price, stop_profit_price, lose_price, stop_lose_price, yield, recommend_credit_money, select_credit_money, multiplying, can_buy_desc, auto_renewal_desc, all_money_desc, all_money, can_buy, make_bargain_num, make_bargain_money, city_profit, city_clean, change_hands, min_value, is_auto_money, city_value, create_time, update_time, delete_time, is_rise, cai_trade, cai_pricechange, cai_changepercent, cai_buy, cai_sell, cai_settlement, cai_open, cai_high, cai_low, cai_volume, cai_amount, cai_change_hands, cai_average, cai_limit_up_price, cai_limit_down_price, cai_ticktime, status, lock_status, type, current_status, qc_status, vip_qc_status, zhiding, zs_type, order_flag, is_hot, is_zs, is_pz, is_dz, is_zfa, ping_day, zfa_num, zfa_price, total_zfa_num, delete_flag, is_hide, vip_qc_price, vip_qc_condition_code, total_qc_num, left_qc_num from fa_strategy
+    </sql>
+
+    <select id="selectFaStrategyList" parameterType="FaStrategy" resultMap="FaStrategyResult">
+        <include refid="selectFaStrategyVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="classifyId != null "> and classify_id = #{classifyId}</if>
+            <if test="title != null  and title != ''"> and (title like concat('%', #{title}, '%') or title_en like concat('%', #{title}, '%') or code like concat('%', #{title}, '%') or all_code like concat('%', #{title}, '%') )</if>
+            <if test="titleEn != null  and titleEn != ''"> and title_en like concat('%', #{titleEn}, '%')</if>
+            <if test="code != null  and code != ''"> and code like concat('%', #{code}, '%')</if>
+            <if test="allCode != null  and allCode != ''"> and all_code like concat('%', #{allCode}, '%')</if>
+            <if test="prefixCode != null  and prefixCode != ''"> and prefix_code = #{prefixCode}</if>
+            <if test="conditionCode != null  and conditionCode != ''"> and condition_code = #{conditionCode}</if>
+            <if test="today != null "> and today = #{today}</if>
+            <if test="yesterday != null "> and yesterday = #{yesterday}</if>
+            <if test="mostHigh != null "> and most_high = #{mostHigh}</if>
+            <if test="mostLow != null "> and most_low = #{mostLow}</if>
+            <if test="stockNum != null "> and stock_num = #{stockNum}</if>
+            <if test="currentPrice != null "> and current_price = #{currentPrice}</if>
+            <if test="buyPrice != null "> and buy_price = #{buyPrice}</if>
+            <if test="profitPrice != null "> and profit_price = #{profitPrice}</if>
+            <if test="stopProfitPrice != null "> and stop_profit_price = #{stopProfitPrice}</if>
+            <if test="losePrice != null "> and lose_price = #{losePrice}</if>
+            <if test="stopLosePrice != null "> and stop_lose_price = #{stopLosePrice}</if>
+            <if test="yield != null "> and yield = #{yield}</if>
+            <if test="recommendCreditMoney != null "> and recommend_credit_money = #{recommendCreditMoney}</if>
+            <if test="selectCreditMoney != null "> and select_credit_money = #{selectCreditMoney}</if>
+            <if test="multiplying != null "> and multiplying = #{multiplying}</if>
+            <if test="canBuyDesc != null  and canBuyDesc != ''"> and can_buy_desc = #{canBuyDesc}</if>
+            <if test="autoRenewalDesc != null  and autoRenewalDesc != ''"> and auto_renewal_desc = #{autoRenewalDesc}</if>
+            <if test="allMoneyDesc != null  and allMoneyDesc != ''"> and all_money_desc = #{allMoneyDesc}</if>
+            <if test="allMoney != null "> and all_money = #{allMoney}</if>
+            <if test="canBuy != null "> and can_buy = #{canBuy}</if>
+            <if test="makeBargainNum != null "> and make_bargain_num = #{makeBargainNum}</if>
+            <if test="makeBargainMoney != null "> and make_bargain_money = #{makeBargainMoney}</if>
+            <if test="cityProfit != null "> and city_profit = #{cityProfit}</if>
+            <if test="cityClean != null "> and city_clean = #{cityClean}</if>
+            <if test="changeHands != null "> and change_hands = #{changeHands}</if>
+            <if test="minValue != null "> and min_value = #{minValue}</if>
+            <if test="isAutoMoney != null "> and is_auto_money = #{isAutoMoney}</if>
+            <if test="cityValue != null "> and city_value = #{cityValue}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            <if test="deleteTime != null "> and delete_time = #{deleteTime}</if>
+            <if test="isRise != null "> and is_rise = #{isRise}</if>
+            <if test="caiTrade != null "> and cai_trade = #{caiTrade}</if>
+            <if test="caiPricechange != null "> and cai_pricechange = #{caiPricechange}</if>
+            <if test="caiChangepercent != null "> and cai_changepercent = #{caiChangepercent}</if>
+            <if test="caiBuy != null "> and cai_buy = #{caiBuy}</if>
+            <if test="caiSell != null "> and cai_sell = #{caiSell}</if>
+            <if test="caiSettlement != null "> and cai_settlement = #{caiSettlement}</if>
+            <if test="caiOpen != null "> and cai_open = #{caiOpen}</if>
+            <if test="caiHigh != null "> and cai_high = #{caiHigh}</if>
+            <if test="caiLow != null "> and cai_low = #{caiLow}</if>
+            <if test="caiVolume != null "> and cai_volume = #{caiVolume}</if>
+            <if test="caiAmount != null "> and cai_amount = #{caiAmount}</if>
+            <if test="caiChangeHands != null "> and cai_change_hands = #{caiChangeHands}</if>
+            <if test="caiAverage != null "> and cai_average = #{caiAverage}</if>
+            <if test="caiLimitUpPrice != null "> and cai_limit_up_price = #{caiLimitUpPrice}</if>
+            <if test="caiLimitDownPrice != null "> and cai_limit_down_price = #{caiLimitDownPrice}</if>
+            <if test="caiTicktime != null  and caiTicktime != ''"> and cai_ticktime = #{caiTicktime}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="lockStatus != null "> and lock_status = #{lockStatus}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="currentStatus != null "> and current_status = #{currentStatus}</if>
+            <if test="qcStatus != null "> and qc_status = #{qcStatus}</if>
+            <if test="vipQcStatus != null "> and vip_qc_status = #{vipQcStatus}</if>
+            <if test="zhiding != null "> and zhiding = #{zhiding}</if>
+            <if test="zsType != null "> and zs_type = #{zsType}</if>
+            <if test="orderFlag != null "> and order_flag = #{orderFlag}</if>
+            <if test="isHot != null "> and is_hot = #{isHot}</if>
+            <if test="isZs != null "> and is_zs = #{isZs}</if>
+            <if test="isPz != null "> and is_pz = #{isPz}</if>
+            <if test="isDz != null "> and is_dz = #{isDz}</if>
+            <if test="isZfa != null "> and is_zfa = #{isZfa}</if>
+            <if test="pingDay != null "> and ping_day = #{pingDay}</if>
+            <if test="zfaNum != null "> and zfa_num = #{zfaNum}</if>
+            <if test="zfaPrice != null "> and zfa_price = #{zfaPrice}</if>
+            <if test="totalZfaNum != null "> and total_zfa_num = #{totalZfaNum}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="isHide != null "> and is_hide = #{isHide}</if>
+            <if test="vipQcPrice != null "> and vip_qc_price = #{vipQcPrice}</if>
+            <if test="vipQcConditionCode != null and vipQcConditionCode != ''"> and vip_qc_condition_code = #{vipQcConditionCode}</if>
+            <if test="totalQcNum != null "> and total_qc_num = #{totalQcNum}</if>
+            <if test="leftQcNum != null "> and left_qc_num = #{leftQcNum}</if>
+        </where>
+        order by id desc
+    </select>
+    
+    <select id="selectFaStrategyById" parameterType="Integer" resultMap="FaStrategyResult">
+        <include refid="selectFaStrategyVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFaStrategy" parameterType="FaStrategy" useGeneratedKeys="true" keyProperty="id">
+        insert into fa_strategy
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="classifyId != null">classify_id,</if>
+            <if test="title != null">title,</if>
+            <if test="titleEn != null">title_en,</if>
+            <if test="code != null">code,</if>
+            <if test="allCode != null">all_code,</if>
+            <if test="prefixCode != null">prefix_code,</if>
+            <if test="conditionCode != null">condition_code,</if>
+            <if test="today != null">today,</if>
+            <if test="yesterday != null">yesterday,</if>
+            <if test="mostHigh != null">most_high,</if>
+            <if test="mostLow != null">most_low,</if>
+            <if test="stockNum != null">stock_num,</if>
+            <if test="currentPrice != null">current_price,</if>
+            <if test="buyPrice != null">buy_price,</if>
+            <if test="profitPrice != null">profit_price,</if>
+            <if test="stopProfitPrice != null">stop_profit_price,</if>
+            <if test="losePrice != null">lose_price,</if>
+            <if test="stopLosePrice != null">stop_lose_price,</if>
+            <if test="yield != null">yield,</if>
+            <if test="recommendCreditMoney != null">recommend_credit_money,</if>
+            <if test="selectCreditMoney != null">select_credit_money,</if>
+            <if test="multiplying != null">multiplying,</if>
+            <if test="canBuyDesc != null">can_buy_desc,</if>
+            <if test="autoRenewalDesc != null">auto_renewal_desc,</if>
+            <if test="allMoneyDesc != null">all_money_desc,</if>
+            <if test="allMoney != null">all_money,</if>
+            <if test="canBuy != null">can_buy,</if>
+            <if test="makeBargainNum != null">make_bargain_num,</if>
+            <if test="makeBargainMoney != null">make_bargain_money,</if>
+            <if test="cityProfit != null">city_profit,</if>
+            <if test="cityClean != null">city_clean,</if>
+            <if test="changeHands != null">change_hands,</if>
+            <if test="minValue != null">min_value,</if>
+            <if test="isAutoMoney != null">is_auto_money,</if>
+            <if test="cityValue != null">city_value,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="deleteTime != null">delete_time,</if>
+            <if test="isRise != null">is_rise,</if>
+            <if test="caiTrade != null">cai_trade,</if>
+            <if test="caiPricechange != null">cai_pricechange,</if>
+            <if test="caiChangepercent != null">cai_changepercent,</if>
+            <if test="caiBuy != null">cai_buy,</if>
+            <if test="caiSell != null">cai_sell,</if>
+            <if test="caiSettlement != null">cai_settlement,</if>
+            <if test="caiOpen != null">cai_open,</if>
+            <if test="caiHigh != null">cai_high,</if>
+            <if test="caiLow != null">cai_low,</if>
+            <if test="caiVolume != null">cai_volume,</if>
+            <if test="caiAmount != null">cai_amount,</if>
+            <if test="caiChangeHands != null">cai_change_hands,</if>
+            <if test="caiAverage != null">cai_average,</if>
+            <if test="caiLimitUpPrice != null">cai_limit_up_price,</if>
+            <if test="caiLimitDownPrice != null">cai_limit_down_price,</if>
+            <if test="caiTicktime != null">cai_ticktime,</if>
+            <if test="status != null">status,</if>
+            <if test="lockStatus != null">lock_status,</if>
+            <if test="type != null">type,</if>
+            <if test="currentStatus != null">current_status,</if>
+            <if test="qcStatus != null">qc_status,</if>
+            <if test="vipQcStatus != null">vip_qc_status,</if>
+            <if test="zhiding != null">zhiding,</if>
+            <if test="zsType != null">zs_type,</if>
+            <if test="orderFlag != null">order_flag,</if>
+            <if test="isHot != null">is_hot,</if>
+            <if test="isZs != null">is_zs,</if>
+            <if test="isPz != null">is_pz,</if>
+            <if test="isDz != null">is_dz,</if>
+            <if test="isZfa != null">is_zfa,</if>
+            <if test="pingDay != null">ping_day,</if>
+            <if test="zfaNum != null">zfa_num,</if>
+            <if test="zfaPrice != null">zfa_price,</if>
+            <if test="totalZfaNum != null">total_zfa_num,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+            <if test="isHide != null">is_hide,</if>
+            <if test="vipQcPrice != null">vip_qc_price,</if>
+            <if test="vipQcConditionCode != null">vip_qc_condition_code,</if>
+            <if test="totalQcNum != null">total_qc_num,</if>
+            <if test="leftQcNum != null">left_qc_num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="classifyId != null">#{classifyId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="titleEn != null">#{titleEn},</if>
+            <if test="code != null">#{code},</if>
+            <if test="allCode != null">#{allCode},</if>
+            <if test="prefixCode != null">#{prefixCode},</if>
+            <if test="conditionCode != null">#{conditionCode},</if>
+            <if test="today != null">#{today},</if>
+            <if test="yesterday != null">#{yesterday},</if>
+            <if test="mostHigh != null">#{mostHigh},</if>
+            <if test="mostLow != null">#{mostLow},</if>
+            <if test="stockNum != null">#{stockNum},</if>
+            <if test="currentPrice != null">#{currentPrice},</if>
+            <if test="buyPrice != null">#{buyPrice},</if>
+            <if test="profitPrice != null">#{profitPrice},</if>
+            <if test="stopProfitPrice != null">#{stopProfitPrice},</if>
+            <if test="losePrice != null">#{losePrice},</if>
+            <if test="stopLosePrice != null">#{stopLosePrice},</if>
+            <if test="yield != null">#{yield},</if>
+            <if test="recommendCreditMoney != null">#{recommendCreditMoney},</if>
+            <if test="selectCreditMoney != null">#{selectCreditMoney},</if>
+            <if test="multiplying != null">#{multiplying},</if>
+            <if test="canBuyDesc != null">#{canBuyDesc},</if>
+            <if test="autoRenewalDesc != null">#{autoRenewalDesc},</if>
+            <if test="allMoneyDesc != null">#{allMoneyDesc},</if>
+            <if test="allMoney != null">#{allMoney},</if>
+            <if test="canBuy != null">#{canBuy},</if>
+            <if test="makeBargainNum != null">#{makeBargainNum},</if>
+            <if test="makeBargainMoney != null">#{makeBargainMoney},</if>
+            <if test="cityProfit != null">#{cityProfit},</if>
+            <if test="cityClean != null">#{cityClean},</if>
+            <if test="changeHands != null">#{changeHands},</if>
+            <if test="minValue != null">#{minValue},</if>
+            <if test="isAutoMoney != null">#{isAutoMoney},</if>
+            <if test="cityValue != null">#{cityValue},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="deleteTime != null">#{deleteTime},</if>
+            <if test="isRise != null">#{isRise},</if>
+            <if test="caiTrade != null">#{caiTrade},</if>
+            <if test="caiPricechange != null">#{caiPricechange},</if>
+            <if test="caiChangepercent != null">#{caiChangepercent},</if>
+            <if test="caiBuy != null">#{caiBuy},</if>
+            <if test="caiSell != null">#{caiSell},</if>
+            <if test="caiSettlement != null">#{caiSettlement},</if>
+            <if test="caiOpen != null">#{caiOpen},</if>
+            <if test="caiHigh != null">#{caiHigh},</if>
+            <if test="caiLow != null">#{caiLow},</if>
+            <if test="caiVolume != null">#{caiVolume},</if>
+            <if test="caiAmount != null">#{caiAmount},</if>
+            <if test="caiChangeHands != null">#{caiChangeHands},</if>
+            <if test="caiAverage != null">#{caiAverage},</if>
+            <if test="caiLimitUpPrice != null">#{caiLimitUpPrice},</if>
+            <if test="caiLimitDownPrice != null">#{caiLimitDownPrice},</if>
+            <if test="caiTicktime != null">#{caiTicktime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="lockStatus != null">#{lockStatus},</if>
+            <if test="type != null">#{type},</if>
+            <if test="currentStatus != null">#{currentStatus},</if>
+            <if test="qcStatus != null">#{qcStatus},</if>
+            <if test="vipQcStatus != null">#{vipQcStatus},</if>
+            <if test="zhiding != null">#{zhiding},</if>
+            <if test="zsType != null">#{zsType},</if>
+            <if test="orderFlag != null">#{orderFlag},</if>
+            <if test="isHot != null">#{isHot},</if>
+            <if test="isZs != null">#{isZs},</if>
+            <if test="isPz != null">#{isPz},</if>
+            <if test="isDz != null">#{isDz},</if>
+            <if test="isZfa != null">#{isZfa},</if>
+            <if test="pingDay != null">#{pingDay},</if>
+            <if test="zfaNum != null">#{zfaNum},</if>
+            <if test="zfaPrice != null">#{zfaPrice},</if>
+            <if test="totalZfaNum != null">#{totalZfaNum},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+            <if test="isHide != null">#{isHide},</if>
+            <if test="vipQcPrice != null">#{vipQcPrice},</if>
+            <if test="vipQcConditionCode != null">#{vipQcConditionCode},</if>
+            <if test="totalQcNum != null">#{totalQcNum},</if>
+            <if test="leftQcNum != null">#{leftQcNum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFaStrategy" parameterType="FaStrategy">
+        update fa_strategy
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="classifyId != null">classify_id = #{classifyId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="titleEn != null">title_en = #{titleEn},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="allCode != null">all_code = #{allCode},</if>
+            <if test="prefixCode != null">prefix_code = #{prefixCode},</if>
+            <if test="conditionCode != null">condition_code = #{conditionCode},</if>
+            <if test="today != null">today = #{today},</if>
+            <if test="yesterday != null">yesterday = #{yesterday},</if>
+            <if test="mostHigh != null">most_high = #{mostHigh},</if>
+            <if test="mostLow != null">most_low = #{mostLow},</if>
+            <if test="stockNum != null">stock_num = #{stockNum},</if>
+            <if test="currentPrice != null">current_price = #{currentPrice},</if>
+            <if test="buyPrice != null">buy_price = #{buyPrice},</if>
+            <if test="profitPrice != null">profit_price = #{profitPrice},</if>
+            <if test="stopProfitPrice != null">stop_profit_price = #{stopProfitPrice},</if>
+            <if test="losePrice != null">lose_price = #{losePrice},</if>
+            <if test="stopLosePrice != null">stop_lose_price = #{stopLosePrice},</if>
+            <if test="yield != null">yield = #{yield},</if>
+            <if test="recommendCreditMoney != null">recommend_credit_money = #{recommendCreditMoney},</if>
+            <if test="selectCreditMoney != null">select_credit_money = #{selectCreditMoney},</if>
+            <if test="multiplying != null">multiplying = #{multiplying},</if>
+            <if test="canBuyDesc != null">can_buy_desc = #{canBuyDesc},</if>
+            <if test="autoRenewalDesc != null">auto_renewal_desc = #{autoRenewalDesc},</if>
+            <if test="allMoneyDesc != null">all_money_desc = #{allMoneyDesc},</if>
+            <if test="allMoney != null">all_money = #{allMoney},</if>
+            <if test="canBuy != null">can_buy = #{canBuy},</if>
+            <if test="makeBargainNum != null">make_bargain_num = #{makeBargainNum},</if>
+            <if test="makeBargainMoney != null">make_bargain_money = #{makeBargainMoney},</if>
+            <if test="cityProfit != null">city_profit = #{cityProfit},</if>
+            <if test="cityClean != null">city_clean = #{cityClean},</if>
+            <if test="changeHands != null">change_hands = #{changeHands},</if>
+            <if test="minValue != null">min_value = #{minValue},</if>
+            <if test="isAutoMoney != null">is_auto_money = #{isAutoMoney},</if>
+            <if test="cityValue != null">city_value = #{cityValue},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="deleteTime != null">delete_time = #{deleteTime},</if>
+            <if test="isRise != null">is_rise = #{isRise},</if>
+            <if test="caiTrade != null">cai_trade = #{caiTrade},</if>
+            <if test="caiPricechange != null">cai_pricechange = #{caiPricechange},</if>
+            <if test="caiChangepercent != null">cai_changepercent = #{caiChangepercent},</if>
+            <if test="caiBuy != null">cai_buy = #{caiBuy},</if>
+            <if test="caiSell != null">cai_sell = #{caiSell},</if>
+            <if test="caiSettlement != null">cai_settlement = #{caiSettlement},</if>
+            <if test="caiOpen != null">cai_open = #{caiOpen},</if>
+            <if test="caiHigh != null">cai_high = #{caiHigh},</if>
+            <if test="caiLow != null">cai_low = #{caiLow},</if>
+            <if test="caiVolume != null">cai_volume = #{caiVolume},</if>
+            <if test="caiAmount != null">cai_amount = #{caiAmount},</if>
+            <if test="caiChangeHands != null">cai_change_hands = #{caiChangeHands},</if>
+            <if test="caiAverage != null">cai_average = #{caiAverage},</if>
+            <if test="caiLimitUpPrice != null">cai_limit_up_price = #{caiLimitUpPrice},</if>
+            <if test="caiLimitDownPrice != null">cai_limit_down_price = #{caiLimitDownPrice},</if>
+            <if test="caiTicktime != null">cai_ticktime = #{caiTicktime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="lockStatus != null">lock_status = #{lockStatus},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="currentStatus != null">current_status = #{currentStatus},</if>
+            <if test="qcStatus != null">qc_status = #{qcStatus},</if>
+            <if test="vipQcStatus != null">vip_qc_status = #{vipQcStatus},</if>
+            <if test="zhiding != null">zhiding = #{zhiding},</if>
+            <if test="zsType != null">zs_type = #{zsType},</if>
+            <if test="orderFlag != null">order_flag = #{orderFlag},</if>
+            <if test="isHot != null">is_hot = #{isHot},</if>
+            <if test="isZs != null">is_zs = #{isZs},</if>
+            <if test="isPz != null">is_pz = #{isPz},</if>
+            <if test="isDz != null">is_dz = #{isDz},</if>
+            <if test="isZfa != null">is_zfa = #{isZfa},</if>
+            <if test="pingDay != null">ping_day = #{pingDay},</if>
+            <if test="zfaNum != null">zfa_num = #{zfaNum},</if>
+            <if test="zfaPrice != null">zfa_price = #{zfaPrice},</if>
+            <if test="totalZfaNum != null">total_zfa_num = #{totalZfaNum},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+            <if test="isHide != null">is_hide = #{isHide},</if>
+            <if test="vipQcPrice != null">vip_qc_price = #{vipQcPrice},</if>
+            <if test="vipQcConditionCode != null">vip_qc_condition_code = #{vipQcConditionCode},</if>
+            <if test="totalQcNum != null">total_qc_num = #{totalQcNum},</if>
+            <if test="leftQcNum != null">left_qc_num = #{leftQcNum},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFaStrategyById" parameterType="Integer">
+        update fa_strategy set delete_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteFaStrategyByIds" parameterType="String">
+        update fa_strategy set delete_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getCodeList">
+        select s.all_code from fa_strategy s limit #{start} , #{end}
+    </select>
+
+    <select id="getStockCurrentPrice" resultType="java.math.BigDecimal">
+        select s.cai_trade from fa_strategy s where s.id = #{id}
+    </select>
+
+    <update id="updateDzPrice">
+        update fa_strategy s set s.zfa_price = s.cai_trade where s.is_dz = 0;
+    </update>
+
+    <update id="updateVipQcPrice">
+        UPDATE fa_strategy s set s.vip_qc_price = s.cai_trade where s.vip_qc_status = 0
+    </update>
+
+    <select id="getHoldingStockCodeList">
+        select DISTINCT shd.all_code from fa_stock_hold_detail shd where shd.`status` = 0;
+    </select>
+
+</mapper>
