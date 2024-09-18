@@ -31,12 +31,15 @@ public class FaStockTrading extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @TableField(exist = false)
+    private BigDecimal profitLose;
+
+    @TableField(exist = false)
     private String conditionCode;
 
     @TableField(exist = false)
     private Integer isSimulation;
 
-    /** 持仓类型(0新股 1普通交易 2大宗交易 3VIP调研 4指数交易 5期货交易 6基金 7增发) */
+    /** 持仓类型(0新股 1普通交易 2大宗交易 3VIP调研 4指数交易 5期货交易 6基金 7增发 8融券) */
     @TableField(exist = false)
     private Integer holdType;
 
@@ -162,5 +165,11 @@ public class FaStockTrading extends BaseEntity {
     @Excel(name = "删除标记(0否1是)")
     @TableField("delete_flag")
     private Integer deleteFlag;
+
+    /** 方向(1买涨 2买跌) */
+    @ApiModelProperty(value = "方向(1买涨 2买跌)")
+    @Excel(name = "方向(1买涨 2买跌)")
+    @TableField("trade_direct")
+    private Integer tradeDirect;
 
 }

@@ -14,7 +14,7 @@ import java.util.Date;
 public interface ApiCommonService
 {
 
-    String upload(MultipartFile file) throws Exception;
+    String upload(MultipartFile file, String ip) throws Exception;
 
-    String getPayment(String orderId, Date createTime, BigDecimal money) throws Exception;
+    String getPayment(Integer memberId, String orderId, Date createTime, BigDecimal money, String ip) throws Exception;
 }

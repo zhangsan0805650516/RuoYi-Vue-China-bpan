@@ -98,6 +98,11 @@ public class SysLoginService
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         recordLoginInfo(loginUser.getUserId());
+
+        // 登录时清掉谷歌验证redis，重新验证
+        SysUser user = userService.selectUserById(loginUser.getUserId());
+        redisCache.deleteObject(Constants.GOOGLE_AUTH_STATUS + ":" + user.getUserId());
+
         // 生成token
         return tokenService.createToken(loginUser);
     }

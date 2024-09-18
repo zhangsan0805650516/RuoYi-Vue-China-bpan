@@ -222,11 +222,16 @@
       </el-table-column>
       <el-table-column :label="$t('ID')" align="center" prop="id" :min-width="$getColumnWidth('id',memberList)" fixed />
       <el-table-column :label="$t('实名姓名')" align="center" prop="name" :min-width="$getColumnWidth('name',memberList)" />
-      <el-table-column :label="$t('手机号')" align="center" prop="mobile" :min-width="$getColumnWidth('mobile',memberList)" >
-        <template slot-scope="scope">
-          {{ scope.row.mobile ? scope.row.mobile.replace(/(\d{3})(\d{4})(\d{4})/, "$1****$3") : "" }}
-        </template>
-      </el-table-column>
+      <el-table-column :label="$t('手机号')" align="center" prop="mobile" :min-width="$getColumnWidth('mobile',memberList)" />
+<!--        <template slot-scope="scope">-->
+<!--          <el-popover trigger="click" placement="top">-->
+<!--            <p>{{ showMobileNumber }}</p>-->
+<!--            <div slot="reference" class="name-wrapper">-->
+<!--              <el-tag @click="showMobile(scope.row)">{{ scope.row.mobile }}</el-tag>-->
+<!--            </div>-->
+<!--          </el-popover>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column :label="$t('唯一码')" align="center" prop="weiyima" :min-width="$getColumnWidth('weiyima',memberList)" />
       <el-table-column :label="$t('是否实名')" align="center" prop="isAuth" :min-width="$getColumnWidth('isAuth',memberList)" >
         <template slot-scope="scope">
@@ -446,7 +451,7 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item :label="$t('手机号')" prop="mobile">
-          <el-input v-model="form.mobile" :placeholder="$t('请输入手机号')" />
+          <el-input v-model="form.mobile" :placeholder="$t('请输入手机号')" disabled />
         </el-form-item>
 <!--        <el-form-item label="用户名" prop="username">-->
 <!--          <el-input v-model="form.username" placeholder="请输入用户名" />-->
@@ -623,13 +628,15 @@
 
 <script>
 import { listMember, getMember, delMember, addMember, updateMember, changeMemberStatus,
-  getDailiList, submitAuthMember, submitBindingBank, submitRecharge, getMemberStatistics, batchAuthMember, getMemberStatisticsSingle } from "@/api/biz/member/member";
+  getDailiList, submitAuthMember, submitBindingBank, submitRecharge, getMemberStatistics,
+  batchAuthMember, getMemberStatisticsSingle, getMobile } from "@/api/biz/member/member";
 import {checkPermi} from "@/utils/permission";
 
 export default {
   name: "Member",
   data() {
     return {
+      showMobileNumber: null,
       // 日期范围
       dateRange1: [],
       dateRange2: [],
@@ -940,6 +947,11 @@ export default {
     this.getDailiList();
   },
   methods: {
+    showMobile(row) {
+      getMobile({"id": row.id}).then(res => {
+        this.showMobileNumber = res.msg;
+      });
+    },
     // startTimer() {
     //   this.timerId = setInterval(() => {
     //     this.handleQuery();

@@ -1,8 +1,11 @@
 package com.ruoyi.web.controller.system;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.model.LoginUser;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -78,6 +81,7 @@ public class SysUserController extends BaseController
         if (!sysUserList.isEmpty()) {
             sysUser.setChildren(sysUserList);
             for (SysUser user : sysUserList) {
+                user.setPassword(null);
                 getChildren(user);
             }
         }
@@ -274,12 +278,15 @@ public class SysUserController extends BaseController
     @PostMapping("/getDailiList")
     public AjaxResult getDailiList()
     {
-        SysUser user = new SysUser();
-        user.setSuperiorId(0);
-        List<SysUser> list = userService.selectUserList(user);
+        LoginUser loginUser = getLoginUser();
+        SysUser sysUser = userService.selectUserById(loginUser.getUserId());
+        sysUser.setPassword(null);
+        List<SysUser> list = new ArrayList<>();
+        list.add(sysUser);
+
         if (!list.isEmpty()) {
-            for (SysUser sysUser : list) {
-                getChildren(sysUser);
+            for (SysUser user : list) {
+                getChildren(user);
             }
         }
         return AjaxResult.success(list);

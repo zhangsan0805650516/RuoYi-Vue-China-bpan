@@ -33,6 +33,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item :label="$t('唯一码')" prop="weiyima">
+        <el-input
+          v-model="queryParams.weiyima"
+          :placeholder="$t('请输入唯一码')"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item :label="$t('股票代码')" prop="code">
         <el-input
           v-model="queryParams.code"

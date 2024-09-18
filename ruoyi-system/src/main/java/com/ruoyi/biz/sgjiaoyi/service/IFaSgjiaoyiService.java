@@ -37,7 +37,7 @@ public interface IFaSgjiaoyiService extends IService<FaSgjiaoyi>
      * @param faSgjiaoyi 线下配售
      * @return 结果
      */
-    public int insertFaSgjiaoyi(FaSgjiaoyi faSgjiaoyi);
+    public int insertFaSgjiaoyi(FaSgjiaoyi faSgjiaoyi) throws Exception;
 
     /**
      * 修改线下配售

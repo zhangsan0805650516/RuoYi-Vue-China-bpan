@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -144,6 +145,35 @@ public class StrategyController extends BaseController
     }
 
     /**
+     * 查询融券列表
+     */
+    @ApiOperation("查询融券列表")
+    @AppLog(title = "查询融券列表", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "size", value = "当页条数", required = true, dataType = "Integer")})
+    @PostMapping("/getRQStrategy")
+    public AjaxResult getRQStrategy(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            if (null == faStrategy.getPage()) {
+                faStrategy.setPage(1);
+            }
+            if (null == faStrategy.getSize()) {
+                faStrategy.setSize(10);
+            }
+            IPage<FaStrategy> faStrategyIPage = faStrategyService.getRQStrategy(faStrategy);
+            return AjaxResult.success(faStrategyIPage);
+        } catch (ServiceException e) {
+            logger.error("getRQStrategy", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getRQStrategy", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
      * 查询首页5大指数
      */
     @ApiOperation("查询首页5大指数")
@@ -172,7 +202,7 @@ public class StrategyController extends BaseController
             @ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer"),
             @ApiImplicitParam(name = "size", value = "当页条数", required = true, dataType = "Integer"),
             @ApiImplicitParam(name = "type", value = "交易所(1沪 2深 3创业 4北交 5科创)", required = true, dataType = "Integer"),
-            @ApiImplicitParam(name = "sortBy", value = "排序字段(1现价 2涨跌 3涨跌幅 4成交额 5换手率)", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "sortBy", value = "排序字段(1现价 2涨跌 3涨跌幅 4成交额 5换手率 6昨收价 7今开价 8最高价)", required = true, dataType = "Integer"),
             @ApiImplicitParam(name = "sort", value = "顺序(1正序 2倒序)", required = true, dataType = "Integer")
     })
     @PostMapping("/getStrategyList")
@@ -247,6 +277,27 @@ public class StrategyController extends BaseController
     }
 
     /**
+     * 龙虎榜
+     */
+    @ApiOperation("龙虎榜")
+    @AppLog(title = "龙虎榜", businessType = BusinessType.OTHER)
+    @PostMapping("/getDragonTigerList")
+    public AjaxResult getDragonTigerList(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            // 启涨大数据
+            List<FaStrategy> list = faStrategyService.getDragonTigerList(faStrategy);
+            return AjaxResult.success(list);
+        } catch (ServiceException e) {
+            logger.error("getDragonTigerList", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getDragonTigerList", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
      * 资金流向
      */
     @ApiOperation("资金流向")
@@ -313,6 +364,110 @@ public class StrategyController extends BaseController
             return AjaxResult.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             logger.error("getSHKline", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 前瞻会议
+     */
+    @ApiOperation("前瞻会议")
+    @AppLog(title = "前瞻会议", businessType = BusinessType.OTHER)
+    @PostMapping("/getQzhy")
+    public AjaxResult getQzhy(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            // 启涨大数据 pz=2 取第四个
+            JSONArray jsonArray = faStrategyService.getQzhy();
+            return AjaxResult.success(jsonArray);
+        } catch (ServiceException e) {
+            logger.error("getQzhy", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getQzhy", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 研报精选
+     */
+    @ApiOperation("研报精选")
+    @AppLog(title = "研报精选", businessType = BusinessType.OTHER)
+    @PostMapping("/getYbjx")
+    public AjaxResult getYbjx(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            // 取涨幅前十之一，业绩略超预期，稳健增长
+            faStrategy = faStrategyService.getYbjx();
+            return AjaxResult.success(faStrategy);
+        } catch (ServiceException e) {
+            logger.error("getYbjx", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getYbjx", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 热门行业
+     */
+    @ApiOperation("热门行业")
+    @AppLog(title = "热门行业", businessType = BusinessType.OTHER)
+    @PostMapping("/getRmhy")
+    public AjaxResult getRmhy(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            // 启涨大数据 pz=2 取前三个
+            JSONArray jsonArray = faStrategyService.getRmhy();
+            return AjaxResult.success(jsonArray);
+        } catch (ServiceException e) {
+            logger.error("getRmhy", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getRmhy", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 短线掘金
+     */
+    @ApiOperation("短线掘金")
+    @AppLog(title = "短线掘金", businessType = BusinessType.OTHER)
+    @PostMapping("/getDxjj")
+    public AjaxResult getDxjj(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            // 取涨幅前十之二，业绩略超预期，稳健增长
+            List<FaStrategy> list = faStrategyService.getDxjj();
+            return AjaxResult.success(list);
+        } catch (ServiceException e) {
+            logger.error("getDxjj", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getDxjj", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 涨跌柱状图
+     */
+    @ApiOperation("涨跌柱状图")
+    @AppLog(title = "涨跌柱状图", businessType = BusinessType.OTHER)
+    @PostMapping("/getRiseAndFallBar")
+    public AjaxResult getRiseAndFallBar(@RequestBody FaStrategy faStrategy)
+    {
+        try {
+            Map<String, Integer> map = faStrategyService.getRiseAndFallBar(faStrategy);
+            return AjaxResult.success(map);
+        } catch (ServiceException e) {
+            logger.error("getRiseAndFallBar", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getRiseAndFallBar", e);
             return AjaxResult.error();
         }
     }

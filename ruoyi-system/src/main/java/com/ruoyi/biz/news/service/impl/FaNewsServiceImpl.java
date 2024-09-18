@@ -13,6 +13,7 @@ import com.ruoyi.biz.news.service.IFaNewsService;
 import com.ruoyi.biz.newsCatalog.domain.FaNewsCatalog;
 import com.ruoyi.biz.newsCatalog.service.IFaNewsCatalogService;
 import com.ruoyi.biz.riskConfig.service.IFaRiskConfigService;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
@@ -51,9 +52,9 @@ public class FaNewsServiceImpl extends ServiceImpl<FaNewsMapper, FaNews> impleme
     @Autowired
     private IFaRiskConfigService iFaRiskConfigService;
 
-    private static String NEWS_LIST_URL = "http://47.120.74.91:5120/news_list?types={0}&page={1}&pagesize=10&token={2}";
+    private static String NEWS_LIST_URL = Constants.QI_ZHANG_URL + "/news_list?types={0}&page={1}&pagesize=10&token={2}";
 
-    private static String NEWS_CONTENT_URL = "http://47.120.74.91:5120/news_content?news_id={0}&token={1}";
+    private static String NEWS_CONTENT_URL = Constants.QI_ZHANG_URL + "/news_content?news_id={0}&token={1}";
 
     private static String INDIA_NEWS_URL = "https://apibs.business-standard.com/search/?type=news&limit=10&page={0}&keyword=news";
 

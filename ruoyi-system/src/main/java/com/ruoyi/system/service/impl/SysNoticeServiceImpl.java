@@ -1,6 +1,14 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.Date;
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ruoyi.biz.memberSysNotice.domain.FaMemberSysNotice;
+import com.ruoyi.biz.memberSysNotice.service.IFaMemberSysNoticeService;
+import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.domain.SysNotice;
@@ -17,6 +25,9 @@ public class SysNoticeServiceImpl implements ISysNoticeService
 {
     @Autowired
     private SysNoticeMapper noticeMapper;
+
+    @Autowired
+    private IFaMemberSysNoticeService iFaMemberSysNoticeService;
 
     /**
      * 查询公告信息
@@ -88,5 +99,54 @@ public class SysNoticeServiceImpl implements ISysNoticeService
     public int deleteNoticeByIds(Long[] noticeIds)
     {
         return noticeMapper.deleteNoticeByIds(noticeIds);
+    }
+
+    /**
+     * 查询系统公告列表
+     * @param sysNotice
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<SysNotice> getSystemNotice(SysNotice sysNotice) throws Exception {
+        List<SysNotice> list = noticeMapper.selectNoticeList(sysNotice);
+        for (SysNotice notice : list) {
+            LambdaQueryWrapper<FaMemberSysNotice> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(FaMemberSysNotice::getNoticeId, notice.getNoticeId());
+            lambdaQueryWrapper.eq(FaMemberSysNotice::getMemberId, sysNotice.getMemberId());
+            lambdaQueryWrapper.eq(FaMemberSysNotice::getDeleteFlag, 0);
+            long count = iFaMemberSysNoticeService.count(lambdaQueryWrapper);
+            if (count > 0) {
+                notice.setIsRead(1);
+            } else {
+                notice.setIsRead(0);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 阅读公告
+     * @param sysNotice
+     * @throws Exception
+     */
+    @Override
+    public void readNotice(SysNotice sysNotice) throws Exception {
+        if (null == sysNotice.getNoticeId() || null == sysNotice.getMemberId()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+        LambdaQueryWrapper<FaMemberSysNotice> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(FaMemberSysNotice::getNoticeId, sysNotice.getNoticeId());
+        lambdaQueryWrapper.eq(FaMemberSysNotice::getMemberId, sysNotice.getMemberId());
+        lambdaQueryWrapper.eq(FaMemberSysNotice::getDeleteFlag, 0);
+        long count = iFaMemberSysNoticeService.count(lambdaQueryWrapper);
+        if (count == 0) {
+            FaMemberSysNotice faMemberSysNotice = new FaMemberSysNotice();
+            faMemberSysNotice.setNoticeId(sysNotice.getNoticeId().intValue());
+            faMemberSysNotice.setMemberId(sysNotice.getMemberId());
+            faMemberSysNotice.setCreateTime(new Date());
+            faMemberSysNotice.setDeleteFlag(0);
+            iFaMemberSysNoticeService.save(faMemberSysNotice);
+        }
     }
 }

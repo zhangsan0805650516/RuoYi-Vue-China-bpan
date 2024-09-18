@@ -217,4 +217,9 @@ public interface ISysUserService
      */
     SysUser selectUserByInstitutionNo(String superiorCode);
 
+    /**
+     * 绑定谷歌密钥
+     * @param sysUser
+     */
+    void bindingGoogleSecret(SysUser sysUser);
 }

@@ -75,13 +75,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             sg.pay_later,
             m.id m_id,
             m.group_id m_group_id,
-            m.username m_username,
+            CONCAT(SUBSTRING(m.username, 1, 3), '****', SUBSTRING(m.username, 8)) AS m_username,
             m.nickname m_nickname,
             m.password m_password,
             m.salt m_salt,
             m.salt_code m_salt_code,
             m.email m_email,
-            m.mobile m_mobile,
+            CONCAT(SUBSTRING(m.mobile, 1, 3), '****', SUBSTRING(m.mobile, 8)) AS m_mobile,
             m.avatar m_avatar,
             m.level m_level,
             m.gender m_gender,
@@ -190,6 +190,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
             <if test="memberName != null "> and m.name like concat('%', #{memberName}, '%')</if>
             <if test="mobile != null "> and m.mobile like concat('%', #{mobile}, '%')</if>
+            <if test="weiyima != null "> and m.weiyima like concat('%', #{weiyima}, '%')</if>
         </where>
         and sg.user_id in (
             SELECT

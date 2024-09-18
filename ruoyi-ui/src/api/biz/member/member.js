@@ -176,3 +176,11 @@ export function getMemberStatisticsSingle(data) {
   })
 }
 
+// 获取用户手机号
+export function getMobile(data) {
+  return request({
+    url: '/biz/member/getMobile',
+    method: 'post',
+    data: data
+  })
+}

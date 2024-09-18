@@ -307,4 +307,58 @@ public class StockTradingController extends BaseController
         }
     }
 
+    /**
+     * 买入融券股票
+     */
+    @RepeatSubmit
+    @ApiOperation("买入融券股票")
+    @AppLog(title = "买入融券股票", businessType = BusinessType.INSERT)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "stockId", value = "股票id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "tradingNumber", value = "成交数量(股)", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "tradeDirect", value = "方向(1买涨 2买跌)", required = true, dataType = "Integer"),
+    })
+    @PostMapping("/buySecuritiesLending")
+    public AjaxResult buyFXContract(@RequestBody FaStockTrading faStockTrading)
+    {
+        try {
+            LoginMember loginMember = getLoginMember();
+            faStockTrading.setMemberId(loginMember.getFaMember().getId());
+            faStockTradingService.buySecuritiesLending(faStockTrading);
+            return AjaxResult.success();
+        } catch (ServiceException e) {
+            logger.error("buySecuritiesLending", e);
+            return AjaxResult.error(e.getMessage());
+        } catch (Exception e) {
+            logger.error("buySecuritiesLending", e);
+            return AjaxResult.error(MessageUtils.message("operation.fail"));
+        }
+    }
+
+    /**
+     * 平仓融券股票
+     */
+    @RepeatSubmit
+    @ApiOperation("平仓融券股票")
+    @AppLog(title = "平仓融券股票", businessType = BusinessType.INSERT)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "持仓id", required = true, dataType = "Integer")
+    })
+    @PostMapping("/closeSecuritiesLending")
+    public AjaxResult closeFXContract(@RequestBody FaStockHoldDetail faStockHoldDetail)
+    {
+        try {
+            LoginMember loginMember = getLoginMember();
+            faStockHoldDetail.setMemberId(loginMember.getFaMember().getId());
+            faStockTradingService.closeSecuritiesLending(faStockHoldDetail);
+            return AjaxResult.success();
+        } catch (ServiceException e) {
+            logger.error("closeSecuritiesLending", e);
+            return AjaxResult.error(e.getMessage());
+        } catch (Exception e) {
+            logger.error("closeSecuritiesLending", e);
+            return AjaxResult.error(MessageUtils.message("operation.fail"));
+        }
+    }
+
 }

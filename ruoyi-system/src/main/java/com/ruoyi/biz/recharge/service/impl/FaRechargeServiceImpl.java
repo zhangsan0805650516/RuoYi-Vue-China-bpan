@@ -82,6 +82,7 @@ public class FaRechargeServiceImpl extends ServiceImpl<FaRechargeMapper, FaRecha
     @Override
     public int updateFaRecharge(FaRecharge faRecharge)
     {
+        faRecharge.setMobile(null);
         faRecharge.setUpdateTime(DateUtils.getNowDate());
         return faRechargeMapper.updateFaRecharge(faRecharge);
     }

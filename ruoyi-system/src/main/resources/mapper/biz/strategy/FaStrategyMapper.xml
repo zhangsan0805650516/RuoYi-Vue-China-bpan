@@ -85,10 +85,139 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="vipQcConditionCode"    column="vip_qc_condition_code"    />
         <result property="totalQcNum"    column="total_qc_num"    />
         <result property="leftQcNum"    column="left_qc_num"    />
+        <result property="buy1"    column="buy1"    />
+        <result property="buy1Num"    column="buy1_num"    />
+        <result property="buy2"    column="buy2"    />
+        <result property="buy2Num"    column="buy2_num"    />
+        <result property="buy3"    column="buy3"    />
+        <result property="buy3Num"    column="buy3_num"    />
+        <result property="buy4"    column="buy4"    />
+        <result property="buy4Num"    column="buy4_num"    />
+        <result property="buy5"    column="buy5"    />
+        <result property="buy5Num"    column="buy5_num"    />
+        <result property="buyTotalNum"    column="buy_total_num"    />
+        <result property="sell1"    column="sell1"    />
+        <result property="sell1Num"    column="sell1_num"    />
+        <result property="sell2"    column="sell2"    />
+        <result property="sell2Num"    column="sell2_num"    />
+        <result property="sell3"    column="sell2"    />
+        <result property="sell3Num"    column="sell2_num"    />
+        <result property="sell4"    column="sell2"    />
+        <result property="sell4Num"    column="sell2_num"    />
+        <result property="sell5"    column="sell2"    />
+        <result property="sell5Num"    column="sell2_num"    />
+        <result property="sellTotalNum"    column="sell_total_num"    />
+        <result property="lastViewTime"    column="last_view_time"    />
+        <result property="isRq"    column="is_rq"    />
     </resultMap>
 
     <sql id="selectFaStrategyVo">
-        select id, classify_id, title, title_en, code, all_code, prefix_code, condition_code, today, yesterday, most_high, most_low, stock_num, current_price, buy_price, profit_price, stop_profit_price, lose_price, stop_lose_price, yield, recommend_credit_money, select_credit_money, multiplying, can_buy_desc, auto_renewal_desc, all_money_desc, all_money, can_buy, make_bargain_num, make_bargain_money, city_profit, city_clean, change_hands, min_value, is_auto_money, city_value, create_time, update_time, delete_time, is_rise, cai_trade, cai_pricechange, cai_changepercent, cai_buy, cai_sell, cai_settlement, cai_open, cai_high, cai_low, cai_volume, cai_amount, cai_change_hands, cai_average, cai_limit_up_price, cai_limit_down_price, cai_ticktime, status, lock_status, type, current_status, qc_status, vip_qc_status, zhiding, zs_type, order_flag, is_hot, is_zs, is_pz, is_dz, is_zfa, ping_day, zfa_num, zfa_price, total_zfa_num, delete_flag, is_hide, vip_qc_price, vip_qc_condition_code, total_qc_num, left_qc_num from fa_strategy
+        select
+            id,
+            classify_id,
+            title,
+            title_en,
+            code,
+            all_code,
+            prefix_code,
+            condition_code,
+            today,
+            yesterday,
+            most_high,
+            most_low,
+            stock_num,
+            current_price,
+            buy_price,
+            profit_price,
+            stop_profit_price,
+            lose_price,
+            stop_lose_price,
+            yield,
+            recommend_credit_money,
+            select_credit_money,
+            multiplying,
+            can_buy_desc,
+            auto_renewal_desc,
+            all_money_desc,
+            all_money,
+            can_buy,
+            make_bargain_num,
+            make_bargain_money,
+            city_profit,
+            city_clean,
+            change_hands,
+            min_value,
+            is_auto_money,
+            city_value,
+            create_time,
+            update_time,
+            delete_time,
+            is_rise,
+            cai_trade,
+            cai_pricechange,
+            cai_changepercent,
+            cai_buy,
+            cai_sell,
+            cai_settlement,
+            cai_open,
+            cai_high,
+            cai_low,
+            cai_volume,
+            cai_amount,
+            cai_change_hands,
+            cai_average,
+            cai_limit_up_price,
+            cai_limit_down_price,
+            cai_ticktime,
+            status,
+            lock_status,
+            type,
+            current_status,
+            qc_status,
+            vip_qc_status,
+            zhiding,
+            zs_type,
+            order_flag,
+            is_hot,
+            is_zs,
+            is_pz,
+            is_dz,
+            is_zfa,
+            ping_day,
+            zfa_num,
+            zfa_price,
+            total_zfa_num,
+            delete_flag,
+            is_hide,
+            vip_qc_price,
+            vip_qc_condition_code,
+            total_qc_num,
+            left_qc_num,
+            buy1,
+            buy1_num,
+            buy2,
+            buy2_num,
+            buy3,
+            buy3_num,
+            buy4,
+            buy4_num,
+            buy5,
+            buy5_num,
+            buy_total_num,
+            sell1,
+            sell1_num,
+            sell2,
+            sell2_num,
+            sell3,
+            sell3_num,
+            sell4,
+            sell4_num,
+            sell5,
+            sell5_num,
+            sell_total_num,
+            last_view_time,
+            is_rq
+        from fa_strategy
     </sql>
 
     <select id="selectFaStrategyList" parameterType="FaStrategy" resultMap="FaStrategyResult">
@@ -174,6 +303,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vipQcConditionCode != null and vipQcConditionCode != ''"> and vip_qc_condition_code = #{vipQcConditionCode}</if>
             <if test="totalQcNum != null "> and total_qc_num = #{totalQcNum}</if>
             <if test="leftQcNum != null "> and left_qc_num = #{leftQcNum}</if>
+            <if test="buy1 != null "> and buy1 = #{buy1}</if>
+            <if test="buy1Num != null "> and buy1_num = #{buy1Num}</if>
+            <if test="buy2 != null "> and buy2 = #{buy2}</if>
+            <if test="buy2Num != null "> and buy2_num = #{buy2Num}</if>
+            <if test="buy3 != null "> and buy3 = #{buy3}</if>
+            <if test="buy3Num != null "> and buy3_num = #{buy3Num}</if>
+            <if test="buy4 != null "> and buy4 = #{buy4}</if>
+            <if test="buy4Num != null "> and buy4_num = #{buy4Num}</if>
+            <if test="buy5 != null "> and buy5 = #{buy5}</if>
+            <if test="buy5Num != null "> and buy5_num = #{buy5Num}</if>
+            <if test="buyTotalNum != null "> and buy_total_num = #{buyTotalNum}</if>
+            <if test="sell1 != null "> and sell1 = #{sell1}</if>
+            <if test="sell1Num != null "> and sell1_num = #{sell1Num}</if>
+            <if test="sell2 != null "> and sell2 = #{sell2}</if>
+            <if test="sell2Num != null "> and sell2_num = #{sell2Num}</if>
+            <if test="sell3 != null "> and sell3 = #{sell3}</if>
+            <if test="sell3Num != null "> and sell3_num = #{sell3Num}</if>
+            <if test="sell4 != null "> and sell4 = #{sell4}</if>
+            <if test="sell4Num != null "> and sell4_num = #{sell4Num}</if>
+            <if test="sell5 != null "> and sell5 = #{sell5}</if>
+            <if test="sell5Num != null "> and sell5_num = #{sell5Num}</if>
+            <if test="buyTotalNum != null "> and buy_total_num = #{buyTotalNum}</if>
+            <if test="lastViewTime != null "> and last_view_time = #{lastViewTime}</if>
+            <if test="isRq != null "> and is_rq = #{isRq}</if>
         </where>
         order by id desc
     </select>
@@ -265,6 +418,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vipQcConditionCode != null">vip_qc_condition_code,</if>
             <if test="totalQcNum != null">total_qc_num,</if>
             <if test="leftQcNum != null">left_qc_num,</if>
+            <if test="buy1 != null">buy1,</if>
+            <if test="buy1Num != null">buy1_num,</if>
+            <if test="buy2 != null">buy2,</if>
+            <if test="buy2Num != null">buy2_num,</if>
+            <if test="buy3 != null">buy3,</if>
+            <if test="buy3Num != null">buy3_num,</if>
+            <if test="buy4 != null">buy4,</if>
+            <if test="buy4Num != null">buy4_num,</if>
+            <if test="buy5 != null">buy5,</if>
+            <if test="buy5Num != null">buy5_num,</if>
+            <if test="buyTotalNum != null">buy_total_num,</if>
+            <if test="sell1 != null">sell1,</if>
+            <if test="sell1Num != null">sell1_num,</if>
+            <if test="sell2 != null">sell2,</if>
+            <if test="sell2Num != null">sell2_num,</if>
+            <if test="sell3 != null">sell3,</if>
+            <if test="sell3Num != null">sell3_num,</if>
+            <if test="sell4 != null">sell4,</if>
+            <if test="sell4Num != null">sell4_num,</if>
+            <if test="sell5 != null">sell5,</if>
+            <if test="sell5Num != null">sell5_num,</if>
+            <if test="sellTotalNum != null">sell_total_num,</if>
+            <if test="lastViewTime != null">last_view_time,</if>
+            <if test="isRq != null">is_rq,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="classifyId != null">#{classifyId},</if>
@@ -346,6 +523,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vipQcConditionCode != null">#{vipQcConditionCode},</if>
             <if test="totalQcNum != null">#{totalQcNum},</if>
             <if test="leftQcNum != null">#{leftQcNum},</if>
+            <if test="buy1 != null">#{buy1},</if>
+            <if test="buy1Num != null">#{buy1Num},</if>
+            <if test="buy2 != null">#{buy2},</if>
+            <if test="buy2Num != null">#{buy2Num},</if>
+            <if test="buy3 != null">#{buy3},</if>
+            <if test="buy3Num != null">#{buy3Num},</if>
+            <if test="buy4 != null">#{buy4},</if>
+            <if test="buy4Num != null">#{buy4Num},</if>
+            <if test="buy5 != null">#{buy5},</if>
+            <if test="buy5Num != null">#{buy5Num},</if>
+            <if test="buyTotalNum != null">#{buyTotalNum},</if>
+            <if test="sell1 != null">#{sell1},</if>
+            <if test="sell1Num != null">#{sell1Num},</if>
+            <if test="sell2 != null">#{sell2},</if>
+            <if test="sell2Num != null">#{sell2Num},</if>
+            <if test="sell3 != null">#{sell3},</if>
+            <if test="sell3Num != null">#{sell3Num},</if>
+            <if test="sell4 != null">#{sell4},</if>
+            <if test="sell4Num != null">#{sell4Num},</if>
+            <if test="sell5 != null">#{sell5},</if>
+            <if test="sell5Num != null">#{sell5Num},</if>
+            <if test="sellTotalNum != null">#{sellTotalNum},</if>
+            <if test="lastViewTime != null">#{lastViewTime},</if>
+            <if test="isRq != null">#{isRq},</if>
          </trim>
     </insert>
 
@@ -431,6 +632,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vipQcConditionCode != null">vip_qc_condition_code = #{vipQcConditionCode},</if>
             <if test="totalQcNum != null">total_qc_num = #{totalQcNum},</if>
             <if test="leftQcNum != null">left_qc_num = #{leftQcNum},</if>
+            <if test="buy1 != null">buy1 = #{buy1},</if>
+            <if test="buy1Num != null">buy1_num = #{buy1Num},</if>
+            <if test="buy2 != null">buy2 = #{buy2},</if>
+            <if test="buy2Num != null">buy2_num = #{buy2Num},</if>
+            <if test="buy3 != null">buy3 = #{buy3},</if>
+            <if test="buy3Num != null">buy3_num = #{buy3Num},</if>
+            <if test="buy4 != null">buy4 = #{buy4},</if>
+            <if test="buy4Num != null">buy4_num = #{buy4Num},</if>
+            <if test="buy5 != null">buy5 = #{buy5},</if>
+            <if test="buy5Num != null">buy5_num = #{buy5Num},</if>
+            <if test="buyTotalNum != null">buy_total_num = #{buyTotalNum},</if>
+            <if test="sell1 != null">sell1 = #{sell1},</if>
+            <if test="sell1Num != null">sell1_num = #{sell1Num},</if>
+            <if test="sell2 != null">sell2 = #{sell2},</if>
+            <if test="sell2Num != null">sell2_num = #{sell2Num},</if>
+            <if test="sell3 != null">sell3 = #{sell3},</if>
+            <if test="sell3Num != null">sell3_num = #{sell3Num},</if>
+            <if test="sell4 != null">sell4 = #{sell4},</if>
+            <if test="sell4Num != null">sell4_num = #{sell4Num},</if>
+            <if test="sell5 != null">sell5 = #{sell5},</if>
+            <if test="sell5Num != null">sell5_num = #{sell5Num},</if>
+            <if test="sellTotalNum != null">sell_total_num = #{sellTotalNum},</if>
+            <if test="lastViewTime != null">last_view_time = #{lastViewTime},</if>
+            <if test="isRq != null">is_rq = #{isRq},</if>
         </trim>
         where id = #{id}
     </update>
@@ -464,6 +689,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getHoldingStockCodeList">
         select DISTINCT shd.all_code from fa_stock_hold_detail shd where shd.`status` = 0;
+    </select>
+
+    <select id="getChooseStockCodeList">
+        SELECT DISTINCT
+            shd.all_code
+        FROM
+            fa_stock_hold_detail shd
+        WHERE
+            shd.`status` = 0
+        UNION ALL
+
+        SELECT
+            s.all_code
+        FROM
+            fa_strategy s
+        WHERE
+            s.delete_flag = 0
+          AND s.last_view_time >= DATE_ADD( DATE_FORMAT( NOW(), '%Y-%m-%d 00:00:00' ), INTERVAL - 1 DAY )
     </select>
 
 </mapper>

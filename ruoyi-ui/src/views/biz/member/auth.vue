@@ -24,6 +24,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item :label="$t('唯一码')" prop="weiyima">
+        <el-input
+          v-model="queryParams.weiyima"
+          :placeholder="$t('请输入唯一码')"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item :label="$t('审核状态')" prop="isAuth">
         <el-select
           v-model="queryParams.isAuth"

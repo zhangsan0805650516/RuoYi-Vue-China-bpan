@@ -97,4 +97,6 @@ public interface FaStrategyMapper extends BaseMapper<FaStrategy>
      * @throws Exception
      */
     String[] getHoldingStockCodeList() throws Exception;
+
+    String[] getChooseStockCodeList() throws Exception;
 }

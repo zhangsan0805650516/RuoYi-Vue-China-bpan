@@ -257,6 +257,30 @@ public class ChinaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaSt
             lambdaUpdateWrapper.set(FaStrategy::getCaiLimitUpPrice, info[47]);
             lambdaUpdateWrapper.set(FaStrategy::getCaiLimitDownPrice, info[48]);
             lambdaUpdateWrapper.set(FaStrategy::getCaiTicktime, getDate(info[30]));
+
+            lambdaUpdateWrapper.set(FaStrategy::getBuy1, info[9]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy1Num, info[10]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy2, info[11]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy2Num, info[12]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy3, info[13]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy3Num, info[14]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy4, info[15]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy4Num, info[16]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy5, info[17]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy5Num, info[18]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuyTotalNum, new BigDecimal(info[10]).add(new BigDecimal(info[12])).add(new BigDecimal(info[14])).add(new BigDecimal(info[16])).add(new BigDecimal(info[18])));
+            lambdaUpdateWrapper.set(FaStrategy::getSell1, info[19]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell1Num, info[20]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell2, info[21]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell2Num, info[22]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell3, info[23]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell3Num, info[24]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell4, info[25]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell4Num, info[26]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell5, info[27]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell5Num, info[28]);
+            lambdaUpdateWrapper.set(FaStrategy::getSellTotalNum, new BigDecimal(info[20]).add(new BigDecimal(info[22])).add(new BigDecimal(info[24])).add(new BigDecimal(info[26])).add(new BigDecimal(info[28])));
+
             lambdaUpdateWrapper.set(FaStrategy::getUpdateTime, new Date());
             this.update(lambdaUpdateWrapper);
         }
@@ -326,6 +350,31 @@ public class ChinaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaSt
             lambdaUpdateWrapper.set(FaStrategy::getCaiLimitUpPrice, info[47]);
             lambdaUpdateWrapper.set(FaStrategy::getCaiLimitDownPrice, info[48]);
             lambdaUpdateWrapper.set(FaStrategy::getCaiTicktime, getDate(info[30]));
+
+            lambdaUpdateWrapper.set(FaStrategy::getBuy1, info[9]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy1Num, info[10]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy2, info[11]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy2Num, info[12]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy3, info[13]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy3Num, info[14]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy4, info[15]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy4Num, info[16]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy5, info[17]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuy5Num, info[18]);
+            lambdaUpdateWrapper.set(FaStrategy::getBuyTotalNum, new BigDecimal(info[10]).add(new BigDecimal(info[12])).add(new BigDecimal(info[14])).add(new BigDecimal(info[16])).add(new BigDecimal(info[18])));
+            lambdaUpdateWrapper.set(FaStrategy::getSell1, info[19]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell1Num, info[20]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell2, info[21]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell2Num, info[22]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell3, info[23]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell3Num, info[24]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell4, info[25]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell4Num, info[26]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell5, info[27]);
+            lambdaUpdateWrapper.set(FaStrategy::getSell5Num, info[28]);
+            lambdaUpdateWrapper.set(FaStrategy::getSellTotalNum, new BigDecimal(info[20]).add(new BigDecimal(info[22])).add(new BigDecimal(info[24])).add(new BigDecimal(info[26])).add(new BigDecimal(info[28])));
+            lambdaUpdateWrapper.set(FaStrategy::getUpdateTime, new Date());
+
             lambdaUpdateWrapper.set(FaStrategy::getUpdateTime, new Date());
 
             // 抢筹未开，更新抢筹价格
@@ -717,6 +766,25 @@ public class ChinaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaSt
             }
         }
         return list;
+    }
+
+    /**
+     * 刷新选定股票价格
+     * @throws Exception
+     */
+    @Override
+    public void updateChooseStock() throws Exception {
+        // 取出指定股票allCode集合
+        String[] codeList = faStrategyMapper.getChooseStockCodeList();
+        if (codeList.length > 0) {
+            String codes = Arrays.toString(codeList);
+            codes = codes.substring(1);
+            codes = codes.substring(0, codes.length() - 1);
+            codes = codes.replace(", ", ",");
+
+            Thread thread = new Thread(getChinaStock(codes));
+            thread.start();
+        }
     }
 
 }

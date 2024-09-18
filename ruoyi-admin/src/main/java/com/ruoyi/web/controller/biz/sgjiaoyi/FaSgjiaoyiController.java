@@ -94,7 +94,7 @@ public class FaSgjiaoyiController extends BaseController
     @PreAuthorize("@ss.hasPermi('biz:sgjiaoyi:add')")
     @Log(title = "线下配售", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody FaSgjiaoyi faSgjiaoyi)
+    public AjaxResult add(@RequestBody FaSgjiaoyi faSgjiaoyi) throws Exception
     {
         return toAjax(faSgjiaoyiService.insertFaSgjiaoyi(faSgjiaoyi));
     }

@@ -1,23 +1,25 @@
 package com.ruoyi.web.controller.system;
 
-import com.ruoyi.common.utils.file.FileUtils;
-import com.ruoyi.common.utils.oss.AliyunOssUploadUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.config.RuoYiConfig;
+import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.file.FileUploadUtils;
-import com.ruoyi.common.utils.file.MimeTypeUtils;
+import com.ruoyi.common.utils.file.FileUtils;
+import com.ruoyi.common.utils.oss.AliyunOssUploadUtils;
 import com.ruoyi.framework.web.service.TokenService;
 import com.ruoyi.system.service.ISysUserService;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Collection;
 
 /**
  * 个人信息 业务处理
@@ -33,6 +35,9 @@ public class SysProfileController extends BaseController
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 个人信息
@@ -99,12 +104,42 @@ public class SysProfileController extends BaseController
         newPassword = SecurityUtils.encryptPassword(newPassword);
         if (userService.resetUserPwd(userName, newPassword) > 0)
         {
+
+            // 删除用户缓存
+            Thread thread = null;
+            try {
+                thread = new Thread(kickoutUser(loginUser.getUserId()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            thread.start();
+
             // 更新缓存用户密码
-            loginUser.getUser().setPassword(newPassword);
-            tokenService.setLoginUser(loginUser);
+//            loginUser.getUser().setPassword(newPassword);
+//            tokenService.setLoginUser(loginUser);
             return success();
         }
         return error("修改密码异常，请联系管理员");
+    }
+
+    /**
+     * 踢出用户
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    private Runnable kickoutUser(Long id) throws Exception {
+        return () -> {
+            // 取出所有在线用户
+            Collection<String> keys = redisCache.keys(CacheConstants.LOGIN_TOKEN_KEY + "*");
+            for (String key : keys) {
+                LoginUser loginUser = redisCache.getCacheObject(key);
+                // 确认用户
+                if (ObjectUtils.isNotEmpty(loginUser) && id.equals(loginUser.getUserId())) {
+                    redisCache.deleteObject(key);
+                }
+            }
+        };
     }
 
     /**

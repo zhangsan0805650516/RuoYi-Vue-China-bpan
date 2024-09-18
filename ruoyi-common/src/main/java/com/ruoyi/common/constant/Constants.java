@@ -10,6 +10,24 @@ import io.jsonwebtoken.Claims;
 public class Constants
 {
 
+    // 启涨大数据接口地址
+    public static final String QI_ZHANG_URL = "http://47.120.74.91:5120";
+
+    /**
+     * 龙虎榜头
+     */
+    public static final String DRAGON_TIGER = "dragon_tiger:";
+
+    /**
+     * Google验证器状态头
+     */
+    public static final String GOOGLE_AUTH_STATUS = "google_auth_status";
+
+    /**
+     * 涨跌平柱状图头
+     */
+    public static final String RISE_AND_FALL_BAR = "rise_fall_bar";
+
     /**
      * 涨跌平头
      */

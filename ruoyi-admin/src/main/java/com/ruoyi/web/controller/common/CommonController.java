@@ -8,6 +8,7 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.file.FileUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.framework.config.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,11 +168,17 @@ public class CommonController
 
     @CrossOrigin
     @PostMapping("/uploadOSS")
-    public AjaxResult uploadFileOSS(MultipartFile file) throws Exception {
-        log.info(String.valueOf(file));
+    public AjaxResult uploadFileOSS(HttpServletRequest request, MultipartFile file) throws Exception {
+        log.error(String.valueOf(file));
         try {
+            String serverName = request.getServerName();
+            InetAddress inetAddress = InetAddress.getByName(serverName);
+            String ip = inetAddress.getHostAddress();
+            log.error("uploadOSS.ip=" + ip);
+            ip = IpUtils.getPublicIp();
+            log.error("uploadOSS.ip=" + ip);
 
-            String result = apiCommonService.upload(file);
+            String result = apiCommonService.upload(file, ip);
 
             AjaxResult ajax = AjaxResult.success();
             ajax.put("url", result);

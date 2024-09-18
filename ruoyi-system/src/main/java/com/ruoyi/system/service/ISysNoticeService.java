@@ -57,4 +57,20 @@ public interface ISysNoticeService
      * @return 结果
      */
     public int deleteNoticeByIds(Long[] noticeIds);
+
+    /**
+     * 查询系统公告列表
+     * @param sysNotice
+     * @return
+     * @throws Exception
+     */
+    List<SysNotice> getSystemNotice(SysNotice sysNotice) throws Exception;
+
+    /**
+     * 阅读公告
+     * @param sysNotice
+     * @throws Exception
+     */
+    void readNotice(SysNotice sysNotice) throws Exception;
+
 }

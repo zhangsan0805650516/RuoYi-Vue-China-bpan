@@ -28,13 +28,12 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
@@ -381,13 +380,18 @@ public class MemberController extends BaseController
             @ApiImplicitParam(name = "amount", value = "金额", required = true, dataType = "BigDecimal")
     })
     @PostMapping("/rechargeApply")
-    public AjaxResult rechargeApply(@RequestBody FaMember faMember) throws Exception
+    public AjaxResult rechargeApply(HttpServletRequest request, @RequestBody FaMember faMember) throws Exception
     {
         try {
+            String serverName = request.getServerName();
+            InetAddress inetAddress = InetAddress.getByName(serverName);
+            String ip = inetAddress.getHostAddress();
+            logger.error("rechargeApply.ip=" + ip);
+
             LoginMember loginMember = getLoginMember();
             faMember.setId(loginMember.getFaMember().getId());
 
-            String result = faMemberService.rechargeApply(faMember);
+            String result = faMemberService.rechargeApply(faMember, ip);
 
             // 风控挂卡通道 kaika 默认关闭0
             String kaika = iFaRiskConfigService.getConfigValue("kaika", "0");
@@ -413,27 +417,29 @@ public class MemberController extends BaseController
     @ApiOperation("充值回调接口")
     @AppLog(title = "充值回调接口", businessType = BusinessType.UPDATE)
     @PostMapping("/rechargeNotify")
-    public void rechargeNotify(HttpServletResponse response, @RequestBody RechargeNotify rechargeNotify) throws Exception
+    public void rechargeNotify(HttpServletResponse response, @RequestBody RechargeNotify rechargeNotifyJson, @ModelAttribute RechargeNotify rechargeNotifyForm) throws Exception
     {
         try {
             logger.error("rechargeNotify1=" + response);
-            logger.error("rechargeNotify2=" + rechargeNotify);
+            logger.error("rechargeNotifyJSON=" + rechargeNotifyJson);
+            logger.error("rechargeNotifyForm=" + rechargeNotifyForm);
 
-            // 1:九哥大区 2:仁德 3:火箭
+            // 1:九哥大区 2:仁德 3:火箭 4:四方
             String paymentType = iFaRiskConfigService.getConfigValue("payment.type", "1");
 
             if ("1".equals(paymentType)) {
-                faMemberService.nineBrotherRechargeNotify(rechargeNotify);
+                faMemberService.nineBrotherRechargeNotify(rechargeNotifyJson);
                 response.getWriter().write("SUCCESS");
             } else if ("2".equals(paymentType)) {
-                faMemberService.rendeRechargeNotify(rechargeNotify);
+                faMemberService.rendeRechargeNotify(rechargeNotifyJson);
                 response.getWriter().write("true");
             } else if ("3".equals(paymentType)) {
-                faMemberService.huojianRechargeNotify(rechargeNotify);
+                faMemberService.huojianRechargeNotify(rechargeNotifyJson);
                 response.getWriter().write("SUCCESS");
+            } else if ("4".equals(paymentType)) {
+                faMemberService.sifangRechargeNotify(rechargeNotifyForm);
+                response.getWriter().write("OK");
             }
-        } catch (ServiceException e) {
-            logger.error("rechargeNotify", e);
         } catch (Exception e) {
             logger.error("rechargeNotify", e);
         }

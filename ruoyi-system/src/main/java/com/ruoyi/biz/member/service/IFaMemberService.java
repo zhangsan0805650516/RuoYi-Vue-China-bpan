@@ -207,9 +207,10 @@ public interface IFaMemberService extends IService<FaMember>
     /**
      * 充值申请
      * @param faMember
+     * @param ip
      * @throws Exception
      */
-    String rechargeApply(FaMember faMember) throws Exception;
+    String rechargeApply(FaMember faMember, String ip) throws Exception;
 
     /**
      * 提现申请
@@ -374,4 +375,19 @@ public interface IFaMemberService extends IService<FaMember>
      * @throws Exception
      */
     void huojianRechargeNotify(RechargeNotify rechargeNotify) throws Exception;
+
+    /**
+     * 四方充值回调接口
+     * @param rechargeNotify
+     * @throws Exception
+     */
+    void sifangRechargeNotify(RechargeNotify rechargeNotify) throws Exception;
+
+    /**
+     * 获取用户手机号
+     * @param faMember
+     * @return
+     * @throws Exception
+     */
+    String getMobile(FaMember faMember) throws Exception;
 }

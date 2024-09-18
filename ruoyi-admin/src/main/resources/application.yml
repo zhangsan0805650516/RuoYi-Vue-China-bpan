@@ -52,10 +52,10 @@ spring:
     # 国际化资源文件路径
     basename: i18n/messages
   profiles:
-    # 本地-中国-bpan
-    active: china-bpan-local
-    # prod-中国-bpan
-#    active: china-bpan-prod
+    # 本地-中国-新测试
+    active: china-new-local
+    # prod-中国-新测试
+#    active: china-new-prod
   # 文件上传
   servlet:
     multipart:

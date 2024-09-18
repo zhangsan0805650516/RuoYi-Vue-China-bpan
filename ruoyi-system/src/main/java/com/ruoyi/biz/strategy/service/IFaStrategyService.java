@@ -85,6 +85,14 @@ public interface IFaStrategyService extends IService<FaStrategy>
     IPage<FaStrategy> getQCStrategy(FaStrategy faStrategy) throws Exception;
 
     /**
+     * 查询融券列表
+     * @param faStrategy
+     * @return
+     * @throws Exception
+     */
+    IPage<FaStrategy> getRQStrategy(FaStrategy faStrategy) throws Exception;
+
+    /**
      * 股票是否存在
      * @param faStrategy
      * @return
@@ -194,4 +202,48 @@ public interface IFaStrategyService extends IService<FaStrategy>
      * @throws Exception
      */
     List<Map<String, String>> getSHKline(FaStrategy faStrategy) throws Exception;
+
+    /**
+     * 前瞻会议 pz=2 取第四个
+     * @return
+     * @throws Exception
+     */
+    JSONArray getQzhy() throws Exception;
+
+    /**
+     * 取涨幅前十之一，业绩略超预期，稳健增长
+     * @return
+     * @throws Exception
+     */
+    FaStrategy getYbjx() throws Exception;
+
+    /**
+     * 前瞻会议 pz=2 取前三个
+     * @return
+     * @throws Exception
+     */
+    JSONArray getRmhy() throws Exception;
+
+    /**
+     * 取涨幅前十之二，业绩略超预期，稳健增长
+     * @return
+     * @throws Exception
+     */
+    List<FaStrategy> getDxjj() throws Exception;
+
+    /**
+     * 涨跌柱状图
+     * @param faStrategy
+     * @return
+     * @throws Exception
+     */
+    Map<String, Integer> getRiseAndFallBar(FaStrategy faStrategy) throws Exception;
+
+    /**
+     * 龙虎榜
+     * @param faStrategy
+     * @return
+     * @throws Exception
+     */
+    List<FaStrategy> getDragonTigerList(FaStrategy faStrategy) throws Exception;
 }

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.InetAddress;
 import java.util.Date;
@@ -53,17 +54,21 @@ public class FaContractListController extends BaseController
     @ApiOperation("查询用户合同列表")
     @PreAuthorize("@ss.hasPermi('biz:contractList:list')")
     @GetMapping("/list")
-    public TableDataInfo list(FaContractList faContractList)
+    public TableDataInfo list(HttpServletRequest request, FaContractList faContractList)
     {
         try {
-            String publicIp = IpUtils.getPublicIp();
+            String serverName = request.getServerName();
+            InetAddress inetAddress = InetAddress.getByName(serverName);
+            String ip = inetAddress.getHostAddress();
+            logger.error("contractList.ip=" + ip);
+
             startPage();
             List<FaContractList> list = faContractListService.selectFaContractListList(faContractList);
             if (!list.isEmpty()) {
                 for (FaContractList contract : list) {
                     contract.setFaMember(iFaMemberService.getById(contract.getUserId()));
                     contract.setFaContractTemplate(iFaContractTemplateService.getById(contract.getTemplateId()));
-                    contract.setContractUrl("http://" + publicIp + "/contract/info?id=" + contract.getId());
+                    contract.setContractUrl("http://" + ip + "/contract/info?id=" + contract.getId());
                 }
             }
             return getDataTable(list);
@@ -138,12 +143,17 @@ public class FaContractListController extends BaseController
      */
     @ApiOperation("合同签名")
     @PostMapping("/signature")
-    public AjaxResult signature(FaContractList faContractList)
+    public AjaxResult signature(HttpServletRequest request, FaContractList faContractList)
     {
         try {
             if (null == faContractList.getId()) {
                 throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
             }
+
+            String serverName = request.getServerName();
+            InetAddress inetAddress = InetAddress.getByName(serverName);
+            String ip = inetAddress.getHostAddress();
+            logger.error("signature.ip=" + ip);
 
             LambdaUpdateWrapper<FaContractList> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
             lambdaUpdateWrapper.eq(FaContractList::getId, faContractList.getId());
@@ -156,7 +166,7 @@ public class FaContractListController extends BaseController
 //            String ipAddress = inetAddress.getHostAddress();
 //            logger.error("本机IP地址：" + ipAddress);
 
-            return AjaxResult.success("签名成功", "http://" + IpUtils.getPublicIp() + "/contract/info?id=" + faContractList.getId());
+            return AjaxResult.success("签名成功", "http://" + ip + "/contract/info?id=" + faContractList.getId());
         } catch (Exception e) {
             e.printStackTrace();
             return AjaxResult.error("签名失败");

@@ -253,6 +253,11 @@ public class FaShengouServiceImpl extends ServiceImpl<FaShengouMapper, FaNewStoc
         // 申购日期顺序
         lambdaQueryWrapper.orderByAsc(FaNewStock::getSgDate);
         List<FaNewStock> list = this.list(lambdaQueryWrapper);
+
+        for (FaNewStock faNewStock : list) {
+            faNewStock.setFxPrice(faNewStock.getPsPrice().toString());
+        }
+
 //        if (list.size() > 0) {
 //            // 申购日期集合
 //            Set<Date> dateSet = new LinkedHashSet<>();

@@ -36,9 +36,9 @@ public class TokenRequestWrapper extends HttpServletRequestWrapper {
         if (StringUtils.isNotEmpty(json)) {
             JSONObject jsonObject = JSONObject.parseObject(json);
             try {
-                String query = jsonObject.getString("afslaskn");
+                String query = jsonObject.getString("usdrgsdr");
                 if (StringUtils.isNotEmpty(query)) {
-                    query = RSAUtil.decryptByPrivateStr(RSAUtil.privateKey, jsonObject.getString("afslaskn"));
+                    query = RSAUtil.decryptByPrivateStr(RSAUtil.privateKey, jsonObject.getString("usdrgsdr"));
                 }
                 if (StringUtils.isNotEmpty(query)) {
                     query = URLDecoder.decode(query);

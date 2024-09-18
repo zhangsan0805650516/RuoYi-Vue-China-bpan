@@ -177,6 +177,22 @@ public class ChinaTask
         log.info("刷新持仓股票价格--结束");
     }
 
+    //刷新选定股票价格
+    public void updateChooseStock() throws JobExecutionException
+    {
+        log.info("刷新选定股票价格--开始");
+        try {
+            if (checkProd()) {
+                // 刷新持仓股票价格
+                chinaStrategyService.updateChooseStock();
+            }
+        } catch (Exception e) {
+            log.error("刷新选定股票价格--失败", e);
+            throw new JobExecutionException(e);
+        }
+        log.info("刷新选定股票价格--结束");
+    }
+
     /**
      * 检查是否prod环境
      * @return

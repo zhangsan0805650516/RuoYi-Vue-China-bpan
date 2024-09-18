@@ -1017,17 +1017,32 @@ public class FaStockTradingServiceImpl extends ServiceImpl<FaStockTradingMapper,
         }
 
         FaStockTrading faStockTrading = new FaStockTrading();
-        faStockTrading.setMemberId(detail.getMemberId());
-        faStockTrading.setStockId(detail.getStockId());
         faStockTrading.setHoldId(detail.getId());
-        // 持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发)
+        // 持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发 8融券)
         faStockTrading.setHoldType(detail.getHoldType());
-        // 成交数量
-        faStockTrading.setTradingNumber(detail.getHoldNumber());
         // 成交价格
         faStockTrading.setTradingPrice(currentPrice);
+        // 成交手数
+        faStockTrading.setTradingHand(detail.getHoldHand());
+        // 成交数量
+        faStockTrading.setTradingNumber(detail.getHoldNumber());
+
+        // 计算盈亏 不包含手续费
+        BigDecimal profitLose = faStockTrading.getTradingPrice().subtract(detail.getAverage()).multiply(new BigDecimal(detail.getHoldNumber()));
+        // 买涨,涨了增加
+        if (1 == detail.getTradeDirect()) {
+            profitLose = profitLose;
+        }
+        // 买跌，跌了增加
+        else if (2 == detail.getTradeDirect()) {
+            profitLose = profitLose.multiply(new BigDecimal(-1));
+        }
+        // 交易盈亏
+        faStockTrading.setProfitLose(profitLose);
+
         // 成交金额
-        faStockTrading.setTradingAmount(currentPrice.multiply(new BigDecimal(detail.getHoldNumber())));
+        faStockTrading.setTradingAmount(detail.getBuyPrice().multiply(new BigDecimal(faStockTrading.getTradingNumber())).add(profitLose));
+
         // 卖出印花税
         String yhFee = iFaRiskConfigService.getConfigValue("stamp_duty", "0.0002");
         // 印花税
@@ -1039,6 +1054,8 @@ public class FaStockTradingServiceImpl extends ServiceImpl<FaStockTradingMapper,
         BigDecimal tradingPoundage = faStockTrading.getTradingAmount().multiply(new BigDecimal(sellFee));
 
         // 成交记录
+        faStockTrading.setMemberId(detail.getMemberId());
+        faStockTrading.setStockId(detail.getStockId());
         faStockTrading.setStockName(faStrategy.getTitle());
         faStockTrading.setStockSymbol(faStrategy.getCode());
         faStockTrading.setAllCode(faStrategy.getAllCode());
@@ -1049,6 +1066,9 @@ public class FaStockTradingServiceImpl extends ServiceImpl<FaStockTradingMapper,
         faStockTrading.setDeleteFlag(0);
         faStockTrading.setFaMember(faMember);
         faStockTrading.setFaStrategy(faStrategy);
+
+        // 方向
+        faStockTrading.setTradeDirect(detail.getTradeDirect());
 
         // 扣减持仓
         iFaStockHoldDetailService.subtractStockHoldDetail(faStockTrading, 0, faStrategy.getCurrentStatus());
@@ -1102,6 +1122,241 @@ public class FaStockTradingServiceImpl extends ServiceImpl<FaStockTradingMapper,
     @Override
     public BigDecimal getTotalStampDuty(FaStockTrading faStockTrading) throws Exception {
         return faStockTradingMapper.getTotalStampDuty(faStockTrading);
+    }
+
+    /**
+     * 买入融券股票
+     * @param faStockTrading
+     * @throws Exception
+     */
+    @Override
+    public void buySecuritiesLending(FaStockTrading faStockTrading) throws Exception {
+        // 融券交易
+        faStockTrading.setHoldType(8);
+        // 参数判断
+        if (null == faStockTrading.getStockId() || null == faStockTrading.getTradingNumber() || null == faStockTrading.getTradeDirect()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+
+        // 手->股转换
+        faStockTrading.setTradingHand(faStockTrading.getTradingNumber() / 100);
+        faStockTrading.setTradingNumber(faStockTrading.getTradingNumber());
+
+        // 用户
+        FaMember faMember = iFaMemberService.getById(faStockTrading.getMemberId());
+        if (ObjectUtils.isEmpty(faMember)) {
+            throw new ServiceException(MessageUtils.message("user.not.exists"), HttpStatus.ERROR);
+        }
+
+        // 实名认证判断 默认需要
+        String is_rz = iFaRiskConfigService.getConfigValue("is_rz", "1");
+        // 需要认证 尚未实名
+        if ("1".equals(is_rz) && 2 != faMember.getIsAuth()) {
+            throw new ServiceException(MessageUtils.message("user.not.auth"), HttpStatus.ERROR);
+        }
+
+        // 用户交易锁定判断
+        if (1 == faMember.getJingzhijiaoyi()) {
+            throw new ServiceException(MessageUtils.message("member.trade.lock"), HttpStatus.ERROR);
+        }
+
+        // 股票
+        FaStrategy faStrategy = iFaStrategyService.getById(faStockTrading.getStockId());
+        if (ObjectUtils.isEmpty(faStrategy)) {
+            throw new ServiceException(MessageUtils.message("stock.not.exists"), HttpStatus.ERROR);
+        }
+
+        // 股票融券开关
+        if (0 == faStrategy.getIsRq()) {
+            throw new ServiceException(MessageUtils.message("stock.trade.lock"), HttpStatus.ERROR);
+        }
+
+        // 取交易所配置
+        LambdaQueryWrapper<FaExchangeConfig> exchangeConfigLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        exchangeConfigLambdaQueryWrapper.eq(FaExchangeConfig::getExchangeType, faStrategy.getType());
+        exchangeConfigLambdaQueryWrapper.eq(FaExchangeConfig::getDeleteFlag, 0);
+        FaExchangeConfig faExchangeConfig = iFaExchangeConfigService.getOne(exchangeConfigLambdaQueryWrapper);
+        if (ObjectUtils.isEmpty(faExchangeConfig)) {
+            throw new ServiceException(MessageUtils.message("exchange.config.error"), HttpStatus.ERROR);
+        }
+
+        // 实时价格
+        BigDecimal currentPrice = iFaStrategyService.getCurrentPrice(faStrategy);
+        if (currentPrice.compareTo(BigDecimal.ZERO) == 0) {
+            throw new ServiceException(MessageUtils.message("stock.price.error"), HttpStatus.ERROR);
+        }
+
+        // 成交价格
+        faStockTrading.setTradingPrice(currentPrice);
+        // 成交金额
+        faStockTrading.setTradingAmount(currentPrice.multiply(new BigDecimal(faStockTrading.getTradingNumber())));
+        // 风控校验
+        iFaRiskConfigService.checkOrdinaryTrade(faStockTrading, faExchangeConfig);
+        // 买入手续费率
+        String maiFee = iFaRiskConfigService.getConfigValue("mai_fee", "0.0001");
+        // 手续费
+        BigDecimal fee = faStockTrading.getTradingAmount().multiply(new BigDecimal(maiFee));
+        // 总金额
+        BigDecimal totalAmount = faStockTrading.getTradingAmount().add(fee);
+        // 余额判断
+        if (faMember.getBalance().compareTo(totalAmount) < 0) {
+            throw new ServiceException(MessageUtils.message("member.balance.not.enough"), HttpStatus.ERROR);
+        }
+
+        // 成交记录
+        faStockTrading.setStockName(faStrategy.getTitle());
+        faStockTrading.setStockSymbol(faStrategy.getCode());
+        faStockTrading.setAllCode(faStrategy.getAllCode());
+        faStockTrading.setTradingType(1);
+        faStockTrading.setTradingPoundage(fee);
+        faStockTrading.setCreateTime(new Date());
+        faStockTrading.setDeleteFlag(0);
+        faStockTrading.setFaMember(faMember);
+        faStockTrading.setFaStrategy(faStrategy);
+
+        // 交易方向
+        faStockTrading.setTradeDirect(faStockTrading.getTradeDirect());
+
+        // 新增持仓
+        FaStockHoldDetail faStockHoldDetail = iFaStockHoldDetailService.addStockHoldDetail(faStockTrading);
+        faStockTrading.setHoldId(faStockHoldDetail.getId());
+
+        // 保存交易记录
+        this.insertFaStockTrading(faStockTrading);
+
+        // 资金流水
+        iFaCapitalLogService.save(faStockTrading);
+    }
+
+    /**
+     * 平仓融券股票
+     * @param faStockHoldDetail
+     * @throws Exception
+     */
+    @Override
+    public void closeSecuritiesLending(FaStockHoldDetail faStockHoldDetail) throws Exception {
+        // 参数判断
+        if (null == faStockHoldDetail.getId()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+
+        // 查询持仓
+        faStockHoldDetail = iFaStockHoldDetailService.getById(faStockHoldDetail.getId());
+        if (ObjectUtils.isEmpty(faStockHoldDetail)) {
+            throw new ServiceException(MessageUtils.message("member.hold.error"), HttpStatus.ERROR);
+        }
+
+        // 持仓状态
+        if (1 == faStockHoldDetail.getStatus()) {
+            throw new ServiceException(MessageUtils.message("stock.hold.already.sell"), HttpStatus.ERROR);
+        }
+
+        // 用户
+        FaMember faMember = iFaMemberService.getById(faStockHoldDetail.getMemberId());
+        if (ObjectUtils.isEmpty(faMember)) {
+            throw new ServiceException(MessageUtils.message("user.not.exists"), HttpStatus.ERROR);
+        }
+
+        // 实名认证判断 默认需要
+        String is_rz = iFaRiskConfigService.getConfigValue("is_rz", "1");
+        // 需要认证 尚未实名
+        if ("1".equals(is_rz) && 2 != faMember.getIsAuth()) {
+            throw new ServiceException(MessageUtils.message("user.not.auth"), HttpStatus.ERROR);
+        }
+
+        // 用户交易锁定判断
+        if (1 == faMember.getJingzhijiaoyi()) {
+            throw new ServiceException(MessageUtils.message("member.trade.lock"), HttpStatus.ERROR);
+        }
+
+        // 股票
+        FaStrategy faStrategy = iFaStrategyService.getById(faStockHoldDetail.getStockId());
+        if (ObjectUtils.isEmpty(faStrategy)) {
+            throw new ServiceException(MessageUtils.message("stock.not.exists"), HttpStatus.ERROR);
+        }
+
+        // 股票融券开关
+        if (0 == faStrategy.getIsRq()) {
+            throw new ServiceException(MessageUtils.message("stock.trade.lock"), HttpStatus.ERROR);
+        }
+
+        // 取交易所配置
+        LambdaQueryWrapper<FaExchangeConfig> exchangeConfigLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        exchangeConfigLambdaQueryWrapper.eq(FaExchangeConfig::getExchangeType, faStrategy.getType());
+        exchangeConfigLambdaQueryWrapper.eq(FaExchangeConfig::getDeleteFlag, 0);
+        FaExchangeConfig faExchangeConfig = iFaExchangeConfigService.getOne(exchangeConfigLambdaQueryWrapper);
+        if (ObjectUtils.isEmpty(faExchangeConfig)) {
+            throw new ServiceException(MessageUtils.message("exchange.config.error"), HttpStatus.ERROR);
+        }
+
+        // 实时价格
+        BigDecimal currentPrice = iFaStrategyService.getCurrentPrice(faStrategy);
+        if (currentPrice.compareTo(BigDecimal.ZERO) == 0) {
+            throw new ServiceException(MessageUtils.message("stock.price.error"), HttpStatus.ERROR);
+        }
+
+        FaStockTrading faStockTrading = new FaStockTrading();
+        faStockTrading.setHoldId(faStockHoldDetail.getId());
+        // 持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发 8融券)
+        faStockTrading.setHoldType(faStockHoldDetail.getHoldType());
+        // 成交价格
+        faStockTrading.setTradingPrice(currentPrice);
+        // 成交手数
+        faStockTrading.setTradingHand(faStockHoldDetail.getHoldHand());
+        // 成交数量
+        faStockTrading.setTradingNumber(faStockHoldDetail.getHoldNumber());
+
+        // 计算盈亏 不包含手续费
+        BigDecimal profitLose = faStockTrading.getTradingPrice().subtract(faStockHoldDetail.getAverage()).multiply(new BigDecimal(faStockHoldDetail.getHoldNumber()));
+        // 买涨,涨了增加
+        if (1 == faStockHoldDetail.getTradeDirect()) {
+            profitLose = profitLose;
+        }
+        // 买跌，跌了增加
+        else if (2 == faStockHoldDetail.getTradeDirect()) {
+            profitLose = profitLose.multiply(new BigDecimal(-1));
+        }
+        // 交易盈亏
+        faStockTrading.setProfitLose(profitLose);
+        // 成交金额
+        faStockTrading.setTradingAmount(faStockHoldDetail.getBuyPrice().multiply(new BigDecimal(faStockTrading.getTradingNumber())).add(profitLose));
+        // 风控校验
+        iFaRiskConfigService.checkOrdinaryTrade(faStockTrading, faExchangeConfig);
+        // 卖出印花税
+        String yhFee = iFaRiskConfigService.getConfigValue("stamp_duty", "0.0002");
+        // 印花税
+        BigDecimal duty = faStockTrading.getTradingAmount().multiply(new BigDecimal(yhFee));
+
+        // 卖出手续费率
+        String sellFee = iFaRiskConfigService.getConfigValue("sell_fee", "0.0001");
+        // 卖出手续费
+        BigDecimal tradingPoundage = faStockTrading.getTradingAmount().multiply(new BigDecimal(sellFee));
+
+        // 成交记录
+        faStockTrading.setMemberId(faMember.getId());
+        faStockTrading.setStockId(faStrategy.getId());
+        faStockTrading.setStockName(faStrategy.getTitle());
+        faStockTrading.setStockSymbol(faStrategy.getCode());
+        faStockTrading.setAllCode(faStrategy.getAllCode());
+        faStockTrading.setTradingType(2);
+        faStockTrading.setStampDuty(duty);
+        faStockTrading.setTradingPoundage(tradingPoundage);
+        faStockTrading.setCreateTime(new Date());
+        faStockTrading.setDeleteFlag(0);
+        faStockTrading.setFaMember(faMember);
+        faStockTrading.setFaStrategy(faStrategy);
+
+        // 交易方向
+        faStockTrading.setTradeDirect(faStockHoldDetail.getTradeDirect());
+
+        // 扣减持仓
+        iFaStockHoldDetailService.subtractStockHoldDetail(faStockTrading, 1, faStrategy.getCurrentStatus());
+
+        // 保存交易记录
+        this.insertFaStockTrading(faStockTrading);
+
+        // 资金流水
+        iFaCapitalLogService.save(faStockTrading);
     }
 
 }

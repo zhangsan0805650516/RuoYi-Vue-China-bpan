@@ -101,6 +101,7 @@ public class FaWithdrawServiceImpl extends ServiceImpl<FaWithdrawMapper, FaWithd
     @Override
     public int updateFaWithdraw(FaWithdraw faWithdraw)
     {
+        faWithdraw.setMobile(null);
         faWithdraw.setUpdateTime(DateUtils.getNowDate());
         return faWithdrawMapper.updateFaWithdraw(faWithdraw);
     }

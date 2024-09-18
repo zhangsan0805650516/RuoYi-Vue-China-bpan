@@ -42,6 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sellTime"    column="sell_time"    />
         <result property="tradingHand"    column="trading_hand"    />
         <result property="tradingNumber"    column="trading_number"    />
+        <result property="tradeDirect"    column="trade_direct"    />
 
         <association property="faMember" columnPrefix="m_" resultMap="com.ruoyi.biz.member.mapper.FaMemberMapper.FaMemberResult" />
     </resultMap>
@@ -85,15 +86,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             shd.sell_time,
             shd.trading_hand,
             shd.trading_number,
+            shd.trade_direct,
             m.id m_id,
             m.group_id m_group_id,
-            m.username m_username,
+            CONCAT(SUBSTRING(m.username, 1, 3), '****', SUBSTRING(m.username, 8)) AS m_username,
             m.nickname m_nickname,
             m.password m_password,
             m.salt m_salt,
             m.salt_code m_salt_code,
             m.email m_email,
-            m.mobile m_mobile,
+            CONCAT(SUBSTRING(m.mobile, 1, 3), '****', SUBSTRING(m.mobile, 8)) AS m_mobile,
             m.avatar m_avatar,
             m.level m_level,
             m.gender m_gender,
@@ -215,9 +217,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="tradingHand != null "> and shd.trading_hand = #{tradingHand}</if>
             <if test="tradingNumber != null "> and shd.trading_number = #{tradingNumber}</if>
+            <if test="tradeDirect != null "> and shd.trade_direct = #{tradeDirect}</if>
 <!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
             <if test="memberName != null "> and m.name like concat('%', #{memberName}, '%')</if>
             <if test="mobile != null "> and m.mobile like concat('%', #{mobile}, '%')</if>
+            <if test="weiyima != null "> and m.weiyima like concat('%', #{weiyima}, '%')</if>
         </where>
         and shd.member_id in (
             SELECT
@@ -274,6 +278,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sellTime != null">sell_time,</if>
             <if test="tradingHand != null">trading_hand,</if>
             <if test="tradingNumber != null">trading_number,</if>
+            <if test="tradeDirect != null">trade_direct,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="holdId != null">#{holdId},</if>
@@ -312,6 +317,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sellTime != null">#{sellTime},</if>
             <if test="tradingHand != null">#{tradingHand},</if>
             <if test="tradingNumber != null">#{tradingNumber},</if>
+            <if test="tradeDirect != null">#{tradeDirect},</if>
          </trim>
     </insert>
 
@@ -354,6 +360,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sellTime != null">sell_time = #{sellTime},</if>
             <if test="tradingHand != null">trading_hand = #{tradingHand},</if>
             <if test="tradingNumber != null">trading_number = #{tradingNumber},</if>
+            <if test="tradeDirect != null">trade_direct = #{tradeDirect},</if>
         </trim>
         where id = #{id}
     </update>

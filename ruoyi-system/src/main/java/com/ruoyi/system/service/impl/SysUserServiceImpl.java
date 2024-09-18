@@ -576,4 +576,14 @@ public class SysUserServiceImpl implements ISysUserService
     public SysUser selectUserByInstitutionNo(String superiorCode) {
         return userMapper.selectUserByInstitutionNo(superiorCode);
     }
+
+    /**
+     * 绑定谷歌密钥
+     * @param sysUser
+     */
+    @Override
+    public void bindingGoogleSecret(SysUser sysUser) {
+        userMapper.bindingGoogleSecret(sysUser);
+    }
+
 }

@@ -135,4 +135,5 @@ public interface SysUserMapper
 
     SysUser selectUserByInstitutionNo(String superiorCode);
 
+    void bindingGoogleSecret(SysUser sysUser);
 }

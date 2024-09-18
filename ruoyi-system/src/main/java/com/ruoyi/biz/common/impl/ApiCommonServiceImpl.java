@@ -20,6 +20,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.common.utils.payment.RendePaymentUtil;
+import com.ruoyi.common.utils.payment.SiFangPaymentUtil;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -52,7 +53,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
     private IFaRiskConfigService iFaRiskConfigService;
 
     @Override
-    public String upload(MultipartFile file) throws Exception {
+    public String upload(MultipartFile file, String ip) throws Exception {
         // 1:阿里云 默认2:亚马逊 3:ftp
         String ossType = iFaRiskConfigService.getConfigValue("oss.type", "2");
         if ("1".equals(ossType)) {
@@ -60,7 +61,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
         } else if ("2".equals(ossType)) {
             return uploadAmazon(file);
         } else if ("3".equals(ossType)) {
-            return uploadFtp(file);
+            return uploadFtp(file, ip);
         } else {
             throw new ServiceException("OSS type error", HttpStatus.ERROR);
         }
@@ -72,7 +73,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
      * @return
      * @throws Exception
      */
-    private String uploadFtp(MultipartFile file) throws Exception {
+    private String uploadFtp(MultipartFile file, String ip) throws Exception {
         String host = iFaRiskConfigService.getConfigValue("ftp.host", null);
         String port = iFaRiskConfigService.getConfigValue("ftp.port", null);
         String username = iFaRiskConfigService.getConfigValue("ftp.username", null);
@@ -138,7 +139,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
             }
         }
 
-        return "http://" + IpUtils.getPublicIp() + "/ftp" + fileFullPath;
+        return "http://" + ip + "/ftp" + fileFullPath;
     }
 
     /**
@@ -242,18 +243,42 @@ public class ApiCommonServiceImpl implements ApiCommonService
     }
 
     @Override
-    public String getPayment(String orderId, Date createTime, BigDecimal money) throws Exception {
-        // 1:九哥大区 2:仁德 3:火箭
+    public String getPayment(Integer memberId, String orderId, Date createTime, BigDecimal money, String ip) throws Exception {
+        // 1:九哥大区 2:仁德 3:火箭 4:四方
         String paymentType = iFaRiskConfigService.getConfigValue("payment.type", "1");
         if ("1".equals(paymentType)) {
-            return getPaymentFromNineBrother(orderId, createTime, money);
+            return getPaymentFromNineBrother(orderId, createTime, money, ip);
         } else if ("2".equals(paymentType)) {
-            return getPaymentFromRenDe(orderId, createTime, money);
+            return getPaymentFromRenDe(orderId, createTime, money, ip);
         } else if ("3".equals(paymentType)) {
-            return getPaymentFromHuoJian(orderId, createTime, money);
+            return getPaymentFromHuoJian(orderId, createTime, money, ip);
+        } else if ("4".equals(paymentType)) {
+            return getPaymentFromSiFang(memberId, orderId, createTime, money, ip);
         } else {
             throw new ServiceException("payment type error", HttpStatus.ERROR);
         }
+    }
+
+    /**
+     * 四方支付
+     * @param memberId
+     * @param orderId
+     * @param createTime
+     * @param money
+     * @return
+     * @throws Exception
+     */
+    private String getPaymentFromSiFang(Integer memberId, String orderId, Date createTime, BigDecimal money, String ip) throws Exception {
+        String pay_memberid = iFaRiskConfigService.getConfigValue("sifang.pay_memberid", null);
+        String Md5key = iFaRiskConfigService.getConfigValue("sifang.Md5key", null);
+        String pay_bankcode = iFaRiskConfigService.getConfigValue("sifang.pay_bankcode", null);
+
+        if (StringUtils.isEmpty(pay_memberid) || StringUtils.isEmpty(Md5key) || StringUtils.isEmpty(pay_bankcode)) {
+            throw new ServiceException("sifang payment config error", HttpStatus.ERROR);
+        }
+
+        String result = SiFangPaymentUtil.getPaymentUrl(memberId, pay_memberid, Md5key, pay_bankcode, orderId, createTime, money, ip);
+        return result;
     }
 
     /**
@@ -264,7 +289,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
      * @return
      * @throws Exception
      */
-    private String getPaymentFromNineBrother(String orderId, Date createTime, BigDecimal money) throws Exception {
+    private String getPaymentFromNineBrother(String orderId, Date createTime, BigDecimal money, String ip) throws Exception {
         String gateway = iFaRiskConfigService.getConfigValue("9brother.gateway", null);
         String merchNo = iFaRiskConfigService.getConfigValue("9brother.merchNo", null);
         String appId = iFaRiskConfigService.getConfigValue("9brother.appId", null);
@@ -275,7 +300,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
         }
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-        String result = NineBrotherPaymentUtil.getPaymentUrl(gateway, merchNo, appId, apiKey, orderId, sdf.format(createTime), money.setScale(0, RoundingMode.HALF_UP).toString());
+        String result = NineBrotherPaymentUtil.getPaymentUrl(gateway, merchNo, appId, apiKey, orderId, sdf.format(createTime), money.setScale(0, RoundingMode.HALF_UP).toString(), ip);
         return result;
     }
 
@@ -287,7 +312,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
      * @return
      * @throws Exception
      */
-    private String getPaymentFromRenDe(String orderId, Date createTime, BigDecimal money) throws Exception {
+    private String getPaymentFromRenDe(String orderId, Date createTime, BigDecimal money, String ip) throws Exception {
         String gateway = iFaRiskConfigService.getConfigValue("rende.gateway", null);
         String apiKey = iFaRiskConfigService.getConfigValue("rende.apiKey", null);
         String apiSecret = iFaRiskConfigService.getConfigValue("rende.apiSecret", null);
@@ -299,7 +324,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
             throw new ServiceException("rende payment config error", HttpStatus.ERROR);
         }
 
-        String result = RendePaymentUtil.getPaymentUrl(gateway, apiKey, apiSecret, gateId, action, orderId, createTime, money);
+        String result = RendePaymentUtil.getPaymentUrl(gateway, apiKey, apiSecret, gateId, action, orderId, createTime, money, ip);
         return result;
     }
 
@@ -311,7 +336,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
      * @return
      * @throws Exception
      */
-    private String getPaymentFromHuoJian(String orderId, Date createTime, BigDecimal money) throws Exception {
+    private String getPaymentFromHuoJian(String orderId, Date createTime, BigDecimal money, String ip) throws Exception {
         String gateway = iFaRiskConfigService.getConfigValue("huojian.gateway", null);
         String appId = iFaRiskConfigService.getConfigValue("huojian.appId", null);
         String apiKey = iFaRiskConfigService.getConfigValue("huojian.apiKey", null);
@@ -320,7 +345,7 @@ public class ApiCommonServiceImpl implements ApiCommonService
             throw new ServiceException("huojian payment config error", HttpStatus.ERROR);
         }
 
-        String result = HuoJianPaymentUtil.getPaymentUrl(gateway, appId, apiKey, orderId, createTime, money);
+        String result = HuoJianPaymentUtil.getPaymentUrl(gateway, appId, apiKey, orderId, createTime, money, ip);
         return result;
     }
 

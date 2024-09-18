@@ -144,7 +144,7 @@ public class FaStockTradingController extends BaseController
             return AjaxResult.success();
         } catch (ServiceException e) {
             logger.error("closingPositionDetail", e);
-            return AjaxResult.error(MessageUtils.message(e.getMessage()));
+            return AjaxResult.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             logger.error("closingPositionDetail", e);
             return AjaxResult.error();

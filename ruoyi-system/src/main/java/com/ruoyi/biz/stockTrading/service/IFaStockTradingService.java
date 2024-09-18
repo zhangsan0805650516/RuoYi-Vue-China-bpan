@@ -169,4 +169,17 @@ public interface IFaStockTradingService extends IService<FaStockTrading>
      */
     BigDecimal getTotalStampDuty(FaStockTrading faStockTrading) throws Exception;
 
+    /**
+     * 买入融券股票
+     * @param faStockTrading
+     * @throws Exception
+     */
+    void buySecuritiesLending(FaStockTrading faStockTrading) throws Exception;
+
+    /**
+     * 平仓融券股票
+     * @param faStockHoldDetail
+     * @throws Exception
+     */
+    void closeSecuritiesLending(FaStockHoldDetail faStockHoldDetail) throws Exception;
 }

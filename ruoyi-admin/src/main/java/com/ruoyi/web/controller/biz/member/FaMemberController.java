@@ -485,4 +485,24 @@ public class FaMemberController extends BaseController
         util.exportExcel(response, bankInfoList, "会员银行卡数据");
     }
 
+    /**
+     * 获取用户手机号
+     */
+    @ApiOperation("获取用户手机号")
+    @Log(title = "获取用户手机号", businessType = BusinessType.OTHER)
+    @PostMapping("/getMobile")
+    public AjaxResult getMobile(@RequestBody FaMember faMember)
+    {
+        try {
+            String mobile = faMemberService.getMobile(faMember);
+            return AjaxResult.success(mobile);
+        } catch (ServiceException e) {
+            logger.error("getMobile", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getMobile", e);
+            return AjaxResult.error();
+        }
+    }
+
 }

@@ -102,6 +102,7 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
     @Override
     public int updateFaCapitalLog(FaCapitalLog faCapitalLog)
     {
+        faCapitalLog.setMobile(null);
         faCapitalLog.setUpdateTime(DateUtils.getNowDate());
         return faCapitalLogMapper.updateFaCapitalLog(faCapitalLog);
     }
@@ -328,6 +329,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
             faCapitalLog.setContent("大宗下单");
         } else if (3 == faStockTrading.getHoldType()) {
             faCapitalLog.setContent("VIP调研下单");
+        } else if (8 == faStockTrading.getHoldType()) {
+            faCapitalLog.setContent("融券下单");
         }
         faCapitalLog.setBeforeMoney(beforeMoney);
         faCapitalLog.setLaterMoney(laterMoney);
@@ -338,6 +341,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
             faCapitalLog.setType(8);
         } else if (3 == faStockTrading.getHoldType()) {
             faCapitalLog.setType(16);
+        } else if (8 == faStockTrading.getHoldType()) {
+            faCapitalLog.setType(25);
         }
         faCapitalLog.setDirect(1);
         faCapitalLog.setCreateTime(new Date());
@@ -367,6 +372,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
                 faCapitalLogFee.setContent("大宗下单手续费");
             } else if (3 == faStockTrading.getHoldType()) {
                 faCapitalLogFee.setContent("VIP调研下单手续费");
+            } else if (8 == faStockTrading.getHoldType()) {
+                faCapitalLogFee.setContent("融券下单手续费");
             }
             faCapitalLogFee.setBeforeMoney(beforeMoney);
             faCapitalLogFee.setLaterMoney(laterMoney);
@@ -377,6 +384,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
                 faCapitalLogFee.setType(9);
             } else if (3 == faStockTrading.getHoldType()) {
                 faCapitalLogFee.setType(17);
+            } else if (8 == faStockTrading.getHoldType()) {
+                faCapitalLogFee.setType(26);
             }
             faCapitalLogFee.setDirect(1);
             faCapitalLogFee.setCreateTime(new Date());
@@ -425,6 +434,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
             faCapitalLog.setContent("大宗平仓收益");
         } else if (3 == faStockTrading.getHoldType()) {
             faCapitalLog.setContent("VIP调研平仓收益");
+        } else if (8 == faStockTrading.getHoldType()) {
+            faCapitalLog.setContent("融券平仓收益");
         }
         faCapitalLog.setBeforeMoney(beforeMoney);
         faCapitalLog.setLaterMoney(laterMoney);
@@ -437,6 +448,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
             faCapitalLog.setType(10);
         } else if (3 == faStockTrading.getHoldType()) {
             faCapitalLog.setType(18);
+        } else if (8 == faStockTrading.getHoldType()) {
+            faCapitalLog.setType(27);
         }
         faCapitalLog.setDirect(0);
         faCapitalLog.setCreateTime(new Date());
@@ -468,6 +481,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
                 faCapitalLogDuty.setContent("大宗印花税");
             } else if (3 == faStockTrading.getHoldType()) {
                 faCapitalLogDuty.setContent("VIP调研印花税");
+            } else if (8 == faStockTrading.getHoldType()) {
+                faCapitalLogDuty.setContent("融券印花税");
             }
             faCapitalLogDuty.setBeforeMoney(beforeMoney);
             faCapitalLogDuty.setLaterMoney(laterMoney);
@@ -480,6 +495,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
                 faCapitalLogDuty.setType(11);
             } else if (3 == faStockTrading.getHoldType()) {
                 faCapitalLogDuty.setType(19);
+            } else if (8 == faStockTrading.getHoldType()) {
+                faCapitalLogDuty.setType(28);
             }
             faCapitalLogDuty.setDirect(1);
             faCapitalLogDuty.setCreateTime(new Date());
@@ -512,6 +529,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
                 faCapitalLogFee.setContent("大宗卖出手续费");
             } else if (3 == faStockTrading.getHoldType()) {
                 faCapitalLogFee.setContent("VIP调研卖出手续费");
+            } else if (8 == faStockTrading.getHoldType()) {
+                faCapitalLogFee.setContent("融券平仓手续费");
             }
             faCapitalLogFee.setBeforeMoney(beforeMoney);
             faCapitalLogFee.setLaterMoney(laterMoney);
@@ -524,6 +543,8 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
                 faCapitalLogFee.setType(15);
             } else if (3 == faStockTrading.getHoldType()) {
                 faCapitalLogFee.setType(20);
+            } else if (3 == faStockTrading.getHoldType()) {
+                faCapitalLogFee.setType(29);
             }
             faCapitalLogFee.setDirect(1);
             faCapitalLogFee.setCreateTime(new Date());

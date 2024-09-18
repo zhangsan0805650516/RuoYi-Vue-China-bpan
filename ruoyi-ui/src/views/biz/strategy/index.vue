@@ -52,28 +52,6 @@
           <el-option :label="$t('开启')" :value="1"/>
         </el-select>
       </el-form-item>
-      <el-form-item :label="$t('显示开关')" prop="isHide">
-        <el-select
-          v-model="queryParams.isHide"
-          :placeholder="$t('请选择')"
-          clearable
-          @keyup.enter.native="handleQuery"
-        >
-          <el-option :label="$t('显示')" :value="0"/>
-          <el-option :label="$t('隐藏')" :value="1"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item :label="$t('配资开关')" prop="isPz">
-        <el-select
-          v-model="queryParams.isPz"
-          :placeholder="$t('请选择')"
-          clearable
-          @keyup.enter.native="handleQuery"
-        >
-          <el-option :label="$t('关闭')" :value="0"/>
-          <el-option :label="$t('打开')" :value="1"/>
-        </el-select>
-      </el-form-item>
       <el-form-item :label="$t('抢筹状态')" prop="qcStatus">
         <el-select
           v-model="queryParams.qcStatus"
@@ -105,6 +83,28 @@
         >
           <el-option :label="$t('关闭')" :value="0"/>
           <el-option :label="$t('打开')" :value="1"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('融券')" prop="isRq">
+        <el-select
+          v-model="queryParams.isRq"
+          :placeholder="$t('请选择')"
+          clearable
+          @keyup.enter.native="handleQuery"
+        >
+          <el-option :label="$t('关闭')" :value="0"/>
+          <el-option :label="$t('打开')" :value="1"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item :label="$t('显示开关')" prop="isHide">
+        <el-select
+          v-model="queryParams.isHide"
+          :placeholder="$t('请选择')"
+          clearable
+          @keyup.enter.native="handleQuery"
+        >
+          <el-option :label="$t('显示')" :value="0"/>
+          <el-option :label="$t('隐藏')" :value="1"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -244,6 +244,16 @@
           ></el-switch>
         </template>
       </el-table-column>
+      <el-table-column :label="$t('融券(关闭/打开)')" align="center" prop="isRq" width="120">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.isRq"
+            :active-value=1
+            :inactive-value=0
+            @change="handleSwitchChange(scope.row, 'isRq')"
+          ></el-switch>
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('显示/隐藏')" align="center" prop="isHide" >
         <template slot-scope="scope">
           <el-switch
@@ -251,16 +261,6 @@
             :active-value=1
             :inactive-value=0
             @change="handleSwitchChange(scope.row, 'isHide')"
-          ></el-switch>
-        </template>
-      </el-table-column>
-      <el-table-column :label="$t('杠杆(关闭/打开)')" align="center" prop="isPz" width="120">
-        <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.isPz"
-            :active-value=1
-            :inactive-value=0
-            @change="handleSwitchChange(scope.row, 'isPz')"
           ></el-switch>
         </template>
       </el-table-column>
@@ -447,7 +447,8 @@ export default {
         zfaNum: null,
         totalZfaNum: null,
         deleteFlag: null,
-        isHide: null
+        isHide: null,
+        isRq: null,
       },
       // 表单参数
       form: {},
@@ -500,6 +501,9 @@ export default {
       } else if (type == 'vipQcStatus') {
         newStatus = row.vipQcStatus;
         text = row.vipQcStatus == 0 ? this.$t("关闭VIP调研") : this.$t("打开VIP调研");
+      } else if (type == 'isRq') {
+        newStatus = row.isRq;
+        text = row.isRq == 0 ? this.$t("关闭融券") : this.$t("打开融券");
       } else {
         return;
       }
@@ -531,6 +535,8 @@ export default {
           row.isQh = oldStatus;
         } else if (type == 'vipQcStatus') {
           row.vipQcStatus = oldStatus;
+        } else if (type == 'isRq') {
+          row.isRq = oldStatus;
         }
       });
     },

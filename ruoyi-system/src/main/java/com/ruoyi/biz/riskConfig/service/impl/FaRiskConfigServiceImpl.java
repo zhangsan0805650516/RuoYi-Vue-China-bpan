@@ -198,7 +198,9 @@ public class FaRiskConfigServiceImpl extends ServiceImpl<FaRiskConfigMapper, FaR
                 if (faRiskConfig.getId() == 12114 && pskqsrsgs == 0) {
                     lambdaUpdateWrapper.set(FaRiskConfig::getValue, 0);
                 } else {
-                    lambdaUpdateWrapper.set(FaRiskConfig::getValue, faRiskConfig.getValue().trim());
+                    if (null != faRiskConfig.getValue()) {
+                        lambdaUpdateWrapper.set(FaRiskConfig::getValue, faRiskConfig.getValue().trim());
+                    }
                 }
                 lambdaUpdateWrapper.set(FaRiskConfig::getUpdateTime, new Date());
                 this.update(lambdaUpdateWrapper);
@@ -211,11 +213,27 @@ public class FaRiskConfigServiceImpl extends ServiceImpl<FaRiskConfigMapper, FaR
      */
     @Override
     public Map getRiskConfigMap() throws Exception {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap();
         List<FaRiskConfig> list = faRiskConfigMapper.selectFaRiskConfigList(null);
         if (list.size() > 0) {
             for (FaRiskConfig faRiskConfig : list) {
-                map.put(faRiskConfig.getName(), faRiskConfig.getValue());
+                if ("oss".equals(faRiskConfig.getConfigGroup())) {
+                    continue;
+                }
+                if ("payment".equals(faRiskConfig.getConfigGroup())) {
+                    continue;
+                }
+                if ("force_close_password".equals(faRiskConfig.getName())) {
+                    continue;
+                }
+                if ("unify".equals(faRiskConfig.getName())) {
+                    continue;
+                }
+                if ("0".equals(faRiskConfig.getValue())) {
+                    map.put(faRiskConfig.getName(), 0);
+                } else {
+                    map.put(faRiskConfig.getName(), faRiskConfig.getValue());
+                }
             }
         }
         return map;

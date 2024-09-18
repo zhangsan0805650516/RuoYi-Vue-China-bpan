@@ -29,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="path"   column="path"  />
         <result property="institutionNo"   column="institution_no"  />
         <result property="level"   column="level"  />
+		<result property="googleSecret"   column="google_secret"  />
         <association property="dept"    javaType="SysDept"         resultMap="deptResult" />
         <collection  property="roles"   javaType="java.util.List"  resultMap="RoleResult" />
     </resultMap>
@@ -54,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 	
 	<sql id="selectUserVo">
-        select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, u.superior_id, u.is_kf, u.kf_url, u.path, u.institution_no, u.level,
+        select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, u.superior_id, u.is_kf, u.kf_url, u.path, u.institution_no, u.level, u.google_secret,
         d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.status as dept_status,
         r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status, r.level
         from sys_user u
@@ -171,6 +172,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="path != null and path != ''">path,</if>
  			<if test="institutionNo != null and institutionNo != ''">institution_no,</if>
  			<if test="level != null and level != ''">level,</if>
+			<if test="googleSecret != null and googleSecret != ''">google_secret,</if>
  			create_time
  		)values(
  			<if test="userId != null and userId != ''">#{userId},</if>
@@ -191,6 +193,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="path != null and path != '' ">#{path},</if>
  			<if test="institutionNo != null and institutionNo != '' ">#{institutionNo},</if>
  			<if test="level != null and level != '' ">#{level},</if>
+			<if test="googleSecret != null and googleSecret != '' ">#{googleSecret},</if>
  			sysdate()
  		)
 	</insert>
@@ -216,7 +219,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="kfUrl != null">kf_url = #{kfUrl},</if>
  			<if test="path != null and path != '' ">path = #{path},</if>
  			<if test="institutionNo != null and institutionNo != '' ">institution_no = #{institutionNo},</if>
- 			<if test="level != null and level != '' ">level = #{level},</if>
+ 			<if test="level != null ">level = #{level},</if>
+			<if test="googleSecret != null and googleSecret != '' ">google_secret = #{googleSecret},</if>
  			update_time = sysdate()
  		</set>
  		where user_id = #{userId}
@@ -256,5 +260,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectUserByInstitutionNo" resultType="com.ruoyi.common.core.domain.entity.SysUser">
 		select u.* from sys_user u where u.institution_no = #{institutionNo}
 	</select>
+
+	<update id="bindingGoogleSecret">
+		update sys_user
+		<set>
+			<if test="googleSecret != null and googleSecret != '' ">google_secret = #{googleSecret},</if>
+			update_time = sysdate()
+		</set>
+		where user_id = #{userId}
+	</update>
 
 </mapper> 

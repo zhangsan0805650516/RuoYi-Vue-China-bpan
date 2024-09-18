@@ -4,6 +4,8 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.redis.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,9 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private RedisCache redisCache;
+
     /**
      * 退出处理
      * 
@@ -44,6 +49,10 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler
             String userName = loginUser.getUsername();
             // 删除用户缓存记录
             tokenService.delLoginUser(loginUser.getToken());
+
+            // 清掉谷歌验证redis，重新验证
+            redisCache.deleteObject(Constants.GOOGLE_AUTH_STATUS + ":" + loginUser.getUserId());
+
             // 记录用户退出日志
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(userName, Constants.LOGOUT, "退出成功"));
         }

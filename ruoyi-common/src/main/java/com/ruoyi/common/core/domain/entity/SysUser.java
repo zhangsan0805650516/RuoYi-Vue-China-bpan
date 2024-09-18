@@ -21,6 +21,10 @@ public class SysUser extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
+    private String code;
+
+    private String url;
+
     private List<SysUser> children;
 
     /** 用户ID */
@@ -107,9 +111,28 @@ public class SysUser extends BaseEntity
     /** 层级 */
     private Integer level;
 
+    /** 谷歌密钥 */
+    private String googleSecret;
+
     public SysUser()
     {
 
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public List<SysUser> getChildren() {
@@ -369,6 +392,14 @@ public class SysUser extends BaseEntity
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    public String getGoogleSecret() {
+        return googleSecret;
+    }
+
+    public void setGoogleSecret(String googleSecret) {
+        this.googleSecret = googleSecret;
     }
 
     @Override

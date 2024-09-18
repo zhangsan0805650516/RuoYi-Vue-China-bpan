@@ -2,6 +2,8 @@ package com.ruoyi.common.utils.payment;
 
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.OrderUtil;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
@@ -26,80 +28,38 @@ public class NineBrotherPaymentUtil {
     private static final String APP_ID = "66a4f9af64dc8f78241fa0cf";
     private static final String API_KEY = "IFAcsZmoP564Egns2bRD8KVoi4vrPdxgSYEb51ETg2DtRIcL3FHgxfIJSuxilDtMGftObHJihcx52tXCMjb6Gd4DjoI72mIXiGmPU5qYNRVxRPdRUM9DrW1CIfk3wtnN";
 
-    public static String getPaymentUrl(String orderId, String applyDate, String amount) {
-        try {
-            SortedMap<String, String> params = new TreeMap<>();
-            params.put("merchNo", PAY_MEMBERID);
-            params.put("appId", APP_ID);
-            params.put("payOrderId", orderId);
-            params.put("payAmt", amount);
-            params.put("notifyUrl", "http://" + IpUtils.getPublicIp() + "/api/member/rechargeNotify");
-            params.put("reqTime", applyDate);
+    public static String getPaymentUrl(String gateway, String merchNo, String appId, String apiKey, String orderId, String applyDate, String amount, String ip) throws Exception {
+        SortedMap<String, String> params = new TreeMap<>();
+        params.put("merchNo", merchNo);
+        params.put("appId", appId);
+        params.put("payOrderId", orderId);
+        params.put("payAmt", amount);
+        params.put("notifyUrl", "http://" + ip + "/api/member/rechargeNotify");
+        params.put("reqTime", applyDate);
 
-            // 排序参数字符串
-            String stringSignTemp = getSignTemp(params);
-            // 拼接商户密钥
-            stringSignTemp = stringSignTemp + "&key=" + API_KEY;
-            // 加密串
-            String sign = getSign(stringSignTemp);
+        // 排序参数字符串
+        String stringSignTemp = getSignTemp(params);
+        // 拼接商户密钥
+        stringSignTemp = stringSignTemp + "&key=" + apiKey;
+        // 加密串
+        String sign = getSign(stringSignTemp);
 
-            params.put("sign", sign);
+        params.put("sign", sign);
 
-            System.out.println(JSONUtil.toJsonStr(params));
+        log.error(JSONUtil.toJsonStr(params));
 
-            String result = HttpUtils.sendPostForPayment(GATEWAY, JSONUtil.toJsonStr(params));
-            log.info("getPaymentUrl=" + result);
-            if (StringUtils.isNotEmpty(result)) {
-                JSONObject jsonObject = JSONObject.parseObject(result);
-                if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("code") && jsonObject.getInteger("code") == 0) {
-                    jsonObject = jsonObject.getJSONObject("data");
-                    if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("url")) {
-                        return jsonObject.getString("url");
-                    }
+        String result = HttpUtils.sendPostForPayment(gateway, JSONUtil.toJsonStr(params));
+        log.error("getPaymentUrl=" + result);
+        if (StringUtils.isNotEmpty(result)) {
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("code") && jsonObject.getInteger("code") == 0) {
+                jsonObject = jsonObject.getJSONObject("data");
+                if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("url")) {
+                    return jsonObject.getString("url");
                 }
+            } else if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("msg")) {
+                throw new ServiceException(jsonObject.getString("msg"), HttpStatus.ERROR);
             }
-        } catch (Exception e) {
-            log.error("getPaymentUrl:", e);
-            return null;
-        }
-        return null;
-    }
-
-    public static String getPaymentUrl(String gateway, String merchNo, String appId, String apiKey, String orderId, String applyDate, String amount) {
-        try {
-            SortedMap<String, String> params = new TreeMap<>();
-            params.put("merchNo", merchNo);
-            params.put("appId", appId);
-            params.put("payOrderId", orderId);
-            params.put("payAmt", amount);
-            params.put("notifyUrl", "http://" + IpUtils.getPublicIp() + "/api/member/rechargeNotify");
-            params.put("reqTime", applyDate);
-
-            // 排序参数字符串
-            String stringSignTemp = getSignTemp(params);
-            // 拼接商户密钥
-            stringSignTemp = stringSignTemp + "&key=" + apiKey;
-            // 加密串
-            String sign = getSign(stringSignTemp);
-
-            params.put("sign", sign);
-
-            System.out.println(JSONUtil.toJsonStr(params));
-
-            String result = HttpUtils.sendPostForPayment(gateway, JSONUtil.toJsonStr(params));
-            log.info("getPaymentUrl=" + result);
-            if (StringUtils.isNotEmpty(result)) {
-                JSONObject jsonObject = JSONObject.parseObject(result);
-                if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("code") && jsonObject.getInteger("code") == 0) {
-                    jsonObject = jsonObject.getJSONObject("data");
-                    if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("url")) {
-                        return jsonObject.getString("url");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("getPaymentUrl:", e);
-            return null;
         }
         return null;
     }
@@ -138,7 +98,7 @@ public class NineBrotherPaymentUtil {
     }
 
     public static void main(String[] args) {
-        getPaymentUrl("RE" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue(), "20240727221125", "300");
+//        getPaymentUrl("RE" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue(), "20240727221125", "300");
     }
 
 }

@@ -24,6 +24,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item :label="$t('唯一码')" prop="weiyima">
+        <el-input
+          v-model="queryParams.weiyima"
+          :placeholder="$t('请输入唯一码')"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item :label="$t('状态')" prop="isPay">
         <el-select
           v-model="queryParams.isPay"
@@ -196,10 +204,10 @@
     <el-dialog :title="title" :visible.sync="openApprove" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item :label="$t('姓名')" prop="name">
-          <el-input v-model="form.name" :placeholder="$t('请输入姓名')" />
+          <el-input v-model="form.name" :placeholder="$t('请输入姓名')" disabled />
         </el-form-item>
         <el-form-item :label="$t('手机号')" prop="mobile">
-          <el-input v-model="form.mobile" :placeholder="$t('请输入手机号')" />
+          <el-input v-model="form.mobile" :placeholder="$t('请输入手机号')" disabled />
         </el-form-item>
         <el-form-item :label="$t('提现金额')" prop="money">
           <el-input v-model="form.money" :placeholder="$t('请输入提现金额')" />
@@ -230,10 +238,10 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="姓名" prop="name">
-          <el-input v-model="form.name" placeholder="请输入姓名" />
+          <el-input v-model="form.name" placeholder="请输入姓名" disabled />
         </el-form-item>
         <el-form-item label="手机号" prop="mobile">
-          <el-input v-model="form.mobile" placeholder="请输入手机号" />
+          <el-input v-model="form.mobile" placeholder="请输入手机号" disabled />
         </el-form-item>
         <el-form-item label="提现金额" prop="money">
           <el-input v-model="form.money" placeholder="请输入提现金额" />

@@ -33,6 +33,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item :label="$t('唯一码')" prop="weiyima">
+        <el-input
+          v-model="queryParams.weiyima"
+          :placeholder="$t('请输入唯一码')"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item :label="$t('股票代码')" prop="code">
         <el-input
           v-model="queryParams.code"
@@ -286,8 +294,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('申购数量')" prop="sgNum">
-          <el-input v-model="form.sgNum" :placeholder="$t('请输入申购数量')" />
+        <el-form-item :label="$t('申购数量(手)')" prop="sgNum">
+          <el-input v-model="form.sgNum" :placeholder="$t('请输入申购数量(手)')" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

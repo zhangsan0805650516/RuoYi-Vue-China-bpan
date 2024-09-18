@@ -48,7 +48,7 @@ public class StockHoldDetailController extends BaseController
             @ApiImplicitParam(name = "size", value = "当页条数", required = true, dataType = "Integer"),
             @ApiImplicitParam(name = "stockId", value = "股票id(可选)", dataType = "Integer"),
             @ApiImplicitParam(name = "stockSymbol", value = "股票代码(可选)", dataType = "String"),
-            @ApiImplicitParam(name = "holdType", value = "持仓类型(1普通交易 2大宗交易)(可选)", dataType = "Integer")
+            @ApiImplicitParam(name = "holdType", value = "持仓类型(1普通交易 2大宗交易 8融券)(可选)", dataType = "Integer")
     })
     @PostMapping("/getStockHoldDetailList")
     public AjaxResult getStockHoldDetailList(@RequestBody FaStockHoldDetail faStockHoldDetail)

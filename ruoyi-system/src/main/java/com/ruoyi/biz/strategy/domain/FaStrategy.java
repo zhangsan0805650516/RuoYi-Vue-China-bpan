@@ -2,6 +2,9 @@ package com.ruoyi.biz.strategy.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -30,6 +33,12 @@ public class FaStrategy extends BaseEntity {
 
     private static final long serialVersionUID=1L;
 
+    @TableField(exist = false)
+    private String tradeDate;
+
+    @TableField(exist = false)
+    List<Map<String, String>> kline;
+
     @ApiModelProperty(value = "板块类型(1地区 2板块 3概念)")
     @TableField(exist = false)
     private Integer bkType;
@@ -49,138 +58,6 @@ public class FaStrategy extends BaseEntity {
     @ApiModelProperty(value = "状态类型")
     @TableField(exist = false)
     private String statusType;
-
-    /**
-     * 买1
-     */
-    @TableField(exist = false)
-    private BigDecimal buy1;
-
-    /**
-     * 买1量
-     */
-    @TableField(exist = false)
-    private BigDecimal buy1Num;
-
-    /**
-     * 买2
-     */
-    @TableField(exist = false)
-    private BigDecimal buy2;
-
-    /**
-     * 买2量
-     */
-    @TableField(exist = false)
-    private BigDecimal buy2Num;
-
-    /**
-     * 买3
-     */
-    @TableField(exist = false)
-    private BigDecimal buy3;
-
-    /**
-     * 买3量
-     */
-    @TableField(exist = false)
-    private BigDecimal buy3Num;
-
-    /**
-     * 买4
-     */
-    @TableField(exist = false)
-    private BigDecimal buy4;
-
-    /**
-     * 买4量
-     */
-    @TableField(exist = false)
-    private BigDecimal buy4Num;
-
-    /**
-     * 买5
-     */
-    @TableField(exist = false)
-    private BigDecimal buy5;
-
-    /**
-     * 买5量
-     */
-    @TableField(exist = false)
-    private BigDecimal buy5Num;
-
-    /**
-     * 买总量
-     */
-    @TableField(exist = false)
-    private BigDecimal buyTotalNum;
-
-    /**
-     * 卖1
-     */
-    @TableField(exist = false)
-    private BigDecimal sell1;
-
-    /**
-     * 卖1量
-     */
-    @TableField(exist = false)
-    private BigDecimal sell1Num;
-
-    /**
-     * 卖2
-     */
-    @TableField(exist = false)
-    private BigDecimal sell2;
-
-    /**
-     * 卖2量
-     */
-    @TableField(exist = false)
-    private BigDecimal sell2Num;
-
-    /**
-     * 卖3
-     */
-    @TableField(exist = false)
-    private BigDecimal sell3;
-
-    /**
-     * 卖3量
-     */
-    @TableField(exist = false)
-    private BigDecimal sell3Num;
-
-    /**
-     * 卖4
-     */
-    @TableField(exist = false)
-    private BigDecimal sell4;
-
-    /**
-     * 卖4量
-     */
-    @TableField(exist = false)
-    private BigDecimal sell4Num;
-
-    /**
-     * 卖5
-     */
-    @TableField(exist = false)
-    private BigDecimal sell5;
-
-    /**
-     * 卖总量
-     */
-    @TableField(exist = false)
-    private BigDecimal sellTotalNum;
-
-    /**
-     * 卖5量
-     */
-    @TableField(exist = false)
-    private BigDecimal sell5Num;
 
     @TableField(exist = false)
     private String queryString;
@@ -653,5 +530,148 @@ public class FaStrategy extends BaseEntity {
     @Excel(name = "剩余抢筹数量")
     @TableField("left_qc_num")
     private Integer leftQcNum;
+
+    /**
+     * 买1
+     */
+    @TableField("buy1")
+    private BigDecimal buy1;
+
+    /**
+     * 买1量
+     */
+    @TableField("buy1_num")
+    private BigDecimal buy1Num;
+
+    /**
+     * 买2
+     */
+    @TableField("buy2")
+    private BigDecimal buy2;
+
+    /**
+     * 买2量
+     */
+    @TableField("buy2_num")
+    private BigDecimal buy2Num;
+
+    /**
+     * 买3
+     */
+    @TableField("buy3")
+    private BigDecimal buy3;
+
+    /**
+     * 买3量
+     */
+    @TableField("buy3_num")
+    private BigDecimal buy3Num;
+
+    /**
+     * 买4
+     */
+    @TableField("buy4")
+    private BigDecimal buy4;
+
+    /**
+     * 买4量
+     */
+    @TableField("buy4_num")
+    private BigDecimal buy4Num;
+
+    /**
+     * 买5
+     */
+    @TableField("buy5")
+    private BigDecimal buy5;
+
+    /**
+     * 买5量
+     */
+    @TableField("buy5_num")
+    private BigDecimal buy5Num;
+
+    /**
+     * 买总量
+     */
+    @TableField("buy_total_num")
+    private BigDecimal buyTotalNum;
+
+    /**
+     * 卖1
+     */
+    @TableField("sell1")
+    private BigDecimal sell1;
+
+    /**
+     * 卖1量
+     */
+    @TableField("sell1_num")
+    private BigDecimal sell1Num;
+
+    /**
+     * 卖2
+     */
+    @TableField("sell2")
+    private BigDecimal sell2;
+
+    /**
+     * 卖2量
+     */
+    @TableField("sell2_num")
+    private BigDecimal sell2Num;
+
+    /**
+     * 卖3
+     */
+    @TableField("sell3")
+    private BigDecimal sell3;
+
+    /**
+     * 卖3量
+     */
+    @TableField("sell3_num")
+    private BigDecimal sell3Num;
+
+    /**
+     * 卖4
+     */
+    @TableField("sell4")
+    private BigDecimal sell4;
+
+    /**
+     * 卖4量
+     */
+    @TableField("sell4_num")
+    private BigDecimal sell4Num;
+
+    /**
+     * 卖5
+     */
+    @TableField("sell5")
+    private BigDecimal sell5;
+
+    /**
+     * 卖5量
+     */
+    @TableField("sell5_num")
+    private BigDecimal sell5Num;
+
+    /**
+     * 卖总量
+     */
+    @TableField("sell_total_num")
+    private BigDecimal sellTotalNum;
+
+    /** 上次浏览时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField("last_view_time")
+    private Date lastViewTime;
+
+    /** 开启融券交易 0关闭 1开启 */
+    @ApiModelProperty(value = "开启融券交易 0关闭 1开启")
+    @Excel(name = "开启融券交易 0关闭 1开启")
+    @TableField("is_rq")
+    private Integer isRq;
 
 }

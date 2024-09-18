@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -201,6 +202,23 @@ public class FaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaStrat
     }
 
     /**
+     * 查询融券列表
+     * @param faStrategy
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public IPage<FaStrategy> getRQStrategy(FaStrategy faStrategy) throws Exception {
+        LambdaQueryWrapper<FaStrategy> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 融券打开
+        lambdaQueryWrapper.eq(FaStrategy::getIsRq, 1);
+        lambdaQueryWrapper.eq(FaStrategy::getDeleteFlag, 0);
+        lambdaQueryWrapper.orderByDesc(FaStrategy::getCreateTime);
+        IPage<FaStrategy> faStrategyIPage = this.page(new Page<>(faStrategy.getPage(), faStrategy.getSize()), lambdaQueryWrapper);
+        return faStrategyIPage;
+    }
+
+    /**
      * 股票是否存在
      * @param faStrategy
      * @return
@@ -298,14 +316,19 @@ public class FaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaStrat
             throw new ServiceException(MessageUtils.message("stock.not.exists"), HttpStatus.ERROR);
         }
 
-        // 更新实时价格
-        getCurrentPrice(strategy);
+        LambdaUpdateWrapper<FaStrategy> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(FaStrategy::getId, strategy.getId());
+        lambdaUpdateWrapper.set(FaStrategy::getLastViewTime, new Date());
+        this.update(lambdaUpdateWrapper);
 
-        // 再从数据库取一次
-        strategy = this.getById(strategy.getId());
-
-        // 买五卖五
-        strategy = getBuySell(strategy);
+//        // 更新实时价格
+//        getCurrentPrice(strategy);
+//
+//        // 再从数据库取一次
+//        strategy = this.getById(strategy.getId());
+//
+//        // 买五卖五
+//        strategy = getBuySell(strategy);
         return strategy;
     }
 
@@ -434,6 +457,9 @@ public class FaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaStrat
                 case "vipQcStatus":
                     lambdaUpdateWrapper.set(FaStrategy::getVipQcStatus, faStrategy.getStatus());
                     break;
+                case "isRq":
+                    lambdaUpdateWrapper.set(FaStrategy::getIsRq, faStrategy.getStatus());
+                    break;
                 default:
                     break;
             }
@@ -444,7 +470,7 @@ public class FaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaStrat
     }
 
     /**
-     * 查询股票列表
+     * 查询股票列表 sortBy 排序字段(1现价 2涨跌 3涨跌幅 4成交额 5换手率 6昨收价 7今开价 8最高价)
      * @param faStrategy
      * @return
      * @throws Exception
@@ -514,6 +540,39 @@ public class FaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaStrat
                     lambdaQueryWrapper.orderByDesc(FaStrategy::getCaiChangeHands);
                 }
                 break;
+            // 昨收价
+            case 6:
+                // 正序
+                if (1 == faStrategy.getSort()) {
+                    lambdaQueryWrapper.orderByAsc(FaStrategy::getCaiSettlement);
+                }
+                // 倒序
+                else if (2 == faStrategy.getSort()) {
+                    lambdaQueryWrapper.orderByDesc(FaStrategy::getCaiSettlement);
+                }
+                break;
+            // 今开价
+            case 7:
+                // 正序
+                if (1 == faStrategy.getSort()) {
+                    lambdaQueryWrapper.orderByAsc(FaStrategy::getCaiOpen);
+                }
+                // 倒序
+                else if (2 == faStrategy.getSort()) {
+                    lambdaQueryWrapper.orderByDesc(FaStrategy::getCaiOpen);
+                }
+                break;
+            // 最高价
+            case 8:
+                // 正序
+                if (1 == faStrategy.getSort()) {
+                    lambdaQueryWrapper.orderByAsc(FaStrategy::getCaiHigh);
+                }
+                // 倒序
+                else if (2 == faStrategy.getSort()) {
+                    lambdaQueryWrapper.orderByDesc(FaStrategy::getCaiHigh);
+                }
+                break;
             default:
                 break;
         }
@@ -534,8 +593,48 @@ public class FaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaStrat
     public List<FaStrategy> getIndexList(FaStrategy faStrategy) throws Exception {
         LambdaQueryWrapper<FaStrategy> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 1);
-        List<FaStrategy> list = this.list(lambdaQueryWrapper);
-        return list;
+        List<FaStrategy> faStrategyList = this.list(lambdaQueryWrapper);
+        for (FaStrategy strategy : faStrategyList) {
+            List<Map<String, String>> list = new ArrayList<>();
+            String result = HttpUtils.sendGet("https://web.ifzq.gtimg.cn/appstock/app/minute/query?_var=min_data_" + strategy.getAllCode() + "&code=" + strategy.getAllCode() + "&r=" + System.currentTimeMillis());
+            if (StringUtils.isNotEmpty(result)) {
+                result = result.substring(result.indexOf("=") + 1);
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                if (jsonObject.containsKey("data")) {
+                    jsonObject = jsonObject.getJSONObject("data");
+                    if (jsonObject.containsKey(strategy.getAllCode())) {
+                        jsonObject = jsonObject.getJSONObject(strategy.getAllCode());
+                        if (jsonObject.containsKey("data")) {
+                            jsonObject = jsonObject.getJSONObject("data");
+                            if (jsonObject.containsKey("data")) {
+                                String date = jsonObject.getString("date");
+                                JSONArray jsonArray = jsonObject.getJSONArray("data");
+                                if (!jsonArray.isEmpty()) {
+                                    SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd HHmmss");
+                                    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    for (int i = 0; i < jsonArray.size(); i++) {
+                                        String info = jsonArray.getString(i);
+                                        String[] infos = info.split(" ");
+                                        Map<String, String> map = new HashMap<>();
+                                        map.put("close", infos[1]);
+                                        String datetime = sdf2.format(sdf1.parse(date + " " + infos[0] + "00"));
+                                        map.put("datetime", datetime);
+                                        map.put("high", infos[1]);
+                                        map.put("low", infos[1]);
+                                        map.put("open", infos[1]);
+                                        map.put("timestamp", String.valueOf(sdf2.parse(datetime).getTime()));
+                                        map.put("volume", infos[2]);
+                                        list.add(map);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            strategy.setKline(list);
+        }
+        return faStrategyList;
     }
 
     /**
@@ -590,7 +689,7 @@ public class FaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaStrat
             jsonArray = new JSONArray();
             // 接口token
             String token = iFaRiskConfigService.getConfigValue("tokenp", "75896ca5bc76d3de");
-            String result = HttpUtils.sendGet("http://47.120.74.91:5120/bkhotlst?pz=" + faStrategy.getBkType() + "&page=1&px=1&token=" + token);
+            String result = HttpUtils.sendGet(Constants.QI_ZHANG_URL + "/bkhotlst?pz=" + faStrategy.getBkType() + "&page=1&px=1&token=" + token);
             if (StringUtils.isNotEmpty(result)) {
                 jsonArray = JSONArray.parse(result);
                 if (!jsonArray.isEmpty()) {
@@ -669,7 +768,7 @@ public class FaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaStrat
         String date = sdf.format(new Date());
         // 接口token
         String token = iFaRiskConfigService.getConfigValue("tokenp", "75896ca5bc76d3de");
-        String result = HttpUtils.sendGet("http://47.120.74.91:5120/moneyflow_hsgt?date=" + date + "&page=1&px=1&token=" + token);
+        String result = HttpUtils.sendGet(Constants.QI_ZHANG_URL + "/moneyflow_hsgt?date=" + date + "&page=1&px=1&token=" + token);
         if (StringUtils.isNotEmpty(result)) {
             JSONArray jsonArray = JSONArray.parse(result);
             if (!jsonArray.isEmpty()) {
@@ -725,6 +824,283 @@ public class FaStrategyServiceImpl extends ServiceImpl<FaStrategyMapper, FaStrat
 //            currentPrice = thailandStrategyService.getStockCurrentPrice(faStrategy);
         }
         return list;
+    }
+
+    /**
+     * 前瞻会议 pz=2 取第四个
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public JSONArray getQzhy() throws Exception {
+        int pz = 2;
+        // 先从redis取
+        JSONArray jsonArray = redisCache.getCacheObject(Constants.BK_HOT_LST + pz);
+        // redis里不存在，从接口取
+        if (null == jsonArray || jsonArray.isEmpty()) {
+            jsonArray = new JSONArray();
+            // 接口token
+            String token = iFaRiskConfigService.getConfigValue("tokenp", "75896ca5bc76d3de");
+            String result = HttpUtils.sendGet(Constants.QI_ZHANG_URL + "/bkhotlst?pz=" + pz + "&page=1&px=1&token=" + token);
+            if (StringUtils.isNotEmpty(result)) {
+                jsonArray = JSONArray.parse(result);
+                if (!jsonArray.isEmpty()) {
+                    for (int i = 3; i < 4; i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        if (ObjectUtils.isNotEmpty(jsonObject)) {
+                            LambdaQueryWrapper<FaStrategy> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+                            lambdaQueryWrapper.eq(FaStrategy::getCode, jsonObject.getString("stockcode"));
+                            lambdaQueryWrapper.last(" limit 1 ");
+                            FaStrategy fa = this.getOne(lambdaQueryWrapper);
+                            if (ObjectUtils.isNotEmpty(fa)) {
+                                jsonObject.put("id", fa.getId());
+                                jsonObject.put("allCode", fa.getAllCode());
+                            }
+                        }
+                    }
+                    // 接口取成功，存入redis，保留5分钟
+                    redisCache.setCacheObject(Constants.BK_HOT_LST + pz, jsonArray, 5, TimeUnit.MINUTES);
+                }
+            }
+        }
+        return jsonArray;
+    }
+
+    /**
+     * 取涨幅前十之一，业绩略超预期，稳健增长
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FaStrategy getYbjx() throws Exception {
+        LambdaQueryWrapper<FaStrategy> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.orderByDesc(FaStrategy::getCaiChangepercent);
+        lambdaQueryWrapper.eq(FaStrategy::getDeleteFlag, 0);
+        lambdaQueryWrapper.last(" limit 10 ");
+        List<FaStrategy> list = this.list(lambdaQueryWrapper);
+
+        Random random = new Random();
+        FaStrategy faStrategy = list.get(random.nextInt(list.size()));
+
+        return faStrategy;
+    }
+
+    /**
+     * 前瞻会议 pz=2 取前三个
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public JSONArray getRmhy() throws Exception {
+        int pz = 2;
+        // 先从redis取
+        JSONArray jsonArray = redisCache.getCacheObject(Constants.BK_HOT_LST + pz);
+        // redis里不存在，从接口取
+        if (null == jsonArray || jsonArray.isEmpty()) {
+            jsonArray = new JSONArray();
+            // 接口token
+            String token = iFaRiskConfigService.getConfigValue("tokenp", "75896ca5bc76d3de");
+            String result = HttpUtils.sendGet(Constants.QI_ZHANG_URL + "/bkhotlst?pz=" + pz + "&page=1&px=1&token=" + token);
+            if (StringUtils.isNotEmpty(result)) {
+                jsonArray = JSONArray.parse(result);
+                if (!jsonArray.isEmpty()) {
+                    for (int i = 0; i < 3; i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        if (ObjectUtils.isNotEmpty(jsonObject)) {
+                            LambdaQueryWrapper<FaStrategy> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+                            lambdaQueryWrapper.eq(FaStrategy::getCode, jsonObject.getString("stockcode"));
+                            lambdaQueryWrapper.last(" limit 1 ");
+                            FaStrategy fa = this.getOne(lambdaQueryWrapper);
+                            if (ObjectUtils.isNotEmpty(fa)) {
+                                jsonObject.put("id", fa.getId());
+                                jsonObject.put("allCode", fa.getAllCode());
+                            }
+                        }
+                    }
+                    // 接口取成功，存入redis，保留5分钟
+                    redisCache.setCacheObject(Constants.BK_HOT_LST + pz, jsonArray, 5, TimeUnit.MINUTES);
+                }
+            }
+        }
+        return jsonArray;
+    }
+
+    /**
+     * 取涨幅前十之二，业绩略超预期，稳健增长
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<FaStrategy> getDxjj() throws Exception {
+        LambdaQueryWrapper<FaStrategy> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.orderByDesc(FaStrategy::getCaiChangepercent);
+        lambdaQueryWrapper.eq(FaStrategy::getDeleteFlag, 0);
+        lambdaQueryWrapper.last(" limit 10 ");
+        List<FaStrategy> list = this.list(lambdaQueryWrapper);
+
+        Collections.shuffle(list); // 随机打乱list顺序
+
+        // 获取前两个元素作为随机选中的数据
+        List<FaStrategy> randomElements = list.subList(0, 2);
+
+        return randomElements;
+    }
+
+    /**
+     * 涨跌柱状图
+     * @param faStrategy
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Map<String, Integer> getRiseAndFallBar(FaStrategy faStrategy) throws Exception {
+        // 先从redis取
+        Map<String, Integer> map = redisCache.getCacheObject(Constants.RISE_AND_FALL_BAR);
+        if (null == map) {
+            map = new HashMap<>();
+            LambdaQueryWrapper<FaStrategy> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            // 涨 9.9% < a
+            lambdaQueryWrapper.gt(FaStrategy::getCaiPricechange, 9.9);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long rise9 = this.count(lambdaQueryWrapper);
+            map.put("rise9", (int) rise9);
+            // 涨 7% < a
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.gt(FaStrategy::getCaiPricechange, 7);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long rise7 = this.count(lambdaQueryWrapper);
+            map.put("rise7", (int) rise7);
+            // 涨 5% < a <= 7%
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.gt(FaStrategy::getCaiPricechange, 5);
+            lambdaQueryWrapper.le(FaStrategy::getCaiPricechange, 7);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long rise57 = this.count(lambdaQueryWrapper);
+            map.put("rise57", (int) rise57);
+            // 涨 3% < a <= 5%
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.gt(FaStrategy::getCaiPricechange, 3);
+            lambdaQueryWrapper.le(FaStrategy::getCaiPricechange, 5);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long rise35 = this.count(lambdaQueryWrapper);
+            map.put("rise35", (int) rise35);
+            // 涨 0% < a <= 3%
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.gt(FaStrategy::getCaiPricechange, 0);
+            lambdaQueryWrapper.le(FaStrategy::getCaiPricechange, 3);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long rise03 = this.count(lambdaQueryWrapper);
+            map.put("rise03", (int) rise03);
+            // 平 a == 0%
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(FaStrategy::getCaiPricechange, 0);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long flat = this.count(lambdaQueryWrapper);
+            map.put("flat", (int) flat);
+            // 跌 -3% <= a < 0%
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.ge(FaStrategy::getCaiPricechange, -3);
+            lambdaQueryWrapper.lt(FaStrategy::getCaiPricechange, 0);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long fall03 = this.count(lambdaQueryWrapper);
+            map.put("fall03", (int) fall03);
+            // 跌 -5% <= a < -3%
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.ge(FaStrategy::getCaiPricechange, -5);
+            lambdaQueryWrapper.lt(FaStrategy::getCaiPricechange, -3);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long fall35 = this.count(lambdaQueryWrapper);
+            map.put("fall35", (int) fall35);
+            // 跌 -7% <= a < -5%
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.ge(FaStrategy::getCaiPricechange, -7);
+            lambdaQueryWrapper.lt(FaStrategy::getCaiPricechange, -5);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long fall57 = this.count(lambdaQueryWrapper);
+            map.put("fall57", (int) fall57);
+            // 跌 a < -7%
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.lt(FaStrategy::getCaiPricechange, -7);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long fall7 = this.count(lambdaQueryWrapper);
+            map.put("fall7", (int) fall7);
+            // 跌 a < -9.9%
+            lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.lt(FaStrategy::getCaiPricechange, -9.9);
+            lambdaQueryWrapper.eq(FaStrategy::getClassifyId, 0);
+            long fall9 = this.count(lambdaQueryWrapper);
+            map.put("fall9", (int) fall9);
+
+            // 存入redis，保留5分钟
+            redisCache.setCacheObject(Constants.RISE_AND_FALL_BAR, map, 5, TimeUnit.MINUTES);
+        }
+        return map;
+    }
+
+    /**
+     * 龙虎榜
+     * @param faStrategy
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<FaStrategy> getDragonTigerList(FaStrategy faStrategy) throws Exception {
+        if (null == faStrategy.getTradeDate()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+            faStrategy.setTradeDate(sdf.format(cal.getTime()));
+        }
+
+        List<FaStrategy> list = new ArrayList<>();
+        // 先从redis取
+        JSONArray jsonArray = redisCache.getCacheObject(Constants.DRAGON_TIGER + faStrategy.getTradeDate());
+        // redis里不存在，从接口取
+        if (null == jsonArray || jsonArray.isEmpty()) {
+            // 接口token
+            String token = iFaRiskConfigService.getConfigValue("tokenp", "75896ca5bc76d3de");
+            String result = HttpUtils.sendGet(Constants.QI_ZHANG_URL + "/top_list?code=&trade_date=" + faStrategy.getTradeDate() +"&token=" + token);
+            if (StringUtils.isNotEmpty(result)) {
+                jsonArray = JSONArray.parse(result);
+                if (!jsonArray.isEmpty()) {
+                    // 接口取成功，存入redis，保留1天
+                    redisCache.setCacheObject(Constants.DRAGON_TIGER + faStrategy.getTradeDate(), jsonArray, 1, TimeUnit.DAYS);
+                }
+            }
+        }
+        if (!jsonArray.isEmpty()) {
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (ObjectUtils.isNotEmpty(jsonObject)) {
+                    String ts_code = jsonObject.getString("ts_code");
+                    String[] tsCode = ts_code.split("\\.");
+                    FaStrategy strategy = new FaStrategy();
+                    strategy.setTitle(jsonObject.getString("name"));
+                    strategy.setTradeDate(jsonObject.getString("trade_date"));
+                    strategy.setCode(tsCode[0]);
+                    strategy.setAllCode(tsCode[1].toLowerCase() + tsCode[0]);
+                    strategy.setId(getStrategyId(strategy.getAllCode()));
+                    strategy.setCaiSettlement(jsonObject.getBigDecimal("close"));
+                    strategy.setCaiAmount(jsonObject.getBigDecimal("l_buy"));
+                    strategy.setCaiChangepercent(jsonObject.getBigDecimal("pct_change").setScale(2, RoundingMode.HALF_UP));
+                    list.add(strategy);
+                }
+            }
+        }
+        return list;
+    }
+
+    private Integer getStrategyId(String allCode) throws Exception {
+        LambdaQueryWrapper<FaStrategy> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(FaStrategy::getAllCode, allCode);
+        lambdaQueryWrapper.eq(FaStrategy::getDeleteFlag, 0);
+        lambdaQueryWrapper.last(" limit 1 ");
+        FaStrategy faStrategy = this.getOne(lambdaQueryWrapper);
+        if (ObjectUtils.isNotEmpty(faStrategy)) {
+            return faStrategy.getId();
+        } else {
+            return 0;
+        }
     }
 
 }

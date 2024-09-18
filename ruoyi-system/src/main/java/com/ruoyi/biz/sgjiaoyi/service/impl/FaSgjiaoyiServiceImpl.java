@@ -108,10 +108,19 @@ public class FaSgjiaoyiServiceImpl extends ServiceImpl<FaSgjiaoyiMapper, FaSgjia
      */
     @Transactional
     @Override
-    public int insertFaSgjiaoyi(FaSgjiaoyi faSgjiaoyi)
+    public int insertFaSgjiaoyi(FaSgjiaoyi faSgjiaoyi) throws Exception
     {
         faSgjiaoyi.setCreateTime(DateUtils.getNowDate());
-        return faSgjiaoyiMapper.insertFaSgjiaoyi(faSgjiaoyi);
+
+        FaNewStock faNewStock = new FaNewStock();
+        faNewStock.setId(faSgjiaoyi.getShengouId());
+        faNewStock.setMemberId(faSgjiaoyi.getUserId());
+        faNewStock.setSgNums(faSgjiaoyi.getSgNum());
+
+        // 保证金模式，先扣
+        iFaShengouService.addPeiShou(faNewStock);
+
+        return 1;
     }
 
     /**

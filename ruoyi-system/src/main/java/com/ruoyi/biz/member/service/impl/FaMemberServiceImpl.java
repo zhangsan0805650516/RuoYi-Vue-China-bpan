@@ -143,6 +143,15 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
                     // 总资产 = 余额 + 新股 + 持仓市值
                     BigDecimal total = member.getBalance().add(fundInfoNew).add(fundInfoMarket);
                     member.setTotal(total);
+
+                    // 交易盈亏
+                    BigDecimal tradeProfit = faMemberMapper.getTradeInfoTradeProfit(member.getId());
+
+                    // 总手续费
+                    BigDecimal totalPoundage = faMemberMapper.getTotalPoundage(member.getId());
+
+                    // 总盈亏 = 交易盈亏 - 总手续费
+                    member.setTotalProfit(tradeProfit.subtract(totalPoundage));
                 }
             }
             return list;
@@ -231,6 +240,9 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
     public int updateFaMember(FaMember faMember)
     {
 
+        faMember.setUsername(null);
+        faMember.setMobile(null);
+
         // 取代理数据
         if (null != faMember.getDailiId()) {
             SysUser sysUser = iSysUserService.selectUserById(faMember.getDailiId());
@@ -252,6 +264,7 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
             faMember.setPaymentCode(SecurityUtils.encryptPassword(faMember.getPaymentCode()));
         }
         faMember.setUpdateTime(DateUtils.getNowDate());
+        faMember.setNickname(faMember.getName());
         return faMemberMapper.updateFaMember(faMember);
     }
 
@@ -725,9 +738,14 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
         if (0 == member.getBankCardAuth()) {
             lambdaUpdateWrapper.set(FaMember::getBankCardAuth, 2);
         }
-        // 2审核通过，修改，变审核中
-        else if (2 == member.getBankCardAuth()) {
-            lambdaUpdateWrapper.set(FaMember::getBankCardAuth, 1);
+
+        // 修改银行卡需要审核，默认需要
+        String edit_bankcard_approve = iFaRiskConfigService.getConfigValue("edit_bankcard_approve", "1");
+        if ("1".equals(edit_bankcard_approve)) {
+            // 2审核通过，修改，变审核中
+            if (2 == member.getBankCardAuth()) {
+                lambdaUpdateWrapper.set(FaMember::getBankCardAuth, 1);
+            }
         }
 
         this.update(lambdaUpdateWrapper);
@@ -924,7 +942,7 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
      */
     @Transactional
     @Override
-    public String rechargeApply(FaMember faMember) throws Exception {
+    public String rechargeApply(FaMember faMember, String ip) throws Exception {
         if (null == faMember.getId() || null == faMember.getAmount()) {
             throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
         }
@@ -969,7 +987,7 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
 
         if ("1".equals(kaika)) {
             // 支付地址
-            String result = apiCommonService.getPayment(faRecharge.getOrderId(), faRecharge.getCreateTime(), faRecharge.getMoney());
+            String result = apiCommonService.getPayment(faMember.getId(), faRecharge.getOrderId(), faRecharge.getCreateTime(), faRecharge.getMoney(), ip);
             if (StringUtils.isEmpty(result)) {
                 throw new ServiceException(MessageUtils.message("payment.error"), HttpStatus.ERROR);
             }
@@ -1629,6 +1647,56 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
                 iFaRechargeService.update(lambdaUpdateWrapper);
             }
         }
+    }
+
+    @Override
+    public void sifangRechargeNotify(RechargeNotify rechargeNotify) throws Exception {
+        LambdaQueryWrapper<FaRecharge> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 商户订单号
+        lambdaQueryWrapper.eq(FaRecharge::getOrderId, rechargeNotify.getOrderid());
+        FaRecharge faRecharge = iFaRechargeService.getOne(lambdaQueryWrapper);
+        if (ObjectUtils.isNotEmpty(faRecharge)) {
+            // 支付成功
+            if ("00".equals(rechargeNotify.getReturncode())) {
+                // 未付款
+                if (0 == faRecharge.getIsPay()) {
+                    LambdaUpdateWrapper<FaRecharge> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                    lambdaUpdateWrapper.eq(FaRecharge::getId, faRecharge.getId());
+                    lambdaUpdateWrapper.set(FaRecharge::getIsPay, 1);
+                    // 平台订单id
+                    lambdaUpdateWrapper.set(FaRecharge::getTransactionId, rechargeNotify.getTransaction_id());
+                    lambdaUpdateWrapper.set(FaRecharge::getUpdateTime, new Date());
+                    lambdaUpdateWrapper.set(FaRecharge::getPayTime, new Date());
+                    lambdaUpdateWrapper.set(FaRecharge::getIsApprove, 1);
+                    iFaRechargeService.update(lambdaUpdateWrapper);
+
+                    // 资金流水
+                    iFaCapitalLogService.save(faRecharge);
+                }
+            }
+            // 支付失败
+            else {
+                LambdaUpdateWrapper<FaRecharge> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                lambdaUpdateWrapper.eq(FaRecharge::getId, faRecharge.getId());
+                lambdaUpdateWrapper.set(FaRecharge::getIsPay, 2);
+                // 平台订单id
+                lambdaUpdateWrapper.set(FaRecharge::getTransactionId, rechargeNotify.getTransaction_id());
+                lambdaUpdateWrapper.set(FaRecharge::getUpdateTime, new Date());
+                iFaRechargeService.update(lambdaUpdateWrapper);
+            }
+        }
+    }
+
+    /**
+     * 获取用户手机号
+     * @param faMember
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public String getMobile(FaMember faMember) throws Exception {
+        faMember = this.getById(faMember.getId());
+        return faMember.getMobile();
     }
 
 }

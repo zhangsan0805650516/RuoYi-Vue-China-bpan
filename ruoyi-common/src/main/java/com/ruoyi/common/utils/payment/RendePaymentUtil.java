@@ -34,7 +34,7 @@ public class RendePaymentUtil {
 //    private static final String GATE_ID = "10045";
 //    private static final String ACTION = "order";
 
-    public static String getPaymentUrl(String gateway, String apiKey, String apiSecret, String gateId, String action, String orderId, Date applyDate, BigDecimal amount) throws Exception {
+    public static String getPaymentUrl(String gateway, String apiKey, String apiSecret, String gateId, String action, String orderId, Date applyDate, BigDecimal amount, String ip) throws Exception {
         String timestamp = String.valueOf(applyDate.getTime() / 1000);
 
         SortedMap<String, Object> params = new TreeMap<>();
@@ -42,7 +42,7 @@ public class RendePaymentUtil {
         params.put("action", action);
         params.put("timestamp", timestamp);
         params.put("sign", getSign(apiKey, apiSecret, action, timestamp));
-        params.put("data", getData(gateId, orderId, amount));
+        params.put("data", getData(gateId, orderId, amount, ip));
 
         log.error(JSONUtil.toJsonStr(params));
 
@@ -100,12 +100,12 @@ public class RendePaymentUtil {
      * @return
      * @throws Exception
      */
-    private static SortedMap<String, Object> getData(String gateId, String orderId, BigDecimal amount) throws Exception {
+    private static SortedMap<String, Object> getData(String gateId, String orderId, BigDecimal amount, String ip) throws Exception {
         SortedMap<String, Object> data = new TreeMap<>();
         data.put("gate_id", gateId);
         data.put("order_number", orderId);
         data.put("amount", amount.setScale(2, RoundingMode.HALF_UP).toString());
-        data.put("notify_url", "http://" + IpUtils.getPublicIp() + "/api/member/rechargeNotify");
+        data.put("notify_url", "http://" + ip + "/api/member/rechargeNotify");
 
         return data;
     }

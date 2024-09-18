@@ -31,13 +31,13 @@ public class UrlFilter extends OncePerRequestFilter {
     }
 
     private String modifyPath(String path) {
-        if(path.contains("api") && path.contains("cf65zd")){
+        if(path.contains("api") && path.contains("hl32zd")){
             String result = "";
             String[] uris = path.split("/");
             for (String str : uris) {
                 if (StringUtils.isNotEmpty(str)) {
-                    if (str.indexOf("cf65zd") > 0) {
-                        result += "/" + str.substring(0, str.indexOf("cf65zd"));
+                    if (str.indexOf("hl32zd") > 0) {
+                        result += "/" + str.substring(0, str.indexOf("hl32zd"));
                     } else {
                         result += "/" + str;
                     }

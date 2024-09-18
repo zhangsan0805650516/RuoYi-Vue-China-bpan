@@ -62,6 +62,10 @@ public class ExportRecharge implements Serializable {
     @Excel(name = "驳回原因")
     private String reject;
 
+    /** 备注 */
+    @Excel(name = "备注")
+    private String remarks;
+
     /** 提现时间 */
     @Excel(name = "提现时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;

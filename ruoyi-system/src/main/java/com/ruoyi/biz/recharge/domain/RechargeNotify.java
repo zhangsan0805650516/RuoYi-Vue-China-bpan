@@ -61,4 +61,12 @@ public class RechargeNotify implements Serializable {
     /** 实际支付金额 */
     private String amount;
 
+    // 四方
+    private String memberid;
+    private String orderid;
+    private String true_amount;
+    private String datetime;
+    private String transaction_id;
+    private String returncode;
+
 }

@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
+
 /**
  * Controller
  * 
@@ -40,14 +43,19 @@ public class ApiCommonController extends BaseController
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "文件", required = true, dataType = "file")})
     @PostMapping("/upload")
-    public AjaxResult uploadFile(@RequestBody MultipartFile file) throws Exception
+    public AjaxResult uploadFile(HttpServletRequest request, @RequestBody MultipartFile file) throws Exception
     {
         try {
             if (null == file) {
                 throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
             }
 
-            String result = apiCommonService.upload(file);
+            String serverName = request.getServerName();
+            InetAddress inetAddress = InetAddress.getByName(serverName);
+            String ip = inetAddress.getHostAddress();
+            logger.error("upload.ip=" + ip);
+
+            String result = apiCommonService.upload(file, ip);
 
             AjaxResult ajax = AjaxResult.success();
             ajax.put("url", result);

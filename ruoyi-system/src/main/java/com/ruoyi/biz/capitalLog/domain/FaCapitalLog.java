@@ -30,6 +30,9 @@ public class FaCapitalLog extends BaseEntity {
     private static final long serialVersionUID=1L;
 
     @TableField(exist = false)
+    private String weiyima;
+
+    @TableField(exist = false)
     private String description;
 
     /** ID */
@@ -103,10 +106,16 @@ public class FaCapitalLog extends BaseEntity {
             "6中签认缴 7提现退回 " +
             "8大宗下单 9大宗下单手续费 10大宗平仓收益 11大宗印花税 " +
             "12配售冻结 13未中签退回 14普通卖出手续费 15大宗卖出手续费 " +
-            "16VIP调研下单 17VIP调研下单手续费 18VIP调研平仓收益 19VIP调研印花税 20VIP调研卖出手续费 21货币兑换出 22货币兑换入 23大宗冻结 24大宗退回)")
+            "16VIP调研下单 17VIP调研下单手续费 18VIP调研平仓收益 19VIP调研印花税 20VIP调研卖出手续费 " +
+            "21货币兑换出 22货币兑换入 " +
+            "23大宗冻结 24大宗退回 " +
+            "25融券下单 26融券下单手续费 27融券平仓收益 28融券印花税 29融券平仓手续费)")
     @Excel(name = "类型(0充值 1提现 2普通下单 3普通下单手续费 4印花税 5平仓收益 6中签认缴 7提现退回 8大宗下单 " +
             "9大宗下单手续费 10大宗平仓收益 11大宗印花税 12配售冻结 13未中签退回 14普通卖出手续费 15大宗卖出手续费" +
-            "16VIP调研下单 17VIP调研下单手续费 18VIP调研平仓收益 19VIP调研印花税 20VIP调研卖出手续费 21货币兑换出 22货币兑换入 23大宗冻结 24大宗退回)")
+            "16VIP调研下单 17VIP调研下单手续费 18VIP调研平仓收益 19VIP调研印花税 20VIP调研卖出手续费 " +
+            "21货币兑换出 22货币兑换入 " +
+            "23大宗冻结 24大宗退回 " +
+            "25融券下单 26融券下单手续费 27融券平仓收益 28融券印花税 29融券平仓手续费)")
     @TableField("type")
     private Integer type;
 

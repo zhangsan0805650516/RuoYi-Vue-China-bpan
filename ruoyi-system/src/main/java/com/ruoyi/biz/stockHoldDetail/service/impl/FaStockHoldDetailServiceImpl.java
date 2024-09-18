@@ -338,9 +338,16 @@ public class FaStockHoldDetailServiceImpl extends ServiceImpl<FaStockHoldDetailM
         // 清空，计算盈亏
         if (0 == faStockHoldDetail.getHoldNumber()) {
             faStockHoldDetail.setStatus(1);
+
             // 计算盈亏 不包含手续费
-            BigDecimal profitLose = faStockTrading.getTradingPrice().subtract(faStockHoldDetail.getAverage()).multiply(new BigDecimal(oldHoldDetail));
-            faStockHoldDetail.setProfitLose(profitLose);
+            if (null == faStockTrading.getProfitLose() || faStockTrading.getProfitLose().compareTo(BigDecimal.ZERO) <= 0) {
+                BigDecimal profitLose = faStockTrading.getTradingPrice().subtract(faStockHoldDetail.getAverage()).multiply(new BigDecimal(oldHoldDetail));
+                faStockHoldDetail.setProfitLose(profitLose);
+            } else {
+                // 盈亏
+                faStockHoldDetail.setProfitLose(faStockTrading.getProfitLose());
+            }
+
             faStockHoldDetail.setAverage(BigDecimal.ZERO);
         }
         // 未清空，计算均价
@@ -387,7 +394,7 @@ public class FaStockHoldDetailServiceImpl extends ServiceImpl<FaStockHoldDetailM
         faStockHoldDetail.setStockType(faStockTrading.getFaStrategy().getType());
         faStockHoldDetail.setHoldHand(faStockTrading.getTradingHand());
         faStockHoldDetail.setHoldNumber(faStockTrading.getTradingNumber());
-        // 持仓类型(1普通交易 2大宗交易 3VIP调研 4指数交易 5期货交易 6基金 7增发)
+        // 持仓类型(1普通交易 2大宗交易 3VIP调研 4指数交易 5期货交易 6基金 7增发 8融券)
         faStockHoldDetail.setHoldType(faStockTrading.getHoldType());
         // 买入价
         faStockHoldDetail.setAverage(faStockTrading.getTradingPrice());
@@ -414,6 +421,9 @@ public class FaStockHoldDetailServiceImpl extends ServiceImpl<FaStockHoldDetailM
         faStockHoldDetail.setTradingHand(faStockTrading.getTradingHand());
         faStockHoldDetail.setTradingNumber(faStockTrading.getTradingNumber());
 
+        // 方向(1买涨 2买跌)
+        faStockHoldDetail.setTradeDirect(faStockTrading.getTradeDirect());
+
         this.save(faStockHoldDetail);
         return faStockHoldDetail;
     }
@@ -436,6 +446,10 @@ public class FaStockHoldDetailServiceImpl extends ServiceImpl<FaStockHoldDetailM
         }
         if (null != faStockHoldDetail.getHoldType()) {
             lambdaQueryWrapper.eq(FaStockHoldDetail::getHoldType, faStockHoldDetail.getHoldType());
+        }
+        // 不包含融券 8融券
+        else {
+            lambdaQueryWrapper.ne(FaStockHoldDetail::getHoldType, 8);
         }
         lambdaQueryWrapper.eq(FaStockHoldDetail::getStatus, faStockHoldDetail.getStatus());
         lambdaQueryWrapper.eq(FaStockHoldDetail::getDeleteFlag, 0);
@@ -466,8 +480,23 @@ public class FaStockHoldDetailServiceImpl extends ServiceImpl<FaStockHoldDetailM
                         FaStrategy faStrategy = iFaStrategyService.selectFaStrategyById(holdDetail.getStockId());
                         if (ObjectUtils.isNotEmpty(faStrategy)) {
                             holdDetail.setCurrentPrice(faStrategy.getCaiTrade());
-                            holdDetail.setProfitLose(holdDetail.getCurrentPrice().subtract(holdDetail.getBuyPrice()).multiply(new BigDecimal(holdDetail.getHoldNumber())));
-                            holdDetail.setProfitRate(holdDetail.getCurrentPrice().subtract(holdDetail.getBuyPrice()).divide(holdDetail.getBuyPrice(), 4, RoundingMode.HALF_UP));
+
+                            // 计算盈亏 不包含手续费
+                            BigDecimal profitLose = holdDetail.getCurrentPrice().subtract(holdDetail.getBuyPrice()).multiply(new BigDecimal(holdDetail.getHoldNumber()));
+                            // 买涨,涨了增加
+                            if (1 == holdDetail.getTradeDirect()) {
+                                profitLose = profitLose;
+                            }
+                            // 买跌，跌了增加
+                            else if (2 == holdDetail.getTradeDirect()) {
+                                profitLose = profitLose.multiply(new BigDecimal(-1));
+                            }
+                            // 普通股票
+                            else {
+                                profitLose = holdDetail.getCurrentPrice().subtract(holdDetail.getBuyPrice()).multiply(new BigDecimal(holdDetail.getHoldNumber()));
+                            }
+                            holdDetail.setProfitLose(profitLose);
+                            holdDetail.setProfitRate(profitLose.divide(holdDetail.getBuyPrice().multiply(new BigDecimal(holdDetail.getTradingNumber())), 4, RoundingMode.HALF_UP));
                         }
                     }
                     // 未上市
@@ -490,7 +519,7 @@ public class FaStockHoldDetailServiceImpl extends ServiceImpl<FaStockHoldDetailM
                     // 手续费汇总
                     holdDetail.setFee(holdDetail.getBuyFee().add(holdDetail.getSellFee()).add(holdDetail.getStampDuty()));
                     // 计算涨跌幅
-                    holdDetail.setProfitRate(holdDetail.getSellPrice().subtract(holdDetail.getBuyPrice()).divide(holdDetail.getBuyPrice(), 4, RoundingMode.HALF_UP));
+                    holdDetail.setProfitRate(holdDetail.getProfitLose().divide(holdDetail.getBuyPrice().multiply(new BigDecimal(holdDetail.getTradingNumber())), 4, RoundingMode.HALF_UP));
                 }
             }
         }

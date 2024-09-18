@@ -31,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT
             cl.id,
             cl.user_id,
-            cl.mobile,
+            CONCAT(SUBSTRING(cl.mobile, 1, 3), '****', SUBSTRING(cl.mobile, 8)) AS mobile,
             cl.NAME,
             cl.superior_id,
             cl.superior_code,
@@ -82,6 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
                 AND date_format(cl.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
             </if>
+            <if test="weiyima != null "> and m.weiyima like concat('%', #{weiyima}, '%')</if>
         </where>
         and cl.user_id in (
             SELECT

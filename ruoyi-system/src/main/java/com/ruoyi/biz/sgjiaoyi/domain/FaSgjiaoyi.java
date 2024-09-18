@@ -32,6 +32,9 @@ public class FaSgjiaoyi extends BaseEntity {
     private static final long serialVersionUID=1L;
 
     @TableField(exist = false)
+    private String weiyima;
+
+    @TableField(exist = false)
     private BigDecimal fxRate;
 
     @TableField(exist = false)

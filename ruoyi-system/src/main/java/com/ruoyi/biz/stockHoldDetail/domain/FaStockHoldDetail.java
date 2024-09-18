@@ -32,6 +32,9 @@ public class FaStockHoldDetail extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @TableField(exist = false)
+    private String weiyima;
+
     /** 卖出数量(股) */
     @ApiModelProperty(value = "卖出数量(股)")
     @Excel(name = "卖出数量(股)")
@@ -160,8 +163,8 @@ public class FaStockHoldDetail extends BaseEntity {
     private Integer holdNumber;
 
     /** 持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发) */
-    @ApiModelProperty(value = "持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发)")
-    @Excel(name = "持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发)")
+    @ApiModelProperty(value = "持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发 8融券)")
+    @Excel(name = "持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发 8融券)")
     @TableField("hold_type")
     private Integer holdType;
 
@@ -282,5 +285,11 @@ public class FaStockHoldDetail extends BaseEntity {
     @Excel(name = "交易股数")
     @TableField("trading_number")
     private Integer tradingNumber;
+
+    /** 方向(1买涨 2买跌) */
+    @ApiModelProperty(value = "方向(1买涨 2买跌)")
+    @Excel(name = "方向(1买涨 2买跌)")
+    @TableField("trade_direct")
+    private Integer tradeDirect;
 
 }

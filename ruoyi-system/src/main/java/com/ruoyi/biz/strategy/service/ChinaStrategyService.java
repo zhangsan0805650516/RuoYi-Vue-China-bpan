@@ -77,4 +77,10 @@ public interface ChinaStrategyService extends IService<FaStrategy>
      * @throws Exception
      */
     List<Map<String, String>> getSHKline(FaStrategy faStrategy) throws Exception;
+
+    /**
+     * 刷新选定股票价格
+     * @throws Exception
+     */
+    void updateChooseStock() throws Exception;
 }
