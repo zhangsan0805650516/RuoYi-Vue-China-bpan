@@ -16,7 +16,7 @@ public class GoogleAuthenticator {
     private static final Logger log = LoggerFactory.getLogger(GoogleAuthenticator.class);
 
     // 发行者（项目名），可为空，注：不允许包含冒号
-    public static final String ISSUER = "newTest";
+    public static final String ISSUER = "bpan";
 
     // 生成的key长度( Generate secret key length)
     public static final int SECRET_SIZE = 32;
