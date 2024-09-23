@@ -1,8 +1,10 @@
 package com.ruoyi.coin.BCoinSpot.service;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
+
+import java.util.List;
 
 /**
  * 现货交易Service接口
@@ -59,4 +61,12 @@ public interface IFaBCoinSpotService extends IService<FaBCoinSpot>
      * @return 结果
      */
     public int deleteFaBCoinSpotById(Integer id);
+
+    /**
+     * 查询现货列表
+     * @param faBCoinSpot
+     * @return
+     * @throws Exception
+     */
+    IPage<FaBCoinSpot> getBCoinSpotList(FaBCoinSpot faBCoinSpot) throws Exception;
 }

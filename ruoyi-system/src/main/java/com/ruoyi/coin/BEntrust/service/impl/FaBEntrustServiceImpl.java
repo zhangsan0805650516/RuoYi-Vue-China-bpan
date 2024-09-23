@@ -1,8 +1,16 @@
 package com.ruoyi.coin.BEntrust.service.impl;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
+import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.coin.BEntrust.mapper.FaBEntrustMapper;
@@ -18,6 +26,7 @@ import com.ruoyi.coin.BEntrust.service.IFaBEntrustService;
 @Service
 public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntrust> implements IFaBEntrustService
 {
+
     @Autowired
     private FaBEntrustMapper faBEntrustMapper;
 
@@ -95,4 +104,26 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
     {
         return faBEntrustMapper.deleteFaBEntrustById(id);
     }
+
+    /**
+     * 查询委托列表
+     * @param faBEntrust
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public IPage<FaBEntrust> getBEntrustList(FaBEntrust faBEntrust) throws Exception {
+        if (null == faBEntrust.getUserId() || null == faBEntrust.getCoinType()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+
+        LambdaQueryWrapper<FaBEntrust> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(FaBEntrust::getUserId, faBEntrust.getUserId());
+        lambdaQueryWrapper.eq(FaBEntrust::getCoinType, faBEntrust.getCoinType());
+        lambdaQueryWrapper.eq(FaBEntrust::getDeleteFlag, 0);
+        lambdaQueryWrapper.orderByDesc(FaBEntrust::getCreateTime);
+        IPage<FaBEntrust> faBEntrustIPage = this.page(new Page<>(faBEntrust.getPage(), faBEntrust.getSize()), lambdaQueryWrapper);
+        return faBEntrustIPage;
+    }
+
 }

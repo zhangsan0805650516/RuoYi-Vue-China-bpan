@@ -1,8 +1,10 @@
 package com.ruoyi.coin.BHoldDetail.service;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.coin.BHoldDetail.domain.FaBHoldDetail;
+
+import java.util.List;
 
 /**
  * 持仓明细Service接口
@@ -59,4 +61,12 @@ public interface IFaBHoldDetailService extends IService<FaBHoldDetail>
      * @return 结果
      */
     public int deleteFaBHoldDetailById(Integer id);
+
+    /**
+     * 查询持仓列表
+     * @param faBHoldDetail
+     * @return
+     * @throws Exception
+     */
+    IPage<FaBHoldDetail> getBHoldDetailList(FaBHoldDetail faBHoldDetail) throws Exception;
 }

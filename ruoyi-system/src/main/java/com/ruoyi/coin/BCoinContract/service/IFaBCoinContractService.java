@@ -1,6 +1,8 @@
 package com.ruoyi.coin.BCoinContract.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.coin.BCoinContract.domain.FaBCoinContract;
 
@@ -59,4 +61,12 @@ public interface IFaBCoinContractService extends IService<FaBCoinContract>
      * @return 结果
      */
     public int deleteFaBCoinContractById(Integer id);
+
+    /**
+     * 查询合约列表
+     * @param faBCoinContract
+     * @return
+     * @throws Exception
+     */
+    IPage<FaBCoinContract> getBCoinContractList(FaBCoinContract faBCoinContract) throws Exception;
 }

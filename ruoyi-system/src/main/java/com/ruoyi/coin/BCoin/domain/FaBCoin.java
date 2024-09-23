@@ -30,6 +30,14 @@ public class FaBCoin extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(value = "排序字段(1现价 2涨跌 3涨跌幅 4成交额 5换手率 6昨收价 7今开价 8最高价)")
+    @TableField(exist = false)
+    private Integer sortBy;
+
+    @ApiModelProperty(value = "顺序(1正序 2倒序)")
+    @TableField(exist = false)
+    private Integer sort;
+
     /** id */
     @ApiModelProperty(value = "id")
     @Excel(name = "id")

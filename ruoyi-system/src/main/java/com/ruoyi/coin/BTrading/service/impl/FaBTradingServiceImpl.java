@@ -1,13 +1,20 @@
 package com.ruoyi.coin.BTrading.service.impl;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.coin.BTrading.domain.FaBTrading;
+import com.ruoyi.coin.BTrading.mapper.FaBTradingMapper;
+import com.ruoyi.coin.BTrading.service.IFaBTradingService;
+import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.coin.BTrading.mapper.FaBTradingMapper;
-import com.ruoyi.coin.BTrading.domain.FaBTrading;
-import com.ruoyi.coin.BTrading.service.IFaBTradingService;
+
+import java.util.List;
 
 /**
  * 成交记录Service业务层处理
@@ -94,5 +101,26 @@ public class FaBTradingServiceImpl extends ServiceImpl<FaBTradingMapper, FaBTrad
     public int deleteFaBTradingById(Integer id)
     {
         return faBTradingMapper.deleteFaBTradingById(id);
+    }
+
+    /**
+     * 查询成交列表
+     * @param faBTrading
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public IPage<FaBTrading> getBTradingList(FaBTrading faBTrading) throws Exception {
+        if (null == faBTrading.getUserId() || null == faBTrading.getCoinType()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+
+        LambdaQueryWrapper<FaBTrading> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(FaBTrading::getUserId, faBTrading.getUserId());
+        lambdaQueryWrapper.eq(FaBTrading::getCoinType, faBTrading.getCoinType());
+        lambdaQueryWrapper.eq(FaBTrading::getDeleteFlag, 0);
+        lambdaQueryWrapper.orderByDesc(FaBTrading::getCreateTime);
+        IPage<FaBTrading> faBTradingIPage = this.page(new Page<>(faBTrading.getPage(), faBTrading.getSize()), lambdaQueryWrapper);
+        return faBTradingIPage;
     }
 }

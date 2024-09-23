@@ -1,6 +1,8 @@
 package com.ruoyi.coin.BEntrust.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 
@@ -59,4 +61,12 @@ public interface IFaBEntrustService extends IService<FaBEntrust>
      * @return 结果
      */
     public int deleteFaBEntrustById(Integer id);
+
+    /**
+     * 查询委托列表
+     * @param faBEntrust
+     * @return
+     * @throws Exception
+     */
+    IPage<FaBEntrust> getBEntrustList(FaBEntrust faBEntrust) throws Exception;
 }

@@ -1,6 +1,8 @@
 package com.ruoyi.coin.BTrading.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.coin.BTrading.domain.FaBTrading;
 
@@ -59,4 +61,12 @@ public interface IFaBTradingService extends IService<FaBTrading>
      * @return 结果
      */
     public int deleteFaBTradingById(Integer id);
+
+    /**
+     * 查询成交列表
+     * @param faBTrading
+     * @return
+     * @throws Exception
+     */
+    IPage<FaBTrading> getBTradingList(FaBTrading faBTrading) throws Exception;
 }
