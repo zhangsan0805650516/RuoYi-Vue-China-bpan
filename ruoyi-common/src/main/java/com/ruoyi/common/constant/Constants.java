@@ -10,6 +10,21 @@ import io.jsonwebtoken.Claims;
 public class Constants
 {
 
+    /**
+     * 交易类型(1币 2现货 3合约)
+     */
+    public static final Integer COIN_TYPE_B = 1;
+
+    /**
+     * 交易类型(1币 2现货 3合约)
+     */
+    public static final Integer COIN_TYPE_SPOT = 2;
+
+    /**
+     * 交易类型(1币 2现货 3合约)
+     */
+    public static final Integer COIN_TYPE_CONTRACT = 3;
+
     // 启涨大数据接口地址
     public static final String QI_ZHANG_URL = "http://47.120.74.91:5120";
 

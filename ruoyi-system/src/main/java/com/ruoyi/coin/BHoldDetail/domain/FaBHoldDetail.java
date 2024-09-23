@@ -1,19 +1,20 @@
 package com.ruoyi.coin.BHoldDetail.domain;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import com.ruoyi.common.core.domain.BaseEntity;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 持仓明细
@@ -70,7 +71,7 @@ public class FaBHoldDetail extends BaseEntity {
     @ApiModelProperty(value = "持有数量")
     @Excel(name = "持有数量")
     @TableField("hold_number")
-    private Long holdNumber;
+    private BigDecimal holdNumber;
 
     /** 持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发) */
     @ApiModelProperty(value = "持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发)")
@@ -82,13 +83,13 @@ public class FaBHoldDetail extends BaseEntity {
     @ApiModelProperty(value = "T+N冻结数量")
     @Excel(name = "T+N冻结数量")
     @TableField("freeze_number")
-    private Long freezeNumber;
+    private BigDecimal freezeNumber;
 
     /** T+N剩余冻结时间 */
     @ApiModelProperty(value = "T+N剩余冻结时间")
     @Excel(name = "T+N剩余冻结时间")
     @TableField("freeze_days_left")
-    private Long freezeDaysLeft;
+    private Integer freezeDaysLeft;
 
     /** T+N状态(0冻结中 1解冻) */
     @ApiModelProperty(value = "T+N状态(0冻结中 1解冻)")
@@ -150,7 +151,7 @@ public class FaBHoldDetail extends BaseEntity {
     @ApiModelProperty(value = "交易股数")
     @Excel(name = "交易股数")
     @TableField("trading_number")
-    private Integer tradingNumber;
+    private BigDecimal tradingNumber;
 
     /** 方向(1买涨 2买跌) */
     @ApiModelProperty(value = "方向(1买涨 2买跌)")

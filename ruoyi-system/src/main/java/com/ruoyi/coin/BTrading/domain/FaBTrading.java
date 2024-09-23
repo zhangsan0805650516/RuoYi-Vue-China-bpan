@@ -44,7 +44,7 @@ public class FaBTrading extends BaseEntity {
     @ApiModelProperty(value = "委托id")
     @Excel(name = "委托id")
     @TableField("entrust_id")
-    private Long entrustId;
+    private Integer entrustId;
 
     /** 用户id */
     @ApiModelProperty(value = "用户id")
@@ -68,7 +68,7 @@ public class FaBTrading extends BaseEntity {
     @ApiModelProperty(value = "成交数量")
     @Excel(name = "成交数量")
     @TableField("trading_number")
-    private Long tradingNumber;
+    private BigDecimal tradingNumber;
 
     /** 成交价格 */
     @ApiModelProperty(value = "成交价格")

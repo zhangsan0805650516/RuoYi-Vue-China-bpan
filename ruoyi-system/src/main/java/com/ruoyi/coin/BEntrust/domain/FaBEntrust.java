@@ -70,13 +70,13 @@ public class FaBEntrust extends BaseEntity {
     @ApiModelProperty(value = "委托数量")
     @Excel(name = "委托数量")
     @TableField("entrust_number")
-    private Integer entrustNumber;
+    private BigDecimal entrustNumber;
 
     /** 交易数量 */
     @ApiModelProperty(value = "交易数量")
     @Excel(name = "交易数量")
     @TableField("trade_number")
-    private Integer tradeNumber;
+    private BigDecimal tradeNumber;
 
     /** 撤销时间 */
     @ApiModelProperty(value = "撤销时间")
