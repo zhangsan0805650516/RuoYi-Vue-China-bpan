@@ -1207,6 +1207,7 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
         LambdaQueryWrapper<FaMember> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(FaMember::getMobile, mobile);
         lambdaQueryWrapper.eq(FaMember::getDeleteFlag, 0);
+        lambdaQueryWrapper.last(" limit 1 ");
         FaMember faMember = this.getOne(lambdaQueryWrapper);
         if (ObjectUtils.isNotEmpty(faMember)) {
             throw new ServiceException(MessageUtils.message("user.mobile.exists"), HttpStatus.ERROR);
