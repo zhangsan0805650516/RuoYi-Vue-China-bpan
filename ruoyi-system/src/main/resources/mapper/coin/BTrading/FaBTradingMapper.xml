@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.coin.BTrading.mapper.FaBTradingMapper">
+    
+    <resultMap type="FaBTrading" id="FaBTradingResult">
+        <result property="id"    column="id"    />
+        <result property="tradeNo"    column="trade_no"    />
+        <result property="entrustId"    column="entrust_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="coinId"    column="coin_id"    />
+        <result property="coinType"    column="coin_type"    />
+        <result property="tradingNumber"    column="trading_number"    />
+        <result property="tradingPrice"    column="trading_price"    />
+        <result property="tradingAmount"    column="trading_amount"    />
+        <result property="tradingType"    column="trading_type"    />
+        <result property="tradeDirect"    column="trade_direct"    />
+        <result property="tradingPoundage"    column="trading_poundage"    />
+        <result property="stampDuty"    column="stamp_duty"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectFaBTradingVo">
+        select id, trade_no, entrust_id, user_id, coin_id, coin_type, trading_number, trading_price, trading_amount, trading_type, trade_direct, trading_poundage, stamp_duty, status, create_time, create_by, update_time, update_by, delete_flag, remarks from fa_b_trading
+    </sql>
+
+    <select id="selectFaBTradingList" parameterType="FaBTrading" resultMap="FaBTradingResult">
+        <include refid="selectFaBTradingVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="tradeNo != null  and tradeNo != ''"> and trade_no = #{tradeNo}</if>
+            <if test="entrustId != null "> and entrust_id = #{entrustId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="coinId != null "> and coin_id = #{coinId}</if>
+            <if test="coinType != null "> and coin_type = #{coinType}</if>
+            <if test="tradingNumber != null "> and trading_number = #{tradingNumber}</if>
+            <if test="tradingPrice != null "> and trading_price = #{tradingPrice}</if>
+            <if test="tradingAmount != null "> and trading_amount = #{tradingAmount}</if>
+            <if test="tradingType != null "> and trading_type = #{tradingType}</if>
+            <if test="tradeDirect != null "> and trade_direct = #{tradeDirect}</if>
+            <if test="tradingPoundage != null "> and trading_poundage = #{tradingPoundage}</if>
+            <if test="stampDuty != null "> and stamp_duty = #{stampDuty}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+        </where>
+    </select>
+    
+    <select id="selectFaBTradingById" parameterType="Integer" resultMap="FaBTradingResult">
+        <include refid="selectFaBTradingVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFaBTrading" parameterType="FaBTrading" useGeneratedKeys="true" keyProperty="id">
+        insert into fa_b_trading
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tradeNo != null">trade_no,</if>
+            <if test="entrustId != null">entrust_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="coinId != null">coin_id,</if>
+            <if test="coinType != null">coin_type,</if>
+            <if test="tradingNumber != null">trading_number,</if>
+            <if test="tradingPrice != null">trading_price,</if>
+            <if test="tradingAmount != null">trading_amount,</if>
+            <if test="tradingType != null">trading_type,</if>
+            <if test="tradeDirect != null">trade_direct,</if>
+            <if test="tradingPoundage != null">trading_poundage,</if>
+            <if test="stampDuty != null">stamp_duty,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+            <if test="remarks != null">remarks,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tradeNo != null">#{tradeNo},</if>
+            <if test="entrustId != null">#{entrustId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="coinId != null">#{coinId},</if>
+            <if test="coinType != null">#{coinType},</if>
+            <if test="tradingNumber != null">#{tradingNumber},</if>
+            <if test="tradingPrice != null">#{tradingPrice},</if>
+            <if test="tradingAmount != null">#{tradingAmount},</if>
+            <if test="tradingType != null">#{tradingType},</if>
+            <if test="tradeDirect != null">#{tradeDirect},</if>
+            <if test="tradingPoundage != null">#{tradingPoundage},</if>
+            <if test="stampDuty != null">#{stampDuty},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+            <if test="remarks != null">#{remarks},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFaBTrading" parameterType="FaBTrading">
+        update fa_b_trading
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tradeNo != null">trade_no = #{tradeNo},</if>
+            <if test="entrustId != null">entrust_id = #{entrustId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="coinId != null">coin_id = #{coinId},</if>
+            <if test="coinType != null">coin_type = #{coinType},</if>
+            <if test="tradingNumber != null">trading_number = #{tradingNumber},</if>
+            <if test="tradingPrice != null">trading_price = #{tradingPrice},</if>
+            <if test="tradingAmount != null">trading_amount = #{tradingAmount},</if>
+            <if test="tradingType != null">trading_type = #{tradingType},</if>
+            <if test="tradeDirect != null">trade_direct = #{tradeDirect},</if>
+            <if test="tradingPoundage != null">trading_poundage = #{tradingPoundage},</if>
+            <if test="stampDuty != null">stamp_duty = #{stampDuty},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFaBTradingById" parameterType="Integer">
+        update fa_b_trading set delete_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteFaBTradingByIds" parameterType="String">
+        update fa_b_trading set delete_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

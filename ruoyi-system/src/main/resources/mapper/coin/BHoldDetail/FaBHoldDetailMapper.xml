@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.coin.BHoldDetail.mapper.FaBHoldDetailMapper">
+    
+    <resultMap type="FaBHoldDetail" id="FaBHoldDetailResult">
+        <result property="id"    column="id"    />
+        <result property="holdNo"    column="hold_no"    />
+        <result property="tradeId"    column="trade_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="coinId"    column="coin_id"    />
+        <result property="coinType"    column="coin_type"    />
+        <result property="holdNumber"    column="hold_number"    />
+        <result property="holdType"    column="hold_type"    />
+        <result property="freezeNumber"    column="freeze_number"    />
+        <result property="freezeDaysLeft"    column="freeze_days_left"    />
+        <result property="freezeStatus"    column="freeze_status"    />
+        <result property="isLock"    column="is_lock"    />
+        <result property="buyPrice"    column="buy_price"    />
+        <result property="buyPoundage"    column="buy_poundage"    />
+        <result property="buyTime"    column="buy_time"    />
+        <result property="sellPrice"    column="sell_price"    />
+        <result property="sellPoundage"    column="sell_poundage"    />
+        <result property="sellStampDuty"    column="sell_stamp_duty"    />
+        <result property="sellTime"    column="sell_time"    />
+        <result property="tradingNumber"    column="trading_number"    />
+        <result property="tradeDirect"    column="trade_direct"    />
+        <result property="profitLose"    column="profit_lose"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectFaBHoldDetailVo">
+        select id, hold_no, trade_id, user_id, coin_id, coin_type, hold_number, hold_type, freeze_number, freeze_days_left, freeze_status, is_lock, buy_price, buy_poundage, buy_time, sell_price, sell_poundage, sell_stamp_duty, sell_time, trading_number, trade_direct, profit_lose, status, create_time, create_by, update_time, update_by, delete_flag, remarks from fa_b_hold_detail
+    </sql>
+
+    <select id="selectFaBHoldDetailList" parameterType="FaBHoldDetail" resultMap="FaBHoldDetailResult">
+        <include refid="selectFaBHoldDetailVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="holdNo != null  and holdNo != ''"> and hold_no = #{holdNo}</if>
+            <if test="tradeId != null "> and trade_id = #{tradeId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="coinId != null "> and coin_id = #{coinId}</if>
+            <if test="coinType != null "> and coin_type = #{coinType}</if>
+            <if test="holdNumber != null "> and hold_number = #{holdNumber}</if>
+            <if test="holdType != null "> and hold_type = #{holdType}</if>
+            <if test="freezeNumber != null "> and freeze_number = #{freezeNumber}</if>
+            <if test="freezeDaysLeft != null "> and freeze_days_left = #{freezeDaysLeft}</if>
+            <if test="freezeStatus != null "> and freeze_status = #{freezeStatus}</if>
+            <if test="isLock != null "> and is_lock = #{isLock}</if>
+            <if test="buyPrice != null "> and buy_price = #{buyPrice}</if>
+            <if test="buyPoundage != null "> and buy_poundage = #{buyPoundage}</if>
+            <if test="buyTime != null "> and buy_time = #{buyTime}</if>
+            <if test="sellPrice != null "> and sell_price = #{sellPrice}</if>
+            <if test="sellPoundage != null "> and sell_poundage = #{sellPoundage}</if>
+            <if test="sellStampDuty != null "> and sell_stamp_duty = #{sellStampDuty}</if>
+            <if test="sellTime != null "> and sell_time = #{sellTime}</if>
+            <if test="tradingNumber != null "> and trading_number = #{tradingNumber}</if>
+            <if test="tradeDirect != null "> and trade_direct = #{tradeDirect}</if>
+            <if test="profitLose != null "> and profit_lose = #{profitLose}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+        </where>
+    </select>
+    
+    <select id="selectFaBHoldDetailById" parameterType="Integer" resultMap="FaBHoldDetailResult">
+        <include refid="selectFaBHoldDetailVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFaBHoldDetail" parameterType="FaBHoldDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into fa_b_hold_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="holdNo != null">hold_no,</if>
+            <if test="tradeId != null">trade_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="coinId != null">coin_id,</if>
+            <if test="coinType != null">coin_type,</if>
+            <if test="holdNumber != null">hold_number,</if>
+            <if test="holdType != null">hold_type,</if>
+            <if test="freezeNumber != null">freeze_number,</if>
+            <if test="freezeDaysLeft != null">freeze_days_left,</if>
+            <if test="freezeStatus != null">freeze_status,</if>
+            <if test="isLock != null">is_lock,</if>
+            <if test="buyPrice != null">buy_price,</if>
+            <if test="buyPoundage != null">buy_poundage,</if>
+            <if test="buyTime != null">buy_time,</if>
+            <if test="sellPrice != null">sell_price,</if>
+            <if test="sellPoundage != null">sell_poundage,</if>
+            <if test="sellStampDuty != null">sell_stamp_duty,</if>
+            <if test="sellTime != null">sell_time,</if>
+            <if test="tradingNumber != null">trading_number,</if>
+            <if test="tradeDirect != null">trade_direct,</if>
+            <if test="profitLose != null">profit_lose,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+            <if test="remarks != null">remarks,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="holdNo != null">#{holdNo},</if>
+            <if test="tradeId != null">#{tradeId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="coinId != null">#{coinId},</if>
+            <if test="coinType != null">#{coinType},</if>
+            <if test="holdNumber != null">#{holdNumber},</if>
+            <if test="holdType != null">#{holdType},</if>
+            <if test="freezeNumber != null">#{freezeNumber},</if>
+            <if test="freezeDaysLeft != null">#{freezeDaysLeft},</if>
+            <if test="freezeStatus != null">#{freezeStatus},</if>
+            <if test="isLock != null">#{isLock},</if>
+            <if test="buyPrice != null">#{buyPrice},</if>
+            <if test="buyPoundage != null">#{buyPoundage},</if>
+            <if test="buyTime != null">#{buyTime},</if>
+            <if test="sellPrice != null">#{sellPrice},</if>
+            <if test="sellPoundage != null">#{sellPoundage},</if>
+            <if test="sellStampDuty != null">#{sellStampDuty},</if>
+            <if test="sellTime != null">#{sellTime},</if>
+            <if test="tradingNumber != null">#{tradingNumber},</if>
+            <if test="tradeDirect != null">#{tradeDirect},</if>
+            <if test="profitLose != null">#{profitLose},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+            <if test="remarks != null">#{remarks},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFaBHoldDetail" parameterType="FaBHoldDetail">
+        update fa_b_hold_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="holdNo != null">hold_no = #{holdNo},</if>
+            <if test="tradeId != null">trade_id = #{tradeId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="coinId != null">coin_id = #{coinId},</if>
+            <if test="coinType != null">coin_type = #{coinType},</if>
+            <if test="holdNumber != null">hold_number = #{holdNumber},</if>
+            <if test="holdType != null">hold_type = #{holdType},</if>
+            <if test="freezeNumber != null">freeze_number = #{freezeNumber},</if>
+            <if test="freezeDaysLeft != null">freeze_days_left = #{freezeDaysLeft},</if>
+            <if test="freezeStatus != null">freeze_status = #{freezeStatus},</if>
+            <if test="isLock != null">is_lock = #{isLock},</if>
+            <if test="buyPrice != null">buy_price = #{buyPrice},</if>
+            <if test="buyPoundage != null">buy_poundage = #{buyPoundage},</if>
+            <if test="buyTime != null">buy_time = #{buyTime},</if>
+            <if test="sellPrice != null">sell_price = #{sellPrice},</if>
+            <if test="sellPoundage != null">sell_poundage = #{sellPoundage},</if>
+            <if test="sellStampDuty != null">sell_stamp_duty = #{sellStampDuty},</if>
+            <if test="sellTime != null">sell_time = #{sellTime},</if>
+            <if test="tradingNumber != null">trading_number = #{tradingNumber},</if>
+            <if test="tradeDirect != null">trade_direct = #{tradeDirect},</if>
+            <if test="profitLose != null">profit_lose = #{profitLose},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFaBHoldDetailById" parameterType="Integer">
+        update fa_b_hold_detail set delete_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteFaBHoldDetailByIds" parameterType="String">
+        update fa_b_hold_detail set delete_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

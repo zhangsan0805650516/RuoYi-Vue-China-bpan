@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.coin.BCoinSpot.mapper.FaBCoinSpotMapper">
+    
+    <resultMap type="FaBCoinSpot" id="FaBCoinSpotResult">
+        <result property="id"    column="id"    />
+        <result property="coinName"    column="coin_name"    />
+        <result property="coinNameEn"    column="coin_name_en"    />
+        <result property="coinCode"    column="coin_code"    />
+        <result property="coinDescribe"    column="coin_describe"    />
+        <result property="coinIcon"    column="coin_icon"    />
+        <result property="coinSort"    column="coin_sort"    />
+        <result property="coinFxTotalNum"    column="coin_fx_total_num"    />
+        <result property="coinLtTotalNum"    column="coin_lt_total_num"    />
+        <result property="coinFxPrice"    column="coin_fx_price"    />
+        <result property="coinFxTime"    column="coin_fx_time"    />
+        <result property="coinWhitePaperLink"    column="coin_white_paper_link"    />
+        <result property="coinOfficialWebsiteLink"    column="coin_official_website_link"    />
+        <result property="coinWithdrawFee"    column="coin_withdraw_fee"    />
+        <result property="coinWithdrawLimitDown"    column="coin_withdraw_limit_down"    />
+        <result property="coinWithdrawLimitUp"    column="coin_withdraw_limit_up"    />
+        <result property="isShow"    column="is_show"    />
+        <result property="isPin"    column="is_pin"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+        <result property="caiPrice"    column="cai_price"    />
+        <result property="caiPricechange"    column="cai_pricechange"    />
+        <result property="caiChangepercent"    column="cai_changepercent"    />
+        <result property="caiBuy"    column="cai_buy"    />
+        <result property="caiSell"    column="cai_sell"    />
+        <result property="caiSettlement"    column="cai_settlement"    />
+        <result property="caiOpen"    column="cai_open"    />
+        <result property="caiHigh"    column="cai_high"    />
+        <result property="caiLow"    column="cai_low"    />
+        <result property="caiVolume"    column="cai_volume"    />
+        <result property="caiVolumeUsdt"    column="cai_volume_usdt"    />
+        <result property="caiAmount"    column="cai_amount"    />
+        <result property="caiAmountUsdt"    column="cai_amount_usdt"    />
+    </resultMap>
+
+    <sql id="selectFaBCoinSpotVo">
+        select id, coin_name, coin_name_en, coin_code, coin_describe, coin_icon, coin_sort, coin_fx_total_num, coin_lt_total_num, coin_fx_price, coin_fx_time, coin_white_paper_link, coin_official_website_link, coin_withdraw_fee, coin_withdraw_limit_down, coin_withdraw_limit_up, is_show, is_pin, status, create_time, create_by, update_time, update_by, remarks, delete_flag, cai_price, cai_pricechange, cai_changepercent, cai_buy, cai_sell, cai_settlement, cai_open, cai_high, cai_low, cai_volume, cai_volume_usdt, cai_amount, cai_amount_usdt from fa_b_coin_spot
+    </sql>
+
+    <select id="selectFaBCoinSpotList" parameterType="FaBCoinSpot" resultMap="FaBCoinSpotResult">
+        <include refid="selectFaBCoinSpotVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="coinName != null  and coinName != ''"> and coin_name like concat('%', #{coinName}, '%')</if>
+            <if test="coinNameEn != null  and coinNameEn != ''"> and coin_name_en = #{coinNameEn}</if>
+            <if test="coinCode != null  and coinCode != ''"> and coin_code = #{coinCode}</if>
+            <if test="coinDescribe != null  and coinDescribe != ''"> and coin_describe = #{coinDescribe}</if>
+            <if test="coinIcon != null  and coinIcon != ''"> and coin_icon = #{coinIcon}</if>
+            <if test="coinSort != null "> and coin_sort = #{coinSort}</if>
+            <if test="coinFxTotalNum != null "> and coin_fx_total_num = #{coinFxTotalNum}</if>
+            <if test="coinLtTotalNum != null "> and coin_lt_total_num = #{coinLtTotalNum}</if>
+            <if test="coinFxPrice != null "> and coin_fx_price = #{coinFxPrice}</if>
+            <if test="coinFxTime != null "> and coin_fx_time = #{coinFxTime}</if>
+            <if test="coinWhitePaperLink != null  and coinWhitePaperLink != ''"> and coin_white_paper_link = #{coinWhitePaperLink}</if>
+            <if test="coinOfficialWebsiteLink != null  and coinOfficialWebsiteLink != ''"> and coin_official_website_link = #{coinOfficialWebsiteLink}</if>
+            <if test="coinWithdrawFee != null "> and coin_withdraw_fee = #{coinWithdrawFee}</if>
+            <if test="coinWithdrawLimitDown != null "> and coin_withdraw_limit_down = #{coinWithdrawLimitDown}</if>
+            <if test="coinWithdrawLimitUp != null "> and coin_withdraw_limit_up = #{coinWithdrawLimitUp}</if>
+            <if test="isShow != null "> and is_show = #{isShow}</if>
+            <if test="isPin != null "> and is_pin = #{isPin}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+            <if test="caiPrice != null "> and cai_price = #{caiPrice}</if>
+            <if test="caiPricechange != null "> and cai_pricechange = #{caiPricechange}</if>
+            <if test="caiChangepercent != null "> and cai_changepercent = #{caiChangepercent}</if>
+            <if test="caiBuy != null "> and cai_buy = #{caiBuy}</if>
+            <if test="caiSell != null "> and cai_sell = #{caiSell}</if>
+            <if test="caiSettlement != null "> and cai_settlement = #{caiSettlement}</if>
+            <if test="caiOpen != null "> and cai_open = #{caiOpen}</if>
+            <if test="caiHigh != null "> and cai_high = #{caiHigh}</if>
+            <if test="caiLow != null "> and cai_low = #{caiLow}</if>
+            <if test="caiVolume != null "> and cai_volume = #{caiVolume}</if>
+            <if test="caiVolumeUsdt != null "> and cai_volume_usdt = #{caiVolumeUsdt}</if>
+            <if test="caiAmount != null "> and cai_amount = #{caiAmount}</if>
+            <if test="caiAmountUsdt != null "> and cai_amount_usdt = #{caiAmountUsdt}</if>
+        </where>
+    </select>
+    
+    <select id="selectFaBCoinSpotById" parameterType="Integer" resultMap="FaBCoinSpotResult">
+        <include refid="selectFaBCoinSpotVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFaBCoinSpot" parameterType="FaBCoinSpot" useGeneratedKeys="true" keyProperty="id">
+        insert into fa_b_coin_spot
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coinName != null">coin_name,</if>
+            <if test="coinNameEn != null">coin_name_en,</if>
+            <if test="coinCode != null">coin_code,</if>
+            <if test="coinDescribe != null">coin_describe,</if>
+            <if test="coinIcon != null">coin_icon,</if>
+            <if test="coinSort != null">coin_sort,</if>
+            <if test="coinFxTotalNum != null">coin_fx_total_num,</if>
+            <if test="coinLtTotalNum != null">coin_lt_total_num,</if>
+            <if test="coinFxPrice != null">coin_fx_price,</if>
+            <if test="coinFxTime != null">coin_fx_time,</if>
+            <if test="coinWhitePaperLink != null">coin_white_paper_link,</if>
+            <if test="coinOfficialWebsiteLink != null">coin_official_website_link,</if>
+            <if test="coinWithdrawFee != null">coin_withdraw_fee,</if>
+            <if test="coinWithdrawLimitDown != null">coin_withdraw_limit_down,</if>
+            <if test="coinWithdrawLimitUp != null">coin_withdraw_limit_up,</if>
+            <if test="isShow != null">is_show,</if>
+            <if test="isPin != null">is_pin,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+            <if test="caiPrice != null">cai_price,</if>
+            <if test="caiPricechange != null">cai_pricechange,</if>
+            <if test="caiChangepercent != null">cai_changepercent,</if>
+            <if test="caiBuy != null">cai_buy,</if>
+            <if test="caiSell != null">cai_sell,</if>
+            <if test="caiSettlement != null">cai_settlement,</if>
+            <if test="caiOpen != null">cai_open,</if>
+            <if test="caiHigh != null">cai_high,</if>
+            <if test="caiLow != null">cai_low,</if>
+            <if test="caiVolume != null">cai_volume,</if>
+            <if test="caiVolumeUsdt != null">cai_volume_usdt,</if>
+            <if test="caiAmount != null">cai_amount,</if>
+            <if test="caiAmountUsdt != null">cai_amount_usdt,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coinName != null">#{coinName},</if>
+            <if test="coinNameEn != null">#{coinNameEn},</if>
+            <if test="coinCode != null">#{coinCode},</if>
+            <if test="coinDescribe != null">#{coinDescribe},</if>
+            <if test="coinIcon != null">#{coinIcon},</if>
+            <if test="coinSort != null">#{coinSort},</if>
+            <if test="coinFxTotalNum != null">#{coinFxTotalNum},</if>
+            <if test="coinLtTotalNum != null">#{coinLtTotalNum},</if>
+            <if test="coinFxPrice != null">#{coinFxPrice},</if>
+            <if test="coinFxTime != null">#{coinFxTime},</if>
+            <if test="coinWhitePaperLink != null">#{coinWhitePaperLink},</if>
+            <if test="coinOfficialWebsiteLink != null">#{coinOfficialWebsiteLink},</if>
+            <if test="coinWithdrawFee != null">#{coinWithdrawFee},</if>
+            <if test="coinWithdrawLimitDown != null">#{coinWithdrawLimitDown},</if>
+            <if test="coinWithdrawLimitUp != null">#{coinWithdrawLimitUp},</if>
+            <if test="isShow != null">#{isShow},</if>
+            <if test="isPin != null">#{isPin},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+            <if test="caiPrice != null">#{caiPrice},</if>
+            <if test="caiPricechange != null">#{caiPricechange},</if>
+            <if test="caiChangepercent != null">#{caiChangepercent},</if>
+            <if test="caiBuy != null">#{caiBuy},</if>
+            <if test="caiSell != null">#{caiSell},</if>
+            <if test="caiSettlement != null">#{caiSettlement},</if>
+            <if test="caiOpen != null">#{caiOpen},</if>
+            <if test="caiHigh != null">#{caiHigh},</if>
+            <if test="caiLow != null">#{caiLow},</if>
+            <if test="caiVolume != null">#{caiVolume},</if>
+            <if test="caiVolumeUsdt != null">#{caiVolumeUsdt},</if>
+            <if test="caiAmount != null">#{caiAmount},</if>
+            <if test="caiAmountUsdt != null">#{caiAmountUsdt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFaBCoinSpot" parameterType="FaBCoinSpot">
+        update fa_b_coin_spot
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coinName != null">coin_name = #{coinName},</if>
+            <if test="coinNameEn != null">coin_name_en = #{coinNameEn},</if>
+            <if test="coinCode != null">coin_code = #{coinCode},</if>
+            <if test="coinDescribe != null">coin_describe = #{coinDescribe},</if>
+            <if test="coinIcon != null">coin_icon = #{coinIcon},</if>
+            <if test="coinSort != null">coin_sort = #{coinSort},</if>
+            <if test="coinFxTotalNum != null">coin_fx_total_num = #{coinFxTotalNum},</if>
+            <if test="coinLtTotalNum != null">coin_lt_total_num = #{coinLtTotalNum},</if>
+            <if test="coinFxPrice != null">coin_fx_price = #{coinFxPrice},</if>
+            <if test="coinFxTime != null">coin_fx_time = #{coinFxTime},</if>
+            <if test="coinWhitePaperLink != null">coin_white_paper_link = #{coinWhitePaperLink},</if>
+            <if test="coinOfficialWebsiteLink != null">coin_official_website_link = #{coinOfficialWebsiteLink},</if>
+            <if test="coinWithdrawFee != null">coin_withdraw_fee = #{coinWithdrawFee},</if>
+            <if test="coinWithdrawLimitDown != null">coin_withdraw_limit_down = #{coinWithdrawLimitDown},</if>
+            <if test="coinWithdrawLimitUp != null">coin_withdraw_limit_up = #{coinWithdrawLimitUp},</if>
+            <if test="isShow != null">is_show = #{isShow},</if>
+            <if test="isPin != null">is_pin = #{isPin},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+            <if test="caiPrice != null">cai_price = #{caiPrice},</if>
+            <if test="caiPricechange != null">cai_pricechange = #{caiPricechange},</if>
+            <if test="caiChangepercent != null">cai_changepercent = #{caiChangepercent},</if>
+            <if test="caiBuy != null">cai_buy = #{caiBuy},</if>
+            <if test="caiSell != null">cai_sell = #{caiSell},</if>
+            <if test="caiSettlement != null">cai_settlement = #{caiSettlement},</if>
+            <if test="caiOpen != null">cai_open = #{caiOpen},</if>
+            <if test="caiHigh != null">cai_high = #{caiHigh},</if>
+            <if test="caiLow != null">cai_low = #{caiLow},</if>
+            <if test="caiVolume != null">cai_volume = #{caiVolume},</if>
+            <if test="caiVolumeUsdt != null">cai_volume_usdt = #{caiVolumeUsdt},</if>
+            <if test="caiAmount != null">cai_amount = #{caiAmount},</if>
+            <if test="caiAmountUsdt != null">cai_amount_usdt = #{caiAmountUsdt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFaBCoinSpotById" parameterType="Integer">
+        update fa_b_coin_spot set delete_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteFaBCoinSpotByIds" parameterType="String">
+        update fa_b_coin_spot set delete_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

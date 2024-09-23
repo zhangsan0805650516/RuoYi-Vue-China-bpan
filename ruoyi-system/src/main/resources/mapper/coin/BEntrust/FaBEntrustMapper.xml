@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.coin.BEntrust.mapper.FaBEntrustMapper">
+    
+    <resultMap type="FaBEntrust" id="FaBEntrustResult">
+        <result property="id"    column="id"    />
+        <result property="entrustNo"    column="entrust_no"    />
+        <result property="userId"    column="user_id"    />
+        <result property="coinId"    column="coin_id"    />
+        <result property="coinType"    column="coin_type"    />
+        <result property="entrustPrice"    column="entrust_price"    />
+        <result property="entrustNumber"    column="entrust_number"    />
+        <result property="tradeNumber"    column="trade_number"    />
+        <result property="undoTime"    column="undo_time"    />
+        <result property="entrustState"    column="entrust_state"    />
+        <result property="tradingType"    column="trading_type"    />
+        <result property="tradeDirect"    column="trade_direct"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="deleteFlag"    column="delete_flag"    />
+    </resultMap>
+
+    <sql id="selectFaBEntrustVo">
+        select id, entrust_no, user_id, coin_id, coin_type, entrust_price, entrust_number, trade_number, undo_time, entrust_state, trading_type, trade_direct, create_time, create_by, update_time, update_by, remarks, delete_flag from fa_b_entrust
+    </sql>
+
+    <select id="selectFaBEntrustList" parameterType="FaBEntrust" resultMap="FaBEntrustResult">
+        <include refid="selectFaBEntrustVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="entrustNo != null  and entrustNo != ''"> and entrust_no = #{entrustNo}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="coinId != null "> and coin_id = #{coinId}</if>
+            <if test="coinType != null "> and coin_type = #{coinType}</if>
+            <if test="entrustPrice != null "> and entrust_price = #{entrustPrice}</if>
+            <if test="entrustNumber != null "> and entrust_number = #{entrustNumber}</if>
+            <if test="tradeNumber != null "> and trade_number = #{tradeNumber}</if>
+            <if test="undoTime != null "> and undo_time = #{undoTime}</if>
+            <if test="entrustState != null "> and entrust_state = #{entrustState}</if>
+            <if test="tradingType != null "> and trading_type = #{tradingType}</if>
+            <if test="tradeDirect != null "> and trade_direct = #{tradeDirect}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="deleteFlag != null "> and delete_flag = #{deleteFlag}</if>
+        </where>
+    </select>
+    
+    <select id="selectFaBEntrustById" parameterType="Integer" resultMap="FaBEntrustResult">
+        <include refid="selectFaBEntrustVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFaBEntrust" parameterType="FaBEntrust" useGeneratedKeys="true" keyProperty="id">
+        insert into fa_b_entrust
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="entrustNo != null">entrust_no,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="coinId != null">coin_id,</if>
+            <if test="coinType != null">coin_type,</if>
+            <if test="entrustPrice != null">entrust_price,</if>
+            <if test="entrustNumber != null">entrust_number,</if>
+            <if test="tradeNumber != null">trade_number,</if>
+            <if test="undoTime != null">undo_time,</if>
+            <if test="entrustState != null">entrust_state,</if>
+            <if test="tradingType != null">trading_type,</if>
+            <if test="tradeDirect != null">trade_direct,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="deleteFlag != null">delete_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="entrustNo != null">#{entrustNo},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="coinId != null">#{coinId},</if>
+            <if test="coinType != null">#{coinType},</if>
+            <if test="entrustPrice != null">#{entrustPrice},</if>
+            <if test="entrustNumber != null">#{entrustNumber},</if>
+            <if test="tradeNumber != null">#{tradeNumber},</if>
+            <if test="undoTime != null">#{undoTime},</if>
+            <if test="entrustState != null">#{entrustState},</if>
+            <if test="tradingType != null">#{tradingType},</if>
+            <if test="tradeDirect != null">#{tradeDirect},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="deleteFlag != null">#{deleteFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFaBEntrust" parameterType="FaBEntrust">
+        update fa_b_entrust
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="entrustNo != null">entrust_no = #{entrustNo},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="coinId != null">coin_id = #{coinId},</if>
+            <if test="coinType != null">coin_type = #{coinType},</if>
+            <if test="entrustPrice != null">entrust_price = #{entrustPrice},</if>
+            <if test="entrustNumber != null">entrust_number = #{entrustNumber},</if>
+            <if test="tradeNumber != null">trade_number = #{tradeNumber},</if>
+            <if test="undoTime != null">undo_time = #{undoTime},</if>
+            <if test="entrustState != null">entrust_state = #{entrustState},</if>
+            <if test="tradingType != null">trading_type = #{tradingType},</if>
+            <if test="tradeDirect != null">trade_direct = #{tradeDirect},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFaBEntrustById" parameterType="Integer">
+        update fa_b_entrust set delete_flag = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteFaBEntrustByIds" parameterType="String">
+        update fa_b_entrust set delete_flag = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
