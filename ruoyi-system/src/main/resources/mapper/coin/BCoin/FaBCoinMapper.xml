@@ -43,10 +43,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="caiVolumeUsdt"    column="cai_volume_usdt"    />
         <result property="caiAmount"    column="cai_amount"    />
         <result property="caiAmountUsdt"    column="cai_amount_usdt"    />
+        <result property="tN"    column="t_n"    />
     </resultMap>
 
     <sql id="selectFaBCoinVo">
-        select id, coin_name, coin_name_en, coin_code, coin_describe, coin_icon, coin_sort, coin_fx_total_num, coin_lt_total_num, coin_fx_price, coin_fx_time, coin_white_paper_link, coin_official_website_link, coin_withdraw_fee, coin_withdraw_limit_down, coin_withdraw_limit_up, is_show, is_pin, status, create_time, create_by, update_time, update_by, remarks, delete_flag, cai_price, cai_pricechange, cai_changepercent, cai_buy, cai_sell, cai_settlement, cai_open, cai_high, cai_low, cai_volume, cai_volume_usdt, cai_amount, cai_amount_usdt from fa_b_coin
+        select id, coin_name, coin_name_en, coin_code, coin_describe, coin_icon, coin_sort, coin_fx_total_num, coin_lt_total_num, coin_fx_price, coin_fx_time, coin_white_paper_link, coin_official_website_link, coin_withdraw_fee, coin_withdraw_limit_down, coin_withdraw_limit_up, is_show, is_pin, status, create_time, create_by, update_time, update_by, remarks, delete_flag, cai_price, cai_pricechange, cai_changepercent, cai_buy, cai_sell, cai_settlement, cai_open, cai_high, cai_low, cai_volume, cai_volume_usdt, cai_amount, cai_amount_usdt, t_n from fa_b_coin
     </sql>
 
     <select id="selectFaBCoinList" parameterType="FaBCoin" resultMap="FaBCoinResult">
@@ -90,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="caiVolumeUsdt != null "> and cai_volume_usdt = #{caiVolumeUsdt}</if>
             <if test="caiAmount != null "> and cai_amount = #{caiAmount}</if>
             <if test="caiAmountUsdt != null "> and cai_amount_usdt = #{caiAmountUsdt}</if>
+            <if test="tN != null "> and t_n = #{tN}</if>
         </where>
     </select>
     
@@ -138,6 +140,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="caiVolumeUsdt != null">cai_volume_usdt,</if>
             <if test="caiAmount != null">cai_amount,</if>
             <if test="caiAmountUsdt != null">cai_amount_usdt,</if>
+            <if test="tN != null">t_n,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="coinName != null">#{coinName},</if>
@@ -177,6 +180,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="caiVolumeUsdt != null">#{caiVolumeUsdt},</if>
             <if test="caiAmount != null">#{caiAmount},</if>
             <if test="caiAmountUsdt != null">#{caiAmountUsdt},</if>
+            <if test="tN != null">#{tN},</if>
          </trim>
     </insert>
 
@@ -220,6 +224,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="caiVolumeUsdt != null">cai_volume_usdt = #{caiVolumeUsdt},</if>
             <if test="caiAmount != null">cai_amount = #{caiAmount},</if>
             <if test="caiAmountUsdt != null">cai_amount_usdt = #{caiAmountUsdt},</if>
+            <if test="tN != null">t_n = #{tN},</if>
         </trim>
         where id = #{id}
     </update>
