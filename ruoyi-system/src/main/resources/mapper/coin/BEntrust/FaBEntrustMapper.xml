@@ -12,7 +12,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="coinType"    column="coin_type"    />
         <result property="entrustPrice"    column="entrust_price"    />
         <result property="entrustNumber"    column="entrust_number"    />
+        <result property="entrustAmount"    column="entrust_amount"    />
+        <result property="tradePrice"    column="trade_price"    />
         <result property="tradeNumber"    column="trade_number"    />
+        <result property="tradeAmount"    column="trade_amount"    />
+        <result property="tradingPoundage"    column="trading_poundage"    />
+        <result property="stampDuty"    column="stamp_duty"    />
         <result property="undoTime"    column="undo_time"    />
         <result property="entrustState"    column="entrust_state"    />
         <result property="tradingType"    column="trading_type"    />
@@ -26,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectFaBEntrustVo">
-        select id, entrust_no, user_id, coin_id, coin_type, entrust_price, entrust_number, trade_number, undo_time, entrust_state, trading_type, trade_direct, create_time, create_by, update_time, update_by, remarks, delete_flag from fa_b_entrust
+        select id, entrust_no, user_id, coin_id, coin_type, entrust_price, entrust_number, entrust_amount, trade_price, trade_number, trade_amount, trading_poundage, stamp_duty, undo_time, entrust_state, trading_type, trade_direct, create_time, create_by, update_time, update_by, remarks, delete_flag from fa_b_entrust
     </sql>
 
     <select id="selectFaBEntrustList" parameterType="FaBEntrust" resultMap="FaBEntrustResult">
@@ -39,7 +44,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="coinType != null "> and coin_type = #{coinType}</if>
             <if test="entrustPrice != null "> and entrust_price = #{entrustPrice}</if>
             <if test="entrustNumber != null "> and entrust_number = #{entrustNumber}</if>
+            <if test="entrustAmount != null "> and entrust_amount = #{entrustAmount}</if>
+            <if test="tradePrice != null "> and trade_price = #{tradePrice}</if>
             <if test="tradeNumber != null "> and trade_number = #{tradeNumber}</if>
+            <if test="tradeAmount != null "> and trade_amount = #{tradeAmount}</if>
+            <if test="tradingPoundage != null "> and trading_poundage = #{tradingPoundage}</if>
+            <if test="stampDuty != null "> and stamp_duty = #{stampDuty}</if>
             <if test="undoTime != null "> and undo_time = #{undoTime}</if>
             <if test="entrustState != null "> and entrust_state = #{entrustState}</if>
             <if test="tradingType != null "> and trading_type = #{tradingType}</if>
@@ -67,7 +77,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="coinType != null">coin_type,</if>
             <if test="entrustPrice != null">entrust_price,</if>
             <if test="entrustNumber != null">entrust_number,</if>
+            <if test="entrustAmount != null">entrust_amount,</if>
+            <if test="tradePrice != null">trade_price,</if>
             <if test="tradeNumber != null">trade_number,</if>
+            <if test="tradeAmount != null">trade_amount,</if>
+            <if test="tradingPoundage != null">trading_poundage,</if>
+            <if test="stampDuty != null">stamp_duty,</if>
             <if test="undoTime != null">undo_time,</if>
             <if test="entrustState != null">entrust_state,</if>
             <if test="tradingType != null">trading_type,</if>
@@ -86,7 +101,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="coinType != null">#{coinType},</if>
             <if test="entrustPrice != null">#{entrustPrice},</if>
             <if test="entrustNumber != null">#{entrustNumber},</if>
+            <if test="entrustAmount != null">#{entrustAmount},</if>
+            <if test="tradePrice != null">#{tradePrice},</if>
             <if test="tradeNumber != null">#{tradeNumber},</if>
+            <if test="tradeAmount != null">#{tradeAmount},</if>
+            <if test="tradingPoundage != null">#{tradingPoundage},</if>
+            <if test="stampDuty != null">#{stampDuty},</if>
             <if test="undoTime != null">#{undoTime},</if>
             <if test="entrustState != null">#{entrustState},</if>
             <if test="tradingType != null">#{tradingType},</if>
@@ -109,7 +129,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="coinType != null">coin_type = #{coinType},</if>
             <if test="entrustPrice != null">entrust_price = #{entrustPrice},</if>
             <if test="entrustNumber != null">entrust_number = #{entrustNumber},</if>
+            <if test="entrustAmount != null">entrust_amount = #{entrustAmount},</if>
+            <if test="tradePrice != null">trade_price = #{tradePrice},</if>
             <if test="tradeNumber != null">trade_number = #{tradeNumber},</if>
+            <if test="tradeAmount != null">trade_amount = #{tradeAmount},</if>
+            <if test="tradingPoundage != null">trading_poundage = #{tradingPoundage},</if>
+            <if test="stampDuty != null">stamp_duty = #{stampDuty},</if>
             <if test="undoTime != null">undo_time = #{undoTime},</if>
             <if test="entrustState != null">entrust_state = #{entrustState},</if>
             <if test="tradingType != null">trading_type = #{tradingType},</if>

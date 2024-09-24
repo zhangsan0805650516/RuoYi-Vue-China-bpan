@@ -72,11 +72,41 @@ public class FaBEntrust extends BaseEntity {
     @TableField("entrust_number")
     private BigDecimal entrustNumber;
 
+    /** 委托金额 */
+    @ApiModelProperty(value = "委托金额")
+    @Excel(name = "委托金额")
+    @TableField("entrust_amount")
+    private BigDecimal entrustAmount;
+
+    /** 成交价格 */
+    @ApiModelProperty(value = "成交价格")
+    @Excel(name = "成交价格")
+    @TableField("trade_price")
+    private BigDecimal tradePrice;
+
     /** 交易数量 */
     @ApiModelProperty(value = "交易数量")
     @Excel(name = "交易数量")
     @TableField("trade_number")
     private BigDecimal tradeNumber;
+
+    /** 成交金额 */
+    @ApiModelProperty(value = "成交金额")
+    @Excel(name = "成交金额")
+    @TableField("trade_amount")
+    private BigDecimal tradeAmount;
+
+    /** 手续费 */
+    @ApiModelProperty(value = "手续费")
+    @Excel(name = "手续费")
+    @TableField("trading_poundage")
+    private BigDecimal tradingPoundage;
+
+    /** 印花税 */
+    @ApiModelProperty(value = "印花税")
+    @Excel(name = "印花税")
+    @TableField("stamp_duty")
+    private BigDecimal stampDuty;
 
     /** 撤销时间 */
     @ApiModelProperty(value = "撤销时间")
