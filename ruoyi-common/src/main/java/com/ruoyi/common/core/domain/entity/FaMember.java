@@ -558,4 +558,40 @@ public class FaMember extends BaseEntity {
     @TableField("bank_card_auth")
     private Integer bankCardAuth;
 
+    /** 现货余额 */
+    @ApiModelProperty(value = "现货余额")
+    @Excel(name = "现货余额")
+    @TableField("balance_spot")
+    private BigDecimal balanceSpot;
+
+    /** 现货收益冻结 */
+    @ApiModelProperty(value = "现货收益冻结")
+    @Excel(name = "现货收益冻结")
+    @TableField("freeze_profit_spot")
+    private BigDecimal freezeProfitSpot;
+
+    /** 合约余额 */
+    @ApiModelProperty(value = "合约余额")
+    @Excel(name = "合约余额")
+    @TableField("balance_contract")
+    private BigDecimal balanceContract;
+
+    /** 合约收益冻结 */
+    @ApiModelProperty(value = "合约收益冻结")
+    @Excel(name = "合约收益冻结")
+    @TableField("freeze_profit_contract")
+    private BigDecimal freezeProfitContract;
+
+    /** 理财余额 */
+    @ApiModelProperty(value = "理财余额")
+    @Excel(name = "理财余额")
+    @TableField("balance_financing")
+    private BigDecimal balanceFinancing;
+
+    /** 理财收益冻结 */
+    @ApiModelProperty(value = "理财收益冻结")
+    @Excel(name = "理财收益冻结")
+    @TableField("freeze_profit_financing")
+    private BigDecimal freezeProfitFinancing;
+
 }

@@ -86,6 +86,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="unbindTime"    column="unbind_time"    />
         <result property="deleteFlag"    column="delete_flag"    />
         <result property="bankCardAuth"    column="bank_card_auth"    />
+        <result property="balanceSpot"    column="balance_spot"    />
+        <result property="freezeProfitSpot"    column="freeze_profit_spot"    />
+        <result property="balanceContract"    column="balance_contract"    />
+        <result property="freezeProfitContract"    column="freeze_profit_contract"    />
+        <result property="balanceFinancing"    column="balance_financing"    />
+        <result property="freezeProfitFinancing"    column="freeze_profit_financing"    />
     </resultMap>
 
     <sql id="selectFaMemberVo">
@@ -170,7 +176,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             m.binding_time,
             m.unbind_time,
             m.delete_flag,
-            m.bank_card_auth
+            m.bank_card_auth,
+            m.balance_spot,
+            m.freeze_profit_spot,
+            m.balance_contract,
+            m.freeze_profit_contract,
+            m.balance_financing,
+            m.freeze_profit_financing
         FROM
             fa_member m
     </sql>
@@ -269,6 +281,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="unbindTime != null "> and m.unbind_time = #{unbindTime}</if>
             <if test="deleteFlag != null "> and m.delete_flag = #{deleteFlag}</if>
             <if test="bankCardAuth != null "> and m.bank_card_auth = #{bankCardAuth}</if>
+            <if test="balanceSpot != null "> and m.balance_spot = #{balanceSpot}</if>
+            <if test="freezeProfitSpot != null "> and m.freeze_profit_spot = #{freezeProfitSpot}</if>
+            <if test="balanceContract != null "> and m.balance_contract = #{balanceContract}</if>
+            <if test="freezeProfitContract != null "> and m.freeze_profit_contract = #{freezeProfitContract}</if>
+            <if test="balanceFinancing != null "> and m.balance_financing = #{balanceFinancing}</if>
+            <if test="freezeProfitFinancing != null "> and m.freeze_profit_financing = #{freezeProfitFinancing}</if>
         </where>
         and m.daili_id in ( select #{parentId} union all select u.user_id from sys_user u where u.path like concat('%,', #{parentId}, ',%'))
     </select>
@@ -372,6 +390,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="unbindTime != null "> and m.unbind_time = #{unbindTime}</if>
             <if test="deleteFlag != null "> and m.delete_flag = #{deleteFlag}</if>
             <if test="bankCardAuth != null "> and m.bank_card_auth = #{bankCardAuth}</if>
+            <if test="balanceSpot != null "> and m.balance_spot = #{balanceSpot}</if>
+            <if test="freezeProfitSpot != null "> and m.freeze_profit_spot = #{freezeProfitSpot}</if>
+            <if test="balanceContract != null "> and m.balance_contract = #{balanceContract}</if>
+            <if test="freezeProfitContract != null "> and m.freeze_profit_contract = #{freezeProfitContract}</if>
+            <if test="balanceFinancing != null "> and m.balance_financing = #{balanceFinancing}</if>
+            <if test="freezeProfitFinancing != null "> and m.freeze_profit_financing = #{freezeProfitFinancing}</if>
         </where>
         and m.is_auth in (1, 2, 3)
         and m.daili_id in ( select #{parentId} union all select u.user_id from sys_user u where u.path like concat('%,', #{parentId}, ',%'))
@@ -481,6 +505,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="unbindTime != null "> and m.unbind_time = #{unbindTime}</if>
             <if test="deleteFlag != null "> and m.delete_flag = #{deleteFlag}</if>
             <if test="bankCardAuth != null "> and m.bank_card_auth = #{bankCardAuth}</if>
+            <if test="balanceSpot != null "> and m.balance_spot = #{balanceSpot}</if>
+            <if test="freezeProfitSpot != null "> and m.freeze_profit_spot = #{freezeProfitSpot}</if>
+            <if test="balanceContract != null "> and m.balance_contract = #{balanceContract}</if>
+            <if test="freezeProfitContract != null "> and m.freeze_profit_contract = #{freezeProfitContract}</if>
+            <if test="balanceFinancing != null "> and m.balance_financing = #{balanceFinancing}</if>
+            <if test="freezeProfitFinancing != null "> and m.freeze_profit_financing = #{freezeProfitFinancing}</if>
         </where>
         and m.bank_card_auth in (1, 2, 3)
         and m.daili_id in ( select #{parentId} union all select u.user_id from sys_user u where u.path like concat('%,', #{parentId}, ',%'))
@@ -574,6 +604,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="unbindTime != null">unbind_time,</if>
             <if test="deleteFlag != null">delete_flag,</if>
             <if test="bankCardAuth != null">bank_card_auth,</if>
+            <if test="balanceSpot != null">balance_spot,</if>
+            <if test="freezeProfitSpot != null">freeze_profit_spot,</if>
+            <if test="balanceContract != null">balance_contract,</if>
+            <if test="freezeProfitContract != null">freeze_profit_contract,</if>
+            <if test="balanceFinancing != null">balance_financing,</if>
+            <if test="freezeProfitFinancing != null">freeze_profit_financing,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="groupId != null">#{groupId},</if>
@@ -656,6 +692,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="unbindTime != null">#{unbindTime},</if>
             <if test="deleteFlag != null">#{deleteFlag},</if>
             <if test="bankCardAuth != null">#{bankCardAuth},</if>
+            <if test="balanceSpot != null">#{balanceSpot},</if>
+            <if test="freezeProfitSpot != null">#{freezeProfitSpot},</if>
+            <if test="balanceContract != null">#{balanceContract},</if>
+            <if test="freezeProfitContract != null">#{freezeProfitContract},</if>
+            <if test="balanceFinancing != null">#{balanceFinancing},</if>
+            <if test="freezeProfitFinancing != null">#{freezeProfitFinancing},</if>
          </trim>
     </insert>
 
@@ -742,6 +784,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="unbindTime != null">unbind_time = #{unbindTime},</if>
             <if test="deleteFlag != null">delete_flag = #{deleteFlag},</if>
             <if test="bankCardAuth != null">bank_card_auth = #{bankCardAuth},</if>
+            <if test="balanceSpot != null">balance_spot = #{balanceSpot},</if>
+            <if test="freezeProfitSpot != null">freeze_profit_spot = #{freezeProfitSpot},</if>
+            <if test="balanceContract != null">balance_contract = #{balanceContract},</if>
+            <if test="freezeProfitContract != null">freeze_profit_contract = #{freezeProfitContract},</if>
+            <if test="balanceFinancing != null">balance_financing = #{balanceFinancing},</if>
+            <if test="freezeProfitFinancing != null">freeze_profit_financing = #{freezeProfitFinancing},</if>
         </trim>
         where id = #{id}
     </update>
