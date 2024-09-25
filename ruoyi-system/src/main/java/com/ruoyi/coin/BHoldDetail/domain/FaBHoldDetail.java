@@ -75,9 +75,9 @@ public class FaBHoldDetail extends BaseEntity {
     @TableField("coin_id")
     private Integer coinId;
 
-    /** 交易类型(1币 2现货 3合约) */
-    @ApiModelProperty(value = "交易类型(1币 2现货 3合约)")
-    @Excel(name = "交易类型(1币 2现货 3合约)")
+    /** 交易类型(1币 2现货 3合约 4理财) */
+    @ApiModelProperty(value = "交易类型(1币 2现货 3合约 4理财)")
+    @Excel(name = "交易类型(1币 2现货 3合约 4理财)")
     @TableField("coin_type")
     private Integer coinType;
 

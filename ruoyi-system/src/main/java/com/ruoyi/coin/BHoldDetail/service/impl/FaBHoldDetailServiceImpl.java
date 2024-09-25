@@ -150,7 +150,7 @@ public class FaBHoldDetailServiceImpl extends ServiceImpl<FaBHoldDetailMapper, F
         faBHoldDetail.setUserId(faBTrading.getUserId());
         // 现货/合约id
         faBHoldDetail.setCoinId(faBTrading.getCoinId());
-        // 交易类型(1币 2现货 3合约)
+        // 交易类型(1币 2现货 3合约 4理财)
         faBHoldDetail.setCoinType(faBTrading.getCoinType());
         // 持有数量
         faBHoldDetail.setHoldNumber(faBTrading.getTradingNumber());

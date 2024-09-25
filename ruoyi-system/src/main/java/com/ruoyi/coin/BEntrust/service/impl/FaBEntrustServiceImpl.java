@@ -157,7 +157,7 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         entrust.setUserId(faBEntrust.getUserId());
         // B种id
         entrust.setCoinId(faBEntrust.getCoinId());
-        // 交易类型(1币 2现货 3合约)
+        // 交易类型(1币 2现货 3合约 4理财)
         entrust.setCoinType(faBEntrust.getCoinType());
         // 委托价格
         entrust.setEntrustPrice(faBEntrust.getFaBCoin().getCaiPrice());
@@ -214,7 +214,7 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         entrust.setUserId(faBHoldDetail.getFaMember().getId());
         // B种id
         entrust.setCoinId(faBHoldDetail.getFaBCoin().getId());
-        // 交易类型(1币 2现货 3合约)
+        // 交易类型(1币 2现货 3合约 4理财)
         entrust.setCoinType(faBHoldDetail.getCoinType());
         // 委托价格
         entrust.setEntrustPrice(faBHoldDetail.getFaBCoin().getCaiPrice());

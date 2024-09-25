@@ -147,7 +147,7 @@ public class FaBTradingServiceImpl extends ServiceImpl<FaBTradingMapper, FaBTrad
         faBTrading.setUserId(faBEntrust.getUserId());
         // 交易品id
         faBTrading.setCoinId(faBEntrust.getCoinId());
-        // 交易类型(1币 2现货 3合约)
+        // 交易类型(1币 2现货 3合约 4理财)
         faBTrading.setCoinType(faBEntrust.getCoinType());
         // 成交数量
         faBTrading.setTradingNumber(faBEntrust.getTradeNumber());
@@ -188,7 +188,7 @@ public class FaBTradingServiceImpl extends ServiceImpl<FaBTradingMapper, FaBTrad
         faBTrading.setUserId(faBEntrust.getUserId());
         // 交易品id
         faBTrading.setCoinId(faBEntrust.getCoinId());
-        // 交易类型(1币 2现货 3合约)
+        // 交易类型(1币 2现货 3合约 4理财)
         faBTrading.setCoinType(faBEntrust.getCoinType());
         // 成交数量
         faBTrading.setTradingNumber(faBEntrust.getTradeNumber());

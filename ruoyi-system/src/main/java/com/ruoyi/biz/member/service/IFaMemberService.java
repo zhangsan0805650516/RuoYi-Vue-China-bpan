@@ -390,4 +390,24 @@ public interface IFaMemberService extends IService<FaMember>
      * @throws Exception
      */
     String getMobile(FaMember faMember) throws Exception;
+
+    /**
+     * 更新余额
+     * @param userId
+     * @param money
+     * @param direct
+     * @param coinType
+     * @throws Exception
+     */
+    void updateMemberBalanceByType(Integer userId, BigDecimal money, Integer direct, Integer coinType) throws Exception;
+
+    /**
+     * 更新冻结余额
+     * @param userId
+     * @param money
+     * @param direct
+     * @param coinType
+     * @throws Exception
+     */
+    void updateFaMemberFreezeProfitByType(Integer userId, BigDecimal money, Integer direct, Integer coinType) throws Exception;
 }

@@ -879,10 +879,10 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
         }
 
         // 更新用户余额 减少 交易金额+手续费
-        iFaMemberService.updateMemberBalance(faBTrading.getUserId(), faBTrading.getTradingAmount().add(faBTrading.getTradingPoundage()), Constants.subtract);
+        iFaMemberService.updateMemberBalanceByType(faBTrading.getUserId(), faBTrading.getTradingAmount().add(faBTrading.getTradingPoundage()), Constants.subtract, faBTrading.getCoinType());
 
         // 更新用户冻结 减少 交易金额+手续费
-        iFaMemberService.updateFaMemberFreezeProfit(faBTrading.getUserId(), faBTrading.getTradingAmount().add(faBTrading.getTradingPoundage()), Constants.subtract);
+        iFaMemberService.updateFaMemberFreezeProfitByType(faBTrading.getUserId(), faBTrading.getTradingAmount().add(faBTrading.getTradingPoundage()), Constants.subtract, faBTrading.getCoinType());
     }
 
     /**
@@ -1003,16 +1003,15 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
         }
 
         // 更新用户余额 增加 交易金额-印花税-手续费
-        iFaMemberService.updateMemberBalance(faBTrading.getUserId(),
-                faBTrading.getTradingAmount().subtract(faBTrading.getStampDuty()).subtract(faBTrading.getTradingPoundage()), Constants.ADD);
+        iFaMemberService.updateMemberBalanceByType(faBTrading.getUserId(),
+                faBTrading.getTradingAmount().subtract(faBTrading.getStampDuty()).subtract(faBTrading.getTradingPoundage()), Constants.ADD, faBTrading.getCoinType());
 
         // 判断卖出资金T+N 冻结资金 增加 交易金额-印花税-手续费
         int tn = Integer.parseInt(iFaRiskConfigService.getConfigValue("kq_dj", "1"));
         if (tn > 0){
-            iFaMemberService.updateFaMemberFreezeProfit(faBTrading.getUserId(),
-                    faBTrading.getTradingAmount().subtract(faBTrading.getStampDuty()).subtract(faBTrading.getTradingPoundage()), Constants.ADD);
+            iFaMemberService.updateFaMemberFreezeProfitByType(faBTrading.getUserId(),
+                    faBTrading.getTradingAmount().subtract(faBTrading.getStampDuty()).subtract(faBTrading.getTradingPoundage()), Constants.ADD, faBTrading.getCoinType());
         }
-
     }
 
 }

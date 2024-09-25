@@ -41,7 +41,7 @@ public class BEntrustController extends BaseController
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer"),
             @ApiImplicitParam(name = "size", value = "当页条数", required = true, dataType = "Integer"),
-            @ApiImplicitParam(name = "coinType", value = "交易类型(1币 2现货 3合约)", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "coinType", value = "交易类型(1币 2现货 3合约 4理财)", required = true, dataType = "Integer"),
     })
     @PostMapping("/getBEntrustList")
     public AjaxResult getBEntrustList(@RequestBody FaBEntrust faBEntrust)

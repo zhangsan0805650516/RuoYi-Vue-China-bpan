@@ -1889,4 +1889,78 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND st.member_id = #{id}
     </select>
 
+    <update id="updateMemberBalanceByType">
+        UPDATE fa_member m
+        <if test="coinType == 1 ">
+            <if test="direct == 0 ">
+                SET m.balance = m.balance + #{money}
+            </if>
+            <if test="direct == 1 ">
+                SET m.balance = m.balance - #{money}
+            </if>
+        </if>
+        <if test="coinType == 2 ">
+            <if test="direct == 0 ">
+                SET m.balance_spot = m.balance_spot + #{money}
+            </if>
+            <if test="direct == 1 ">
+                SET m.balance_spot = m.balance_spot - #{money}
+            </if>
+        </if>
+        <if test="coinType == 3 ">
+            <if test="direct == 0 ">
+                SET m.balance_contract = m.balance_contract + #{money}
+            </if>
+            <if test="direct == 1 ">
+                SET m.balance_contract = m.balance_contract - #{money}
+            </if>
+        </if>
+        <if test="coinType == 4 ">
+            <if test="direct == 0 ">
+                SET m.balance_financing = m.balance_financing + #{money}
+            </if>
+            <if test="direct == 1 ">
+                SET m.balance_financing = m.balance_financing - #{money}
+            </if>
+        </if>
+        WHERE m.id = #{userId}
+    </update>
+
+    <update id="updateFaMemberFreezeProfitByType">
+        UPDATE fa_member m
+        <if test="currencyType == 1 ">
+            <if test="direct == 0 ">
+                SET m.freeze_profit = m.freeze_profit + #{money}
+            </if>
+            <if test="direct == 1 ">
+                SET m.freeze_profit = IF(m.freeze_profit <![CDATA[<]]> #{money}, 0, m.freeze_profit - #{money})
+            </if>
+        </if>
+        <if test="currencyType == 2 ">
+            <if test="direct == 0 ">
+                SET m.freeze_profit_spot = m.freeze_profit_spot + #{money}
+            </if>
+            <if test="direct == 1 ">
+                SET m.freeze_profit_spot = IF(m.freeze_profit_spot <![CDATA[<]]> #{money}, 0, m.freeze_profit_spot - #{money})
+            </if>
+        </if>
+        <if test="currencyType == 3 ">
+            <if test="direct == 0 ">
+                SET m.freeze_profit_contract = m.freeze_profit_contract + #{money}
+            </if>
+            <if test="direct == 1 ">
+                SET m.freeze_profit_contract = IF(m.freeze_profit_contract <![CDATA[<]]> #{money}, 0, m.freeze_profit_contract - #{money})
+            </if>
+        </if>
+        <if test="currencyType == 4 ">
+            <if test="direct == 0 ">
+                SET m.freeze_profit_financing = m.freeze_profit_financing + #{money}
+            </if>
+            <if test="direct == 1 ">
+                SET m.freeze_profit_financing = IF(m.freeze_profit_financing <![CDATA[<]]> #{money}, 0, m.freeze_profit_financing - #{money})
+            </if>
+        </if>
+        WHERE m.id = #{userId}
+    </update>
+
 </mapper>

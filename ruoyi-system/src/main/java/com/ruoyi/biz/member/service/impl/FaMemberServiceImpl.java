@@ -1700,4 +1700,30 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
         return faMember.getMobile();
     }
 
+    /**
+     * 更新余额
+     * @param userId
+     * @param money
+     * @param direct
+     * @param coinType
+     * @throws Exception
+     */
+    @Override
+    public void updateMemberBalanceByType(Integer userId, BigDecimal money, Integer direct, Integer coinType) throws Exception {
+        faMemberMapper.updateMemberBalanceByType(userId, money, direct, coinType);
+    }
+
+    /**
+     * 更新冻结余额
+     * @param userId
+     * @param money
+     * @param direct
+     * @param coinType
+     * @throws Exception
+     */
+    @Override
+    public void updateFaMemberFreezeProfitByType(Integer userId, BigDecimal money, Integer direct, Integer coinType) throws Exception {
+        faMemberMapper.updateFaMemberFreezeProfitByType(userId, money, direct, coinType);
+    }
+
 }

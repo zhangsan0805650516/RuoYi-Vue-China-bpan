@@ -41,17 +41,17 @@ public class Constants
     public static final Integer SELL = 2;
 
     /**
-     * 交易类型(1币 2现货 3合约)
+     * 交易类型(1币 2现货 3合约 4理财)
      */
     public static final Integer COIN_TYPE_B = 1;
 
     /**
-     * 交易类型(1币 2现货 3合约)
+     * 交易类型(1币 2现货 3合约 4理财)
      */
     public static final Integer COIN_TYPE_SPOT = 2;
 
     /**
-     * 交易类型(1币 2现货 3合约)
+     * 交易类型(1币 2现货 3合约 4理财)
      */
     public static final Integer COIN_TYPE_CONTRACT = 3;
 

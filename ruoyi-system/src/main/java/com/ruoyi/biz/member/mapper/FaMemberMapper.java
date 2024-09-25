@@ -305,4 +305,8 @@ public interface FaMemberMapper extends BaseMapper<FaMember>
     BigDecimal getDzTradeInfoHoldProfit(@Param("id") Integer id) throws Exception;
 
     BigDecimal getTotalPoundage(@Param("id") Integer id) throws Exception;
+
+    void updateMemberBalanceByType(@Param("userId") Integer memberId, @Param("money") BigDecimal amount, @Param("direct") int direct, @Param("coinType") Integer coinType) throws Exception;
+
+    void updateFaMemberFreezeProfitByType(@Param("userId") Integer memberId, @Param("money") BigDecimal amount, @Param("direct") int direct, @Param("coinType") Integer coinType) throws Exception;
 }
