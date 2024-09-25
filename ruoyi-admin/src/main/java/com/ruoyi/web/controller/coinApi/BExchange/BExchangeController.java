@@ -135,6 +135,8 @@ public class BExchangeController extends BaseController
     public AjaxResult sellBCoinSpot(@RequestBody FaBHoldDetail faBHoldDetail)
     {
         try {
+            LoginMember loginMember = getLoginMember();
+            faBHoldDetail.setUserId(loginMember.getFaMember().getId());
             bExchangeService.sellBCoinSpot(faBHoldDetail);
             return AjaxResult.success();
         } catch (ServiceException e) {
@@ -163,6 +165,8 @@ public class BExchangeController extends BaseController
             LoginMember loginMember = getLoginMember();
             faBEntrust.setUserId(loginMember.getFaMember().getId());
             faBEntrust.setCoinType(Constants.COIN_TYPE_CONTRACT);
+            faBEntrust.setTradingType(Constants.BUY);
+            faBEntrust.setTradeDirect(Constants.BUY_UP);
             bExchangeService.buyBCoinContract(faBEntrust);
             return AjaxResult.success();
         } catch (ServiceException e) {
@@ -187,6 +191,8 @@ public class BExchangeController extends BaseController
     public AjaxResult sellBCoinContract(@RequestBody FaBHoldDetail faBHoldDetail)
     {
         try {
+            LoginMember loginMember = getLoginMember();
+            faBHoldDetail.setUserId(loginMember.getFaMember().getId());
             bExchangeService.sellBCoinContract(faBHoldDetail);
             return AjaxResult.success();
         } catch (ServiceException e) {

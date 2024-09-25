@@ -241,6 +241,8 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         FaBEntrust entrust = new FaBEntrust();
         entrust.setFaMember(faBHoldDetail.getFaMember());
         entrust.setFaBCoin(faBHoldDetail.getFaBCoin());
+        entrust.setFaBCoinSpot(faBHoldDetail.getFaBCoinSpot());
+        entrust.setFaBCoinContract(faBHoldDetail.getFaBCoinContract());
 
         // 委托流水号
         entrust.setEntrustNo("E" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue());
@@ -251,6 +253,21 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         // 交易类型(1币 2现货 3合约 4理财)
         entrust.setCoinType(faBHoldDetail.getCoinType());
         // 委托价格
+        switch (entrust.getCoinType()) {
+            case 1:
+                entrust.setEntrustPrice(faBHoldDetail.getFaBCoin().getCaiPrice());
+                break;
+            case 2:
+                entrust.setEntrustPrice(faBHoldDetail.getFaBCoinSpot().getCaiPrice());
+                break;
+            case 3:
+                entrust.setEntrustPrice(faBHoldDetail.getFaBCoinContract().getCaiPrice());
+                break;
+            case 4:
+                break;
+            default:
+                break;
+        }
         entrust.setEntrustPrice(faBHoldDetail.getFaBCoin().getCaiPrice());
         // 委托数量
         entrust.setEntrustNumber(faBHoldDetail.getHoldNumber());
