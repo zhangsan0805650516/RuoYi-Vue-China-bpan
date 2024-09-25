@@ -1,6 +1,5 @@
 package com.ruoyi.coin.BExchange.service;
 
-import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 import com.ruoyi.coin.BHoldDetail.domain.FaBHoldDetail;
 
