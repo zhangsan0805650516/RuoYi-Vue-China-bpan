@@ -7,7 +7,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="FaBHoldDetail" id="FaBHoldDetailResult">
         <result property="id"    column="id"    />
         <result property="holdNo"    column="hold_no"    />
-        <result property="tradeId"    column="trade_id"    />
+        <result property="tradeBuyId"    column="trade_buy_id"    />
+        <result property="tradeSellId"    column="trade_sell_id"    />
         <result property="userId"    column="user_id"    />
         <result property="coinId"    column="coin_id"    />
         <result property="coinType"    column="coin_type"    />
@@ -37,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectFaBHoldDetailVo">
-        select id, hold_no, trade_id, user_id, coin_id, coin_type, hold_number, hold_type, freeze_number, freeze_days_left, freeze_status, is_lock, buy_price, buy_poundage, buy_time, sell_price, sell_poundage, sell_stamp_duty, sell_time, trading_number, trade_direct, profit_lose, status, create_time, create_by, update_time, update_by, delete_flag, remarks from fa_b_hold_detail
+        select id, hold_no, trade_buy_id, trade_sell_id, user_id, coin_id, coin_type, hold_number, hold_type, freeze_number, freeze_days_left, freeze_status, is_lock, buy_price, buy_poundage, buy_time, sell_price, sell_poundage, sell_stamp_duty, sell_time, trading_number, trade_direct, profit_lose, status, create_time, create_by, update_time, update_by, delete_flag, remarks from fa_b_hold_detail
     </sql>
 
     <select id="selectFaBHoldDetailList" parameterType="FaBHoldDetail" resultMap="FaBHoldDetailResult">
@@ -45,7 +46,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="id != null "> and id = #{id}</if>
             <if test="holdNo != null  and holdNo != ''"> and hold_no = #{holdNo}</if>
-            <if test="tradeId != null "> and trade_id = #{tradeId}</if>
+            <if test="tradeBuyId != null "> and trade_buy_id = #{tradeBuyId}</if>
+            <if test="tradeSellId != null "> and trade_sell_id = #{tradeSellId}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
             <if test="coinId != null "> and coin_id = #{coinId}</if>
             <if test="coinType != null "> and coin_type = #{coinType}</if>
@@ -84,7 +86,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into fa_b_hold_detail
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="holdNo != null">hold_no,</if>
-            <if test="tradeId != null">trade_id,</if>
+            <if test="tradeBuyId != null">trade_buy_id,</if>
+            <if test="tradeSellId != null">trade_sell_id,</if>
             <if test="userId != null">user_id,</if>
             <if test="coinId != null">coin_id,</if>
             <if test="coinType != null">coin_type,</if>
@@ -114,7 +117,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="holdNo != null">#{holdNo},</if>
-            <if test="tradeId != null">#{tradeId},</if>
+            <if test="tradeBuyId != null">#{tradeBuyId},</if>
+            <if test="tradeSellId != null">#{tradeSellId},</if>
             <if test="userId != null">#{userId},</if>
             <if test="coinId != null">#{coinId},</if>
             <if test="coinType != null">#{coinType},</if>
@@ -148,7 +152,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update fa_b_hold_detail
         <trim prefix="SET" suffixOverrides=",">
             <if test="holdNo != null">hold_no = #{holdNo},</if>
-            <if test="tradeId != null">trade_id = #{tradeId},</if>
+            <if test="tradeBuyId != null">trade_buy_id = #{tradeBuyId},</if>
+            <if test="tradeSellId != null">trade_sell_id = #{tradeSellId},</if>
             <if test="userId != null">user_id = #{userId},</if>
             <if test="coinId != null">coin_id = #{coinId},</if>
             <if test="coinType != null">coin_type = #{coinType},</if>

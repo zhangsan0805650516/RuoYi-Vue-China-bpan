@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.ruoyi.common.core.domain.entity.FaMember;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -31,6 +33,12 @@ public class FaBHoldDetail extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @TableField(exist = false)
+    private FaMember faMember;
+
+    @TableField(exist = false)
+    private FaBCoin faBCoin;
+
     /** id */
     @ApiModelProperty(value = "id")
     @Excel(name = "id")
@@ -43,11 +51,17 @@ public class FaBHoldDetail extends BaseEntity {
     @TableField("hold_no")
     private String holdNo;
 
-    /** 交易id */
-    @ApiModelProperty(value = "交易id")
-    @Excel(name = "交易id")
-    @TableField("trade_id")
-    private Integer tradeId;
+    /** 买入交易id */
+    @ApiModelProperty(value = "买入交易id")
+    @Excel(name = "买入交易id")
+    @TableField("trade_buy_id")
+    private Integer tradeBuyId;
+
+    /** 卖出交易id */
+    @ApiModelProperty(value = "卖出交易id")
+    @Excel(name = "卖出交易id")
+    @TableField("trade_sell_id")
+    private Integer tradeSellId;
 
     /** 用户id */
     @ApiModelProperty(value = "用户id")
