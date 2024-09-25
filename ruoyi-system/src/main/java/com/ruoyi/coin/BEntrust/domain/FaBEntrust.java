@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.coin.BCoin.domain.FaBCoin;
+import com.ruoyi.coin.BCoinContract.domain.FaBCoinContract;
+import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.entity.FaMember;
 import io.swagger.annotations.ApiModel;
@@ -37,6 +39,12 @@ public class FaBEntrust extends BaseEntity {
 
     @TableField(exist = false)
     private FaBCoin faBCoin;
+
+    @TableField(exist = false)
+    private FaBCoinSpot faBCoinSpot;
+
+    @TableField(exist = false)
+    private FaBCoinContract faBCoinContract;
 
     /** id */
     @ApiModelProperty(value = "id")

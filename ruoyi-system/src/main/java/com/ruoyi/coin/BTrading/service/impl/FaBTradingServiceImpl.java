@@ -138,6 +138,8 @@ public class FaBTradingServiceImpl extends ServiceImpl<FaBTradingMapper, FaBTrad
         FaBTrading faBTrading = new FaBTrading();
         faBTrading.setFaMember(faBEntrust.getFaMember());
         faBTrading.setFaBCoin(faBEntrust.getFaBCoin());
+        faBTrading.setFaBCoinSpot(faBEntrust.getFaBCoinSpot());
+        faBTrading.setFaBCoinContract(faBEntrust.getFaBCoinContract());
 
         // 交易流水号
         faBTrading.setTradeNo("T" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue());

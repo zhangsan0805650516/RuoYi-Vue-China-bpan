@@ -159,7 +159,21 @@ public class FaBHoldDetailServiceImpl extends ServiceImpl<FaBHoldDetailMapper, F
         // T+N冻结数量
         faBHoldDetail.setFreezeNumber(faBTrading.getTradingNumber());
         // T+N剩余冻结时间
-        faBHoldDetail.setFreezeDaysLeft(faBTrading.getFaBCoin().getTN());
+        switch (faBTrading.getCoinType()) {
+            case 1:
+                faBHoldDetail.setFreezeDaysLeft(faBTrading.getFaBCoin().getTN());
+                break;
+            case 2:
+                faBHoldDetail.setFreezeDaysLeft(faBTrading.getFaBCoinSpot().getTN());
+                break;
+            case 3:
+                faBHoldDetail.setFreezeDaysLeft(faBTrading.getFaBCoinContract().getTN());
+                break;
+            case 4:
+                break;
+            default:
+                break;
+        }
         // T+N状态(0冻结中 1解冻)
         faBHoldDetail.setFreezeStatus(0);
         // 是否锁仓(0否1是)

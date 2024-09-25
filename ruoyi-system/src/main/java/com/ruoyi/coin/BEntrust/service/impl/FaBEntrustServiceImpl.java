@@ -150,6 +150,8 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         FaBEntrust entrust = new FaBEntrust();
         entrust.setFaMember(faBEntrust.getFaMember());
         entrust.setFaBCoin(faBEntrust.getFaBCoin());
+        entrust.setFaBCoinSpot(faBEntrust.getFaBCoinSpot());
+        entrust.setFaBCoinContract(faBEntrust.getFaBCoinContract());
 
         // 委托流水号
         entrust.setEntrustNo("E" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue());
@@ -160,7 +162,21 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         // 交易类型(1币 2现货 3合约 4理财)
         entrust.setCoinType(faBEntrust.getCoinType());
         // 委托价格
-        entrust.setEntrustPrice(faBEntrust.getFaBCoin().getCaiPrice());
+        switch (entrust.getCoinType()) {
+            case 1:
+                entrust.setEntrustPrice(faBEntrust.getFaBCoin().getCaiPrice());
+                break;
+            case 2:
+                entrust.setEntrustPrice(faBEntrust.getFaBCoinSpot().getCaiPrice());
+                break;
+            case 3:
+                entrust.setEntrustPrice(faBEntrust.getFaBCoinContract().getCaiPrice());
+                break;
+            case 4:
+                break;
+            default:
+                break;
+        }
         // 委托数量
         entrust.setEntrustNumber(faBEntrust.getEntrustNumber());
         // 委托金额
@@ -181,8 +197,26 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         // 总金额
         BigDecimal totalAmount = entrust.getTradeAmount().add(fee);
         // 余额判断
-        if (faBEntrust.getFaMember().getBalance().compareTo(totalAmount) < 0) {
-            throw new ServiceException(MessageUtils.message("member.balance.not.enough"), HttpStatus.ERROR);
+        switch (entrust.getCoinType()) {
+            case 1:
+                if (faBEntrust.getFaMember().getBalance().compareTo(totalAmount) < 0) {
+                    throw new ServiceException(MessageUtils.message("member.balance.not.enough"), HttpStatus.ERROR);
+                }
+                break;
+            case 2:
+                if (faBEntrust.getFaMember().getBalanceSpot().compareTo(totalAmount) < 0) {
+                    throw new ServiceException(MessageUtils.message("member.balance.not.enough"), HttpStatus.ERROR);
+                }
+                break;
+            case 3:
+                if (faBEntrust.getFaMember().getBalanceContract().compareTo(totalAmount) < 0) {
+                    throw new ServiceException(MessageUtils.message("member.balance.not.enough"), HttpStatus.ERROR);
+                }
+                break;
+            case 4:
+                break;
+            default:
+                break;
         }
 
         // 委托状态(0委托中 1成交 2撤回 3部分成交)
