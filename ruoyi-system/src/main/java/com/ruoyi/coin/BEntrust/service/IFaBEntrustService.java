@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
+import com.ruoyi.coin.BHoldDetail.domain.FaBHoldDetail;
 import com.ruoyi.common.core.domain.entity.FaMember;
 
 /**
@@ -73,10 +74,18 @@ public interface IFaBEntrustService extends IService<FaBEntrust>
     IPage<FaBEntrust> getBEntrustList(FaBEntrust faBEntrust) throws Exception;
 
     /**
-     * 生成委托
+     * 生成买入委托
      * @param faBEntrust
      * @return
      * @throws Exception
      */
-    FaBEntrust createEntrust(FaBEntrust faBEntrust) throws Exception;
+    FaBEntrust createBuyEntrust(FaBEntrust faBEntrust) throws Exception;
+
+    /**
+     * 生成卖出委托
+     * @param faBHoldDetail
+     * @return
+     * @throws Exception
+     */
+    FaBEntrust createSellEntrust(FaBHoldDetail faBHoldDetail) throws Exception;
 }

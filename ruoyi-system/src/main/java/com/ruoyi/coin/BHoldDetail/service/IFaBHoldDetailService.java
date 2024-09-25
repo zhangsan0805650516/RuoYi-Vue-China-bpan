@@ -78,4 +78,12 @@ public interface IFaBHoldDetailService extends IService<FaBHoldDetail>
      * @throws Exception
      */
     FaBHoldDetail createHoldDetail(FaBTrading faBTrading) throws Exception;
+
+    /**
+     * 扣减持仓
+     * @param faBTrading
+     * @param faBHoldDetail
+     * @return
+     */
+    FaBHoldDetail subtractHoldDetail(FaBTrading faBTrading, FaBHoldDetail faBHoldDetail);
 }

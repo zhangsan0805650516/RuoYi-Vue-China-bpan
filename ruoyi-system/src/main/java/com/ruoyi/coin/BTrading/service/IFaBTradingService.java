@@ -72,10 +72,18 @@ public interface IFaBTradingService extends IService<FaBTrading>
     IPage<FaBTrading> getBTradingList(FaBTrading faBTrading) throws Exception;
 
     /**
-     * 生成交易
+     * 生成买入交易
      * @param faBEntrust
      * @return
      * @throws Exception
      */
-    FaBTrading createTrading(FaBEntrust faBEntrust) throws Exception;
+    FaBTrading createBuyTrading(FaBEntrust faBEntrust) throws Exception;
+
+    /**
+     * 生成卖出交易
+     * @param faBEntrust
+     * @return
+     * @throws Exception
+     */
+    FaBTrading createSellTrading(FaBEntrust faBEntrust) throws Exception;
 }

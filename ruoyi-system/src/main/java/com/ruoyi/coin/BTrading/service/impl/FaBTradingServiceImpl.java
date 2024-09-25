@@ -128,13 +128,54 @@ public class FaBTradingServiceImpl extends ServiceImpl<FaBTradingMapper, FaBTrad
     }
 
     /**
-     * 生成交易
+     * 生成买入交易
      * @param faBEntrust
      * @return
      * @throws Exception
      */
     @Override
-    public FaBTrading createTrading(FaBEntrust faBEntrust) throws Exception {
+    public FaBTrading createBuyTrading(FaBEntrust faBEntrust) throws Exception {
+        FaBTrading faBTrading = new FaBTrading();
+        faBTrading.setFaMember(faBEntrust.getFaMember());
+        faBTrading.setFaBCoin(faBEntrust.getFaBCoin());
+
+        // 交易流水号
+        faBTrading.setTradeNo("T" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue());
+        // 委托id
+        faBTrading.setEntrustId(faBEntrust.getId());
+        // 用户id
+        faBTrading.setUserId(faBEntrust.getUserId());
+        // 交易品id
+        faBTrading.setCoinId(faBEntrust.getCoinId());
+        // 交易类型(1币 2现货 3合约)
+        faBTrading.setCoinType(faBEntrust.getCoinType());
+        // 成交数量
+        faBTrading.setTradingNumber(faBEntrust.getTradeNumber());
+        // 成交价格
+        faBTrading.setTradingPrice(faBEntrust.getTradePrice());
+        // 成交金额
+        faBTrading.setTradingAmount(faBEntrust.getTradeAmount());
+        // 买卖(1买 2卖)
+        faBTrading.setTradingType(faBEntrust.getTradingType());
+        // 方向(1买涨 2买跌)
+        faBTrading.setTradeDirect(faBEntrust.getTradeDirect());
+        // 手续费
+        faBTrading.setTradingPoundage(faBEntrust.getTradingPoundage());
+        // 印花税
+        faBTrading.setStampDuty(faBEntrust.getStampDuty());
+        faBTrading.setCreateTime(new Date());
+        this.save(faBTrading);
+        return faBTrading;
+    }
+
+    /**
+     * 生成卖出交易
+     * @param entrust
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FaBTrading createSellTrading(FaBEntrust faBEntrust) throws Exception {
         FaBTrading faBTrading = new FaBTrading();
         faBTrading.setFaMember(faBEntrust.getFaMember());
         faBTrading.setFaBCoin(faBEntrust.getFaBCoin());

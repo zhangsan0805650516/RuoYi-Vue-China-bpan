@@ -79,6 +79,8 @@ public class BExchangeController extends BaseController
     public AjaxResult sellBCoin(@RequestBody FaBHoldDetail faBHoldDetail)
     {
         try {
+            LoginMember loginMember = getLoginMember();
+            faBHoldDetail.setUserId(loginMember.getFaMember().getId());
             bExchangeService.sellBCoin(faBHoldDetail);
             return AjaxResult.success();
         } catch (ServiceException e) {

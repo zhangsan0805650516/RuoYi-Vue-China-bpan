@@ -1,5 +1,7 @@
 package com.ruoyi.coin.BHoldDetail.service.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.OrderUtil;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.coin.BHoldDetail.mapper.FaBHoldDetailMapper;
@@ -141,8 +144,8 @@ public class FaBHoldDetailServiceImpl extends ServiceImpl<FaBHoldDetailMapper, F
 
         // 持仓流水号
         faBHoldDetail.setHoldNo("H" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue());
-        // 交易id
-        faBHoldDetail.setTradeId(faBTrading.getId());
+        // 买入交易id
+        faBHoldDetail.setTradeBuyId(faBTrading.getId());
         // 用户id
         faBHoldDetail.setUserId(faBTrading.getUserId());
         // 现货/合约id
@@ -175,6 +178,53 @@ public class FaBHoldDetailServiceImpl extends ServiceImpl<FaBHoldDetailMapper, F
         faBHoldDetail.setStatus(0);
         faBHoldDetail.setCreateTime(new Date());
         this.save(faBHoldDetail);
+        return faBHoldDetail;
+    }
+
+    /**
+     * 扣减持仓
+     * @param faBTrading
+     * @param faBHoldDetail
+     * @return
+     */
+    @Override
+    public FaBHoldDetail subtractHoldDetail(FaBTrading faBTrading, FaBHoldDetail faBHoldDetail) {
+        // 是否锁仓
+        if (1 == faBHoldDetail.getIsLock()) {
+            throw new ServiceException(MessageUtils.message("member.hold.lock"), HttpStatus.ERROR);
+        }
+
+        // 是否冻结中
+        if (faBHoldDetail.getFreezeDaysLeft() > 0) {
+            throw new ServiceException("用户持仓T+" + faBHoldDetail.getFreezeDaysLeft() + "锁定", HttpStatus.ERROR);
+        }
+
+        // T+N冻结数量
+        faBHoldDetail.setFreezeNumber(BigDecimal.ZERO);
+        // T+N剩余冻结时间
+        faBHoldDetail.setFreezeDaysLeft(0);
+        // T+N状态(0冻结中 1解冻)
+        faBHoldDetail.setFreezeStatus(1);
+        // 持有数量
+        faBHoldDetail.setHoldNumber(BigDecimal.ZERO);
+        // 状态（0持有 1清空）
+        faBHoldDetail.setStatus(1);
+
+        // 卖出价
+        faBHoldDetail.setSellPrice(faBTrading.getTradingPrice());
+        // 卖出手续费
+        faBHoldDetail.setSellPoundage(faBTrading.getTradingPoundage());
+        // 卖出印花税
+        faBHoldDetail.setSellStampDuty(faBTrading.getStampDuty());
+        // 卖出时间
+        faBHoldDetail.setSellTime(faBTrading.getCreateTime());
+
+        // 盈亏
+        BigDecimal profitLose = faBHoldDetail.getSellPrice().subtract(faBHoldDetail.getBuyPrice()).multiply(faBHoldDetail.getTradingNumber());
+        faBHoldDetail.setProfitLose(profitLose);
+
+        faBHoldDetail.setUpdateTime(new Date());
+        this.updateFaBHoldDetail(faBHoldDetail);
         return faBHoldDetail;
     }
 }
