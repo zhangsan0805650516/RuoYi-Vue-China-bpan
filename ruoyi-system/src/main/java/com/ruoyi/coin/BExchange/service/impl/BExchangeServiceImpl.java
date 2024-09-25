@@ -9,6 +9,7 @@ import com.ruoyi.biz.stockTrading.domain.FaStockTrading;
 import com.ruoyi.biz.strategy.domain.FaStrategy;
 import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.coin.BCoin.service.IFaBCoinService;
+import com.ruoyi.coin.BCoinContract.domain.FaBCoinContract;
 import com.ruoyi.coin.BCoinContract.service.IFaBCoinContractService;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
 import com.ruoyi.coin.BCoinSpot.service.IFaBCoinSpotService;
@@ -303,11 +304,115 @@ public class BExchangeServiceImpl implements BExchangeService
 
     @Override
     public void buyBCoinContract(FaBEntrust faBEntrust) throws Exception {
+        // 参数判断
+        if (null == faBEntrust.getUserId() || null == faBEntrust.getCoinType() || null == faBEntrust.getCoinId() ||
+                null == faBEntrust.getEntrustNumber() || faBEntrust.getEntrustNumber().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
 
+        // 用户
+        FaMember faMember = iFaMemberService.getById(faBEntrust.getUserId());
+        faBEntrust.setFaMember(faMember);
+        if (ObjectUtils.isEmpty(faMember)) {
+            throw new ServiceException(MessageUtils.message("user.not.exists"), HttpStatus.ERROR);
+        }
+
+        // 实名认证判断 默认需要
+        String is_rz = iFaRiskConfigService.getConfigValue("is_rz", "1");
+        // 需要认证 尚未实名
+        if ("1".equals(is_rz) && 2 != faMember.getIsAuth()) {
+            throw new ServiceException(MessageUtils.message("user.not.auth"), HttpStatus.ERROR);
+        }
+
+        // 用户交易锁定判断
+        if (1 == faMember.getJingzhijiaoyi()) {
+            throw new ServiceException(MessageUtils.message("member.trade.lock"), HttpStatus.ERROR);
+        }
+
+        // B合约
+        FaBCoinContract faBCoinContract = iFaBCoinContractService.getById(faBEntrust.getCoinId());
+        faBEntrust.setFaBCoinContract(faBCoinContract);
+        if (ObjectUtils.isEmpty(faBCoinContract)) {
+            throw new ServiceException(MessageUtils.message("stock.not.exists"), HttpStatus.ERROR);
+        }
+
+        // B合约锁定判断
+        if (1 == faBCoinContract.getStatus()) {
+            throw new ServiceException(MessageUtils.message("stock.trade.lock"), HttpStatus.ERROR);
+        }
+
+        // 委托
+        FaBEntrust entrust = iFaBEntrustService.createBuyEntrust(faBEntrust);
+
+        // 交易
+        FaBTrading faBTrading = iFaBTradingService.createBuyTrading(entrust);
+
+        // 持仓
+        FaBHoldDetail faBHoldDetail = iFaBHoldDetailService.createHoldDetail(faBTrading);
+
+        // 流水
+        iFaCapitalLogService.createCapitalLog(faBTrading);
     }
 
     @Override
     public void sellBCoinContract(FaBHoldDetail faBHoldDetail) throws Exception {
+        // 参数判断
+        if (null == faBHoldDetail.getUserId() || null == faBHoldDetail.getId()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
 
+        // 查询持仓
+        faBHoldDetail = iFaBHoldDetailService.getById(faBHoldDetail.getId());
+        if (ObjectUtils.isEmpty(faBHoldDetail)) {
+            throw new ServiceException(MessageUtils.message("member.hold.error"), HttpStatus.ERROR);
+        }
+
+        // 持仓状态
+        if (1 == faBHoldDetail.getStatus()) {
+            throw new ServiceException(MessageUtils.message("stock.hold.already.sell"), HttpStatus.ERROR);
+        }
+
+        // 用户
+        FaMember faMember = iFaMemberService.getById(faBHoldDetail.getUserId());
+        faBHoldDetail.setFaMember(faMember);
+        if (ObjectUtils.isEmpty(faMember)) {
+            throw new ServiceException(MessageUtils.message("user.not.exists"), HttpStatus.ERROR);
+        }
+
+        // 实名认证判断 默认需要
+        String is_rz = iFaRiskConfigService.getConfigValue("is_rz", "1");
+        // 需要认证 尚未实名
+        if ("1".equals(is_rz) && 2 != faMember.getIsAuth()) {
+            throw new ServiceException(MessageUtils.message("user.not.auth"), HttpStatus.ERROR);
+        }
+
+        // 用户交易锁定判断
+        if (1 == faMember.getJingzhijiaoyi()) {
+            throw new ServiceException(MessageUtils.message("member.trade.lock"), HttpStatus.ERROR);
+        }
+
+        // B合约
+        FaBCoinContract faBCoinContract = iFaBCoinContractService.getById(faBHoldDetail.getCoinId());
+        faBHoldDetail.setFaBCoinContract(faBCoinContract);
+        if (ObjectUtils.isEmpty(faBCoinContract)) {
+            throw new ServiceException(MessageUtils.message("stock.not.exists"), HttpStatus.ERROR);
+        }
+
+        // 股票锁定判断
+        if (1 == faBCoinContract.getStatus()) {
+            throw new ServiceException(MessageUtils.message("stock.trade.lock"), HttpStatus.ERROR);
+        }
+
+        // 委托
+        FaBEntrust entrust = iFaBEntrustService.createSellEntrust(faBHoldDetail);
+
+        // 交易
+        FaBTrading faBTrading = iFaBTradingService.createSellTrading(entrust);
+
+        // 扣减持仓
+        faBHoldDetail = iFaBHoldDetailService.subtractHoldDetail(faBTrading, faBHoldDetail);
+
+        // 流水
+        iFaCapitalLogService.createCapitalLog(faBTrading);
     }
 }

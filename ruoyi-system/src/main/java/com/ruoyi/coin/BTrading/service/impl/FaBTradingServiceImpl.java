@@ -172,7 +172,7 @@ public class FaBTradingServiceImpl extends ServiceImpl<FaBTradingMapper, FaBTrad
 
     /**
      * 生成卖出交易
-     * @param entrust
+     * @param faBEntrust
      * @return
      * @throws Exception
      */
