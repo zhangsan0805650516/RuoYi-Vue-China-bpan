@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.entity.FaMember;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -27,6 +29,12 @@ import com.ruoyi.common.core.domain.BaseEntity;
 public class FaBTrading extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
+
+    @TableField(exist = false)
+    private FaMember faMember;
+
+    @TableField(exist = false)
+    private FaBCoin faBCoin;
 
     /** id */
     @ApiModelProperty(value = "id")

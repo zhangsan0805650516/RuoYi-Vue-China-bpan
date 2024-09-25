@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 import com.ruoyi.coin.BTrading.domain.FaBTrading;
 
 /**
@@ -69,4 +70,12 @@ public interface IFaBTradingService extends IService<FaBTrading>
      * @throws Exception
      */
     IPage<FaBTrading> getBTradingList(FaBTrading faBTrading) throws Exception;
+
+    /**
+     * 生成交易
+     * @param faBEntrust
+     * @return
+     * @throws Exception
+     */
+    FaBTrading createTrading(FaBEntrust faBEntrust) throws Exception;
 }

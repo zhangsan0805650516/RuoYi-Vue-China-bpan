@@ -1,16 +1,24 @@
 package com.ruoyi.coin.BEntrust.service.impl;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.biz.riskConfig.service.IFaRiskConfigService;
+import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.core.domain.entity.FaMember;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.common.utils.OrderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.coin.BEntrust.mapper.FaBEntrustMapper;
@@ -29,6 +37,9 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
 
     @Autowired
     private FaBEntrustMapper faBEntrustMapper;
+
+    @Autowired
+    private IFaRiskConfigService iFaRiskConfigService;
 
     /**
      * 查询委托
@@ -124,6 +135,62 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         lambdaQueryWrapper.orderByDesc(FaBEntrust::getCreateTime);
         IPage<FaBEntrust> faBEntrustIPage = this.page(new Page<>(faBEntrust.getPage(), faBEntrust.getSize()), lambdaQueryWrapper);
         return faBEntrustIPage;
+    }
+
+    /**
+     * 生成委托
+     * @param faBEntrust
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FaBEntrust createEntrust(FaBEntrust faBEntrust) throws Exception {
+        FaBEntrust entrust = new FaBEntrust();
+        entrust.setFaMember(faBEntrust.getFaMember());
+        entrust.setFaBCoin(faBEntrust.getFaBCoin());
+
+        // 委托流水号
+        entrust.setEntrustNo("E" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue());
+        // 用户
+        entrust.setUserId(faBEntrust.getUserId());
+        // B种id
+        entrust.setCoinId(faBEntrust.getCoinId());
+        // 交易类型(1币 2现货 3合约)
+        entrust.setCoinType(faBEntrust.getCoinType());
+        // 委托价格
+        entrust.setEntrustPrice(faBEntrust.getFaBCoin().getCaiPrice());
+        // 委托数量
+        entrust.setEntrustNumber(faBEntrust.getEntrustNumber());
+        // 委托金额
+        entrust.setEntrustAmount(entrust.getEntrustPrice().multiply(entrust.getEntrustNumber()).setScale(2, RoundingMode.HALF_UP));
+        // 成交价格
+        entrust.setTradePrice(entrust.getEntrustPrice());
+        // 成交数量
+        entrust.setTradeNumber(entrust.getEntrustNumber());
+        // 成交金额
+        entrust.setTradeAmount(entrust.getEntrustAmount());
+
+        // 买入手续费率
+        String maiFee = iFaRiskConfigService.getConfigValue("mai_fee", "0.0001");
+        // 手续费
+        BigDecimal fee = entrust.getTradeAmount().multiply(new BigDecimal(maiFee)).setScale(2, RoundingMode.HALF_UP);
+        // 总金额
+        BigDecimal totalAmount = entrust.getTradeAmount().add(fee);
+
+        // 余额判断
+        if (faBEntrust.getFaMember().getBalance().compareTo(totalAmount) < 0) {
+            throw new ServiceException(MessageUtils.message("member.balance.not.enough"), HttpStatus.ERROR);
+        }
+
+        // 委托状态(0委托中 1成交 2撤回 3部分成交)
+        entrust.setEntrustState(1);
+        // 买卖(1买 2卖)
+        entrust.setTradingType(faBEntrust.getTradingType());
+        // 方向(1买涨 2买跌)
+        entrust.setTradeDirect(faBEntrust.getTradeDirect());
+        entrust.setCreateTime(new Date());
+        this.save(entrust);
+        return entrust;
     }
 
 }

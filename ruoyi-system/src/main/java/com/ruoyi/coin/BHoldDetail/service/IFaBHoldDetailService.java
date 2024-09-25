@@ -3,6 +3,7 @@ package com.ruoyi.coin.BHoldDetail.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.coin.BHoldDetail.domain.FaBHoldDetail;
+import com.ruoyi.coin.BTrading.domain.FaBTrading;
 
 import java.util.List;
 
@@ -69,4 +70,12 @@ public interface IFaBHoldDetailService extends IService<FaBHoldDetail>
      * @throws Exception
      */
     IPage<FaBHoldDetail> getBHoldDetailList(FaBHoldDetail faBHoldDetail) throws Exception;
+
+    /**
+     * 生成持仓
+     * @param faBTrading
+     * @return
+     * @throws Exception
+     */
+    FaBHoldDetail createHoldDetail(FaBTrading faBTrading) throws Exception;
 }

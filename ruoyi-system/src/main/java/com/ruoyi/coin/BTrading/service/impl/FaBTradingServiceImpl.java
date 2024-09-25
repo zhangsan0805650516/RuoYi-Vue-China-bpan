@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 import com.ruoyi.coin.BTrading.domain.FaBTrading;
 import com.ruoyi.coin.BTrading.mapper.FaBTradingMapper;
 import com.ruoyi.coin.BTrading.service.IFaBTradingService;
@@ -11,9 +12,11 @@ import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.common.utils.OrderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -122,5 +125,46 @@ public class FaBTradingServiceImpl extends ServiceImpl<FaBTradingMapper, FaBTrad
         lambdaQueryWrapper.orderByDesc(FaBTrading::getCreateTime);
         IPage<FaBTrading> faBTradingIPage = this.page(new Page<>(faBTrading.getPage(), faBTrading.getSize()), lambdaQueryWrapper);
         return faBTradingIPage;
+    }
+
+    /**
+     * 生成交易
+     * @param faBEntrust
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FaBTrading createTrading(FaBEntrust faBEntrust) throws Exception {
+        FaBTrading faBTrading = new FaBTrading();
+        faBTrading.setFaMember(faBEntrust.getFaMember());
+        faBTrading.setFaBCoin(faBEntrust.getFaBCoin());
+
+        // 交易流水号
+        faBTrading.setTradeNo("T" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue());
+        // 委托id
+        faBTrading.setEntrustId(faBEntrust.getId());
+        // 用户id
+        faBTrading.setUserId(faBEntrust.getUserId());
+        // 交易品id
+        faBTrading.setCoinId(faBEntrust.getCoinId());
+        // 交易类型(1币 2现货 3合约)
+        faBTrading.setCoinType(faBEntrust.getCoinType());
+        // 成交数量
+        faBTrading.setTradingNumber(faBEntrust.getTradeNumber());
+        // 成交价格
+        faBTrading.setTradingPrice(faBEntrust.getTradePrice());
+        // 成交金额
+        faBTrading.setTradingAmount(faBEntrust.getTradeAmount());
+        // 买卖(1买 2卖)
+        faBTrading.setTradingType(faBEntrust.getTradingType());
+        // 方向(1买涨 2买跌)
+        faBTrading.setTradeDirect(faBEntrust.getTradeDirect());
+        // 手续费
+        faBTrading.setTradingPoundage(faBEntrust.getTradingPoundage());
+        // 印花税
+        faBTrading.setStampDuty(faBEntrust.getStampDuty());
+        faBTrading.setCreateTime(new Date());
+        this.save(faBTrading);
+        return faBTrading;
     }
 }

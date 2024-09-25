@@ -53,6 +53,8 @@ public class BExchangeController extends BaseController
             LoginMember loginMember = getLoginMember();
             faBEntrust.setUserId(loginMember.getFaMember().getId());
             faBEntrust.setCoinType(Constants.COIN_TYPE_B);
+            faBEntrust.setTradingType(Constants.BUY);
+            faBEntrust.setTradeDirect(Constants.BUY_UP);
             bExchangeService.buyBCoin(faBEntrust);
             return AjaxResult.success();
         } catch (ServiceException e) {

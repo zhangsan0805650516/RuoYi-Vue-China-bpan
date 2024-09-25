@@ -11,6 +11,36 @@ public class Constants
 {
 
     /**
+     * 方向(0赠 1减)
+     */
+    public static final Integer ADD = 0;
+
+    /**
+     * 方向(0赠 1减)
+     */
+    public static final Integer subtract = 1;
+
+    /**
+     * 方向(1买涨 2买跌)
+     */
+    public static final Integer BUY_UP = 1;
+
+    /**
+     * 方向(1买涨 2买跌)
+     */
+    public static final Integer SELL_DOWN = 2;
+
+    /**
+     * 买卖(1买 2卖)
+     */
+    public static final Integer BUY = 1;
+
+    /**
+     * 买卖(1买 2卖)
+     */
+    public static final Integer SELL = 2;
+
+    /**
      * 交易类型(1币 2现货 3合约)
      */
     public static final Integer COIN_TYPE_B = 1;

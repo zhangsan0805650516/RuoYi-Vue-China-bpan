@@ -9,6 +9,7 @@ import com.ruoyi.biz.sgjiaoyi.domain.FaSgjiaoyi;
 import com.ruoyi.biz.stockTrading.domain.FaStockTrading;
 import com.ruoyi.biz.tradeApprove.domain.FaTradeApprove;
 import com.ruoyi.biz.withdraw.domain.FaWithdraw;
+import com.ruoyi.coin.BTrading.domain.FaBTrading;
 
 import java.util.List;
 
@@ -125,4 +126,11 @@ public interface IFaCapitalLogService extends IService<FaCapitalLog>
      * @throws Exception
      */
     FaCapitalLog save(FaTradeApprove faTradeApprove) throws Exception;
+
+    /**
+     * 生成流水
+     * @param faBTrading
+     * @throws Exception
+     */
+    void createCapitalLog(FaBTrading faBTrading) throws Exception;
 }

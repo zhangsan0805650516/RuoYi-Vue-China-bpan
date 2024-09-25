@@ -18,7 +18,9 @@ import com.ruoyi.biz.stockTrading.domain.FaStockTrading;
 import com.ruoyi.biz.stockTrading.service.IFaStockTradingService;
 import com.ruoyi.biz.tradeApprove.domain.FaTradeApprove;
 import com.ruoyi.biz.withdraw.domain.FaWithdraw;
+import com.ruoyi.coin.BTrading.domain.FaBTrading;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.entity.FaMember;
 import com.ruoyi.common.utils.DateUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -778,6 +780,239 @@ public class FaCapitalLogServiceImpl extends ServiceImpl<FaCapitalLogMapper, FaC
         iFaMemberService.updateFaMemberFreezeProfit(faMember.getId(), faTradeApprove.getShouldPayAmount(), 1);
 
         return faCapitalLog;
+    }
+
+    /**
+     * 生成流水
+     * @param faBTrading
+     * @throws Exception
+     */
+    @Override
+    public void createCapitalLog(FaBTrading faBTrading) throws Exception {
+        // 买入流水
+        if (1 == faBTrading.getTradingType()) {
+            saveBuyCapitalLog(faBTrading);
+        }
+        // 卖出流水
+        else if (2 == faBTrading.getTradingType()) {
+            saveSellCapitalLog(faBTrading);
+        }
+    }
+
+    /**
+     * 买入流水
+     * @param faBTrading
+     */
+    private void saveBuyCapitalLog(FaBTrading faBTrading) throws Exception {
+        BigDecimal beforeMoney = faBTrading.getFaMember().getBalance();
+        BigDecimal laterMoney = faBTrading.getFaMember().getBalance().subtract(faBTrading.getTradingAmount());
+
+        // 交易
+        FaCapitalLog faCapitalLog = new FaCapitalLog();
+        faCapitalLog.setUserId(faBTrading.getFaMember().getId());
+        faCapitalLog.setMobile(faBTrading.getFaMember().getMobile());
+        faCapitalLog.setName(faBTrading.getFaMember().getName());
+        faCapitalLog.setSuperiorId(faBTrading.getFaMember().getSuperiorId());
+        faCapitalLog.setSuperiorCode(faBTrading.getFaMember().getSuperiorCode());
+        faCapitalLog.setSuperiorName(faBTrading.getFaMember().getSuperiorName());
+        if (1 == faBTrading.getCoinType()) {
+            faCapitalLog.setContent("币买入");
+        } else if (2 == faBTrading.getCoinType()) {
+            faCapitalLog.setContent("现货买入");
+        } else if (3 == faBTrading.getCoinType()) {
+            faCapitalLog.setContent("合约买入");
+        }
+        faCapitalLog.setBeforeMoney(beforeMoney);
+        faCapitalLog.setLaterMoney(laterMoney);
+        faCapitalLog.setMoney(faBTrading.getTradingAmount());
+        if (1 == faBTrading.getCoinType()) {
+            faCapitalLog.setType(101);
+        } else if (2 == faBTrading.getCoinType()) {
+            faCapitalLog.setType(102);
+        } else if (3 == faBTrading.getCoinType()) {
+            faCapitalLog.setType(103);
+        }
+        faCapitalLog.setDirect(1);
+        faCapitalLog.setCreateTime(new Date());
+        faCapitalLog.setOrderId(faBTrading.getId());
+        faCapitalLog.setStockId(faBTrading.getFaBCoin().getId());
+        faCapitalLog.setStockName(faBTrading.getFaBCoin().getCoinName());
+        faCapitalLog.setDeleteFlag(0);
+        this.save(faCapitalLog);
+
+        // 手续费
+        FaCapitalLog faCapitalLogFee = new FaCapitalLog();
+        if (faBTrading.getTradingPoundage().compareTo(BigDecimal.ZERO) > 0) {
+            beforeMoney = laterMoney;
+            laterMoney = laterMoney.subtract(faBTrading.getTradingPoundage());
+
+            faCapitalLogFee.setUserId(faBTrading.getFaMember().getId());
+            faCapitalLogFee.setMobile(faBTrading.getFaMember().getMobile());
+            faCapitalLogFee.setName(faBTrading.getFaMember().getName());
+            faCapitalLogFee.setSuperiorId(faBTrading.getFaMember().getSuperiorId());
+            faCapitalLogFee.setSuperiorCode(faBTrading.getFaMember().getSuperiorCode());
+            faCapitalLogFee.setSuperiorName(faBTrading.getFaMember().getSuperiorName());
+            if (1 == faBTrading.getCoinType()) {
+                faCapitalLogFee.setContent("币买入手续费");
+            } else if (2 == faBTrading.getCoinType()) {
+                faCapitalLogFee.setContent("现货买入手续费");
+            } else if (3 == faBTrading.getCoinType()) {
+                faCapitalLogFee.setContent("合约买入手续费");
+            }
+            faCapitalLogFee.setBeforeMoney(beforeMoney);
+            faCapitalLogFee.setLaterMoney(laterMoney);
+            faCapitalLogFee.setMoney(faBTrading.getTradingPoundage());
+            if (1 == faBTrading.getCoinType()) {
+                faCapitalLogFee.setType(104);
+            } else if (2 == faBTrading.getCoinType()) {
+                faCapitalLogFee.setType(105);
+            } else if (3 == faBTrading.getCoinType()) {
+                faCapitalLogFee.setType(106);
+            }
+            faCapitalLogFee.setDirect(1);
+            faCapitalLogFee.setCreateTime(new Date());
+            faCapitalLog.setOrderId(faBTrading.getId());
+            faCapitalLog.setStockId(faBTrading.getFaBCoin().getId());
+            faCapitalLog.setStockName(faBTrading.getFaBCoin().getCoinName());
+            faCapitalLogFee.setDeleteFlag(0);
+            this.save(faCapitalLogFee);
+        }
+
+        // 更新用户余额 减少 交易金额+手续费
+        iFaMemberService.updateMemberBalance(faBTrading.getUserId(), faBTrading.getTradingAmount().add(faBTrading.getTradingPoundage()), Constants.subtract);
+
+        // 更新用户冻结 减少 交易金额+手续费
+        iFaMemberService.updateFaMemberFreezeProfit(faBTrading.getUserId(), faBTrading.getTradingAmount().add(faBTrading.getTradingPoundage()), Constants.subtract);
+    }
+
+    /**
+     * 卖出流水
+     * @param faBTrading
+     */
+    private void saveSellCapitalLog(FaBTrading faBTrading) throws Exception {
+        BigDecimal beforeMoney = faBTrading.getFaMember().getBalance();
+        BigDecimal laterMoney = faBTrading.getFaMember().getBalance().add(faBTrading.getTradingAmount());
+
+        // 交易
+        FaCapitalLog faCapitalLog = new FaCapitalLog();
+        faCapitalLog.setUserId(faBTrading.getFaMember().getId());
+        faCapitalLog.setMobile(faBTrading.getFaMember().getMobile());
+        faCapitalLog.setName(faBTrading.getFaMember().getName());
+        faCapitalLog.setSuperiorId(faBTrading.getFaMember().getSuperiorId());
+        faCapitalLog.setSuperiorCode(faBTrading.getFaMember().getSuperiorCode());
+        faCapitalLog.setSuperiorName(faBTrading.getFaMember().getSuperiorName());
+        if (1 == faBTrading.getCoinType()) {
+            faCapitalLog.setContent("币平仓");
+        } else if (2 == faBTrading.getCoinType()) {
+            faCapitalLog.setContent("现货平仓");
+        } else if (3 == faBTrading.getCoinType()) {
+            faCapitalLog.setContent("合约平仓");
+        }
+        faCapitalLog.setBeforeMoney(beforeMoney);
+        faCapitalLog.setLaterMoney(laterMoney);
+        faCapitalLog.setMoney(faBTrading.getTradingAmount());
+        if (1 == faBTrading.getCoinType()) {
+            faCapitalLog.setType(107);
+        } else if (2 == faBTrading.getCoinType()) {
+            faCapitalLog.setType(108);
+        } else if (3 == faBTrading.getCoinType()) {
+            faCapitalLog.setType(109);
+        }
+        faCapitalLog.setDirect(0);
+        faCapitalLog.setCreateTime(new Date());
+        faCapitalLog.setOrderId(faBTrading.getId());
+        faCapitalLog.setStockId(faBTrading.getFaBCoin().getId());
+        faCapitalLog.setStockName(faBTrading.getFaBCoin().getCoinName());
+        faCapitalLog.setDeleteFlag(0);
+        this.save(faCapitalLog);
+
+        // 印花税
+        FaCapitalLog faCapitalLogDuty = new FaCapitalLog();
+        if (faBTrading.getStampDuty().compareTo(BigDecimal.ZERO) > 0) {
+            beforeMoney = faCapitalLog.getLaterMoney();
+            laterMoney = faCapitalLog.getLaterMoney().subtract(faBTrading.getStampDuty());
+
+            faCapitalLogDuty.setUserId(faBTrading.getFaMember().getId());
+            faCapitalLogDuty.setMobile(faBTrading.getFaMember().getMobile());
+            faCapitalLogDuty.setName(faBTrading.getFaMember().getName());
+            faCapitalLogDuty.setSuperiorId(faBTrading.getFaMember().getSuperiorId());
+            faCapitalLogDuty.setSuperiorCode(faBTrading.getFaMember().getSuperiorCode());
+            faCapitalLogDuty.setSuperiorName(faBTrading.getFaMember().getSuperiorName());
+            if (1 == faBTrading.getCoinType()) {
+                faCapitalLog.setContent("币印花税");
+            } else if (2 == faBTrading.getCoinType()) {
+                faCapitalLog.setContent("现货印花税");
+            } else if (3 == faBTrading.getCoinType()) {
+                faCapitalLog.setContent("合约印花税");
+            }
+            faCapitalLogDuty.setBeforeMoney(beforeMoney);
+            faCapitalLogDuty.setLaterMoney(laterMoney);
+            faCapitalLogDuty.setMoney(faBTrading.getStampDuty());
+            if (1 == faBTrading.getCoinType()) {
+                faCapitalLog.setType(110);
+            } else if (2 == faBTrading.getCoinType()) {
+                faCapitalLog.setType(111);
+            } else if (3 == faBTrading.getCoinType()) {
+                faCapitalLog.setType(112);
+            }
+            faCapitalLogDuty.setDirect(1);
+            faCapitalLogDuty.setCreateTime(new Date());
+            faCapitalLogDuty.setOrderId(faBTrading.getId());
+            faCapitalLogDuty.setStockId(faBTrading.getFaBCoin().getId());
+            faCapitalLogDuty.setStockName(faBTrading.getFaBCoin().getCoinName());
+            faCapitalLogDuty.setDeleteFlag(0);
+            this.save(faCapitalLogDuty);
+        }
+
+        // 手续费
+        FaCapitalLog faCapitalLogFee = new FaCapitalLog();
+        if (faBTrading.getTradingPoundage().compareTo(BigDecimal.ZERO) > 0) {
+            beforeMoney = laterMoney;
+            laterMoney = laterMoney.subtract(faBTrading.getTradingPoundage());
+
+            faCapitalLogFee.setUserId(faBTrading.getFaMember().getId());
+            faCapitalLogFee.setMobile(faBTrading.getFaMember().getMobile());
+            faCapitalLogFee.setName(faBTrading.getFaMember().getName());
+            faCapitalLogFee.setSuperiorId(faBTrading.getFaMember().getSuperiorId());
+            faCapitalLogFee.setSuperiorCode(faBTrading.getFaMember().getSuperiorCode());
+            faCapitalLogFee.setSuperiorName(faBTrading.getFaMember().getSuperiorName());
+            if (1 == faBTrading.getCoinType()) {
+                faCapitalLog.setContent("币平仓手续费");
+            } else if (2 == faBTrading.getCoinType()) {
+                faCapitalLog.setContent("现货平仓手续费");
+            } else if (3 == faBTrading.getCoinType()) {
+                faCapitalLog.setContent("合约平仓手续费");
+            }
+            faCapitalLogFee.setBeforeMoney(beforeMoney);
+            faCapitalLogFee.setLaterMoney(laterMoney);
+            faCapitalLogFee.setMoney(faBTrading.getTradingPoundage());
+            if (1 == faBTrading.getCoinType()) {
+                faCapitalLog.setType(113);
+            } else if (2 == faBTrading.getCoinType()) {
+                faCapitalLog.setType(114);
+            } else if (3 == faBTrading.getCoinType()) {
+                faCapitalLog.setType(115);
+            }
+            faCapitalLogFee.setDirect(1);
+            faCapitalLogFee.setCreateTime(new Date());
+            faCapitalLogFee.setOrderId(faBTrading.getId());
+            faCapitalLogFee.setStockId(faBTrading.getFaBCoin().getId());
+            faCapitalLogFee.setStockName(faBTrading.getFaBCoin().getCoinName());
+            faCapitalLogFee.setDeleteFlag(0);
+            this.save(faCapitalLogFee);
+        }
+
+        // 更新用户余额 增加 交易金额-印花税-手续费
+        iFaMemberService.updateMemberBalance(faBTrading.getUserId(),
+                faBTrading.getTradingAmount().subtract(faBTrading.getStampDuty()).subtract(faBTrading.getTradingPoundage()), Constants.ADD);
+
+        // 判断卖出资金T+N 冻结资金 增加 交易金额-印花税-手续费
+        int tn = Integer.parseInt(iFaRiskConfigService.getConfigValue("kq_dj", "1"));
+        if (tn > 0){
+            iFaMemberService.updateFaMemberFreezeProfit(faBTrading.getUserId(),
+                    faBTrading.getTradingAmount().subtract(faBTrading.getStampDuty()).subtract(faBTrading.getTradingPoundage()), Constants.ADD);
+        }
+
     }
 
 }

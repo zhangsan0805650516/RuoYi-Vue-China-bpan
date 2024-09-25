@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
+import com.ruoyi.common.core.domain.entity.FaMember;
 
 /**
  * 委托Service接口
@@ -69,4 +71,12 @@ public interface IFaBEntrustService extends IService<FaBEntrust>
      * @throws Exception
      */
     IPage<FaBEntrust> getBEntrustList(FaBEntrust faBEntrust) throws Exception;
+
+    /**
+     * 生成委托
+     * @param faBEntrust
+     * @return
+     * @throws Exception
+     */
+    FaBEntrust createEntrust(FaBEntrust faBEntrust) throws Exception;
 }

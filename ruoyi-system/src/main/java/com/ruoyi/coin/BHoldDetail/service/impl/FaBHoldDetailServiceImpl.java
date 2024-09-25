@@ -1,16 +1,20 @@
 package com.ruoyi.coin.BHoldDetail.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.biz.stockHoldDetail.domain.FaStockHoldDetail;
 import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
+import com.ruoyi.coin.BTrading.domain.FaBTrading;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.common.utils.OrderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.coin.BHoldDetail.mapper.FaBHoldDetailMapper;
@@ -123,5 +127,54 @@ public class FaBHoldDetailServiceImpl extends ServiceImpl<FaBHoldDetailMapper, F
         lambdaQueryWrapper.orderByDesc(FaBHoldDetail::getCreateTime);
         IPage<FaBHoldDetail> faBHoldDetailIPage = this.page(new Page<>(faBHoldDetail.getPage(), faBHoldDetail.getSize()), lambdaQueryWrapper);
         return faBHoldDetailIPage;
+    }
+
+    /**
+     * 生成持仓
+     * @param faBTrading
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FaBHoldDetail createHoldDetail(FaBTrading faBTrading) throws Exception {
+        FaBHoldDetail faBHoldDetail = new FaBHoldDetail();
+
+        // 持仓流水号
+        faBHoldDetail.setHoldNo("H" + OrderUtil.orderSn() + OrderUtil.randomNumber(0,9).intValue());
+        // 交易id
+        faBHoldDetail.setTradeId(faBTrading.getId());
+        // 用户id
+        faBHoldDetail.setUserId(faBTrading.getUserId());
+        // 现货/合约id
+        faBHoldDetail.setCoinId(faBTrading.getCoinId());
+        // 交易类型(1币 2现货 3合约)
+        faBHoldDetail.setCoinType(faBTrading.getCoinType());
+        // 持有数量
+        faBHoldDetail.setHoldNumber(faBTrading.getTradingNumber());
+        // 持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发 8融券)
+        faBHoldDetail.setHoldType(1);
+        // T+N冻结数量
+        faBHoldDetail.setFreezeNumber(faBTrading.getTradingNumber());
+        // T+N剩余冻结时间
+        faBHoldDetail.setFreezeDaysLeft(faBTrading.getFaBCoin().getTN());
+        // T+N状态(0冻结中 1解冻)
+        faBHoldDetail.setFreezeStatus(0);
+        // 是否锁仓(0否1是)
+        faBHoldDetail.setIsLock(0);
+        // 买入价
+        faBHoldDetail.setBuyPrice(faBTrading.getTradingPrice());
+        // 买入手续费
+        faBHoldDetail.setBuyPoundage(faBTrading.getTradingPoundage());
+        // 买入时间
+        faBHoldDetail.setBuyTime(faBTrading.getCreateTime());
+        // 交易股数
+        faBHoldDetail.setTradingNumber(faBTrading.getTradingNumber());
+        // 方向(1买涨 2买跌)
+        faBHoldDetail.setTradeDirect(faBTrading.getTradeDirect());
+        // 状态（0持有 1清空）
+        faBHoldDetail.setStatus(0);
+        faBHoldDetail.setCreateTime(new Date());
+        this.save(faBHoldDetail);
+        return faBHoldDetail;
     }
 }
