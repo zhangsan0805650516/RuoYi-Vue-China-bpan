@@ -55,6 +55,11 @@ public class Constants
      */
     public static final Integer COIN_TYPE_CONTRACT = 3;
 
+    /**
+     * 交易类型(1币 2现货 3合约 4理财)
+     */
+    public static final Integer COIN_TYPE_FINANCING = 4;
+
     // 启涨大数据接口地址
     public static final String QI_ZHANG_URL = "http://47.120.74.91:5120";
 

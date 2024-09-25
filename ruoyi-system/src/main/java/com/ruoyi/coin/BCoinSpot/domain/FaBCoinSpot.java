@@ -243,4 +243,10 @@ public class FaBCoinSpot extends BaseEntity {
     @TableField("cai_amount_usdt")
     private BigDecimal caiAmountUsdt;
 
+    /** T+N */
+    @ApiModelProperty(value = "T+N")
+    @Excel(name = "T+N")
+    @TableField("t_n")
+    private Integer tN;
+
 }
