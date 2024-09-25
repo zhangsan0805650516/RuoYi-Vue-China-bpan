@@ -36,6 +36,12 @@ public class FaBHoldDetail extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @TableField(exist = false)
+    private BigDecimal currentPrice;
+
+    @TableField(exist = false)
+    private BigDecimal totalFee;
+
+    @TableField(exist = false)
     private FaMember faMember;
 
     @TableField(exist = false)

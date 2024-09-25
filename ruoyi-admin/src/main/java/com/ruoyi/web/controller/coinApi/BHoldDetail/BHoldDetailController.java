@@ -43,6 +43,7 @@ public class BHoldDetailController extends BaseController
             @ApiImplicitParam(name = "page", value = "页码", required = true, dataType = "Integer"),
             @ApiImplicitParam(name = "size", value = "当页条数", required = true, dataType = "Integer"),
             @ApiImplicitParam(name = "coinType", value = "交易类型(1币 2现货 3合约 4理财)", required = true, dataType = "Integer"),
+            @ApiImplicitParam(name = "status", value = "状态（0持有 1清空）", dataType = "Integer"),
     })
     @PostMapping("/getBHoldDetailList")
     public AjaxResult getBHoldDetailList(@RequestBody FaBHoldDetail faBHoldDetail)

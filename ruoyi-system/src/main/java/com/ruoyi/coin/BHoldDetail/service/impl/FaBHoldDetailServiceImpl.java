@@ -1,28 +1,30 @@
 package com.ruoyi.coin.BHoldDetail.service.impl;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.biz.stockHoldDetail.domain.FaStockHoldDetail;
-import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
+import com.ruoyi.coin.BCoin.domain.FaBCoin;
+import com.ruoyi.coin.BCoin.service.IFaBCoinService;
+import com.ruoyi.coin.BCoinContract.domain.FaBCoinContract;
+import com.ruoyi.coin.BCoinContract.service.IFaBCoinContractService;
+import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
+import com.ruoyi.coin.BCoinSpot.service.IFaBCoinSpotService;
+import com.ruoyi.coin.BHoldDetail.domain.FaBHoldDetail;
+import com.ruoyi.coin.BHoldDetail.mapper.FaBHoldDetailMapper;
+import com.ruoyi.coin.BHoldDetail.service.IFaBHoldDetailService;
 import com.ruoyi.coin.BTrading.domain.FaBTrading;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.OrderUtil;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.coin.BHoldDetail.mapper.FaBHoldDetailMapper;
-import com.ruoyi.coin.BHoldDetail.domain.FaBHoldDetail;
-import com.ruoyi.coin.BHoldDetail.service.IFaBHoldDetailService;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 持仓明细Service业务层处理
@@ -35,6 +37,15 @@ public class FaBHoldDetailServiceImpl extends ServiceImpl<FaBHoldDetailMapper, F
 {
     @Autowired
     private FaBHoldDetailMapper faBHoldDetailMapper;
+
+    @Autowired
+    private IFaBCoinService iFaBCoinService;
+
+    @Autowired
+    private IFaBCoinSpotService iFaBCoinSpotService;
+
+    @Autowired
+    private IFaBCoinContractService iFaBCoinContractService;
 
     /**
      * 查询持仓明细
@@ -125,10 +136,44 @@ public class FaBHoldDetailServiceImpl extends ServiceImpl<FaBHoldDetailMapper, F
 
         LambdaQueryWrapper<FaBHoldDetail> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(FaBHoldDetail::getUserId, faBHoldDetail.getUserId());
-        lambdaQueryWrapper.eq(FaBHoldDetail::getCoinType, faBHoldDetail.getCoinType());
+        if (null != faBHoldDetail.getCoinType()) {
+            lambdaQueryWrapper.eq(FaBHoldDetail::getCoinType, faBHoldDetail.getCoinType());
+        }
+        if (null != faBHoldDetail.getStatus()) {
+            lambdaQueryWrapper.eq(FaBHoldDetail::getStatus, faBHoldDetail.getStatus());
+        }
+
         lambdaQueryWrapper.eq(FaBHoldDetail::getDeleteFlag, 0);
         lambdaQueryWrapper.orderByDesc(FaBHoldDetail::getCreateTime);
         IPage<FaBHoldDetail> faBHoldDetailIPage = this.page(new Page<>(faBHoldDetail.getPage(), faBHoldDetail.getSize()), lambdaQueryWrapper);
+        for (FaBHoldDetail holdDetail : faBHoldDetailIPage.getRecords()) {
+            holdDetail.setCurrentPrice(BigDecimal.ZERO);
+            // 总手续费
+            holdDetail.setTotalFee(holdDetail.getBuyPoundage().add(holdDetail.getSellPoundage()).add(holdDetail.getSellStampDuty()));
+            // 持仓中，计算盈亏
+            if (0 == holdDetail.getStatus()) {
+                switch (holdDetail.getCoinType()) {
+                    case 1:
+                        FaBCoin faBCoin = iFaBCoinService.getById(holdDetail.getCoinId());
+                        holdDetail.setCurrentPrice(faBCoin.getCaiPrice());
+                        break;
+                    case 2:
+                        FaBCoinSpot faBCoinSpot = iFaBCoinSpotService.getById(holdDetail.getCoinId());
+                        holdDetail.setCurrentPrice(faBCoinSpot.getCaiPrice());
+                        break;
+                    case 3:
+                        FaBCoinContract faBCoinContract = iFaBCoinContractService.getById(holdDetail.getCoinId());
+                        holdDetail.setCurrentPrice(faBCoinContract.getCaiPrice());
+                        break;
+                    case 4:
+                        break;
+                    default:
+                        break;
+                }
+                BigDecimal profitLose = holdDetail.getCurrentPrice().subtract(holdDetail.getBuyPrice()).multiply(holdDetail.getTradingNumber());
+                holdDetail.setProfitLose(profitLose);
+            }
+        }
         return faBHoldDetailIPage;
     }
 
