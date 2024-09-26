@@ -4,7 +4,10 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.ruoyi.biz.shengou.domain.FaNewStock;
 import com.ruoyi.biz.strategy.service.impl.ChinaStrategyServiceImpl;
+import com.ruoyi.coin.BCoin.domain.FaBCoin;
+import com.ruoyi.coin.BCoin.service.IFaBCoinService;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
 import com.ruoyi.coin.BCoinSpot.service.IFaBCoinSpotService;
 import com.ruoyi.coin.task.service.BCoinTaskService;
@@ -14,12 +17,15 @@ import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.common.utils.stockUtils.StockUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.TimerTask;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * B交易Service业务层处理
@@ -32,7 +38,46 @@ public class BCoinTaskServiceImpl implements BCoinTaskService
 {
 
     @Autowired
+    private IFaBCoinService iFaBCoinService;
+
+    @Autowired
     private IFaBCoinSpotService iFaBCoinSpotService;
+
+    /**
+     * 刷新B种
+     * @throws Exception
+     */
+    @Override
+    public void updateBCoin() throws Exception {
+        Document doc = Jsoup.connect("https://www.binance.com/zh-CN/markets/overview")
+                //设置爬取超时时间
+                .timeout(10000)
+                //get请求
+                .get();
+
+        Elements tbody = doc.getElementsByClass("css-1pysja1");
+        Elements rows = tbody.get(0).getElementsByClass("css-vlibs4");
+        for (int i = 0; i < rows.size(); i++) {
+            Element tr = rows.get(i);
+
+            LambdaUpdateWrapper<FaBCoin> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            lambdaUpdateWrapper.eq(FaBCoin::getCoinName, tr.getElementsByClass("subtitle3").get(0).text());
+            lambdaUpdateWrapper.set(FaBCoin::getCaiPrice, new BigDecimal(tr.getElementsByClass("body2").get(0).text().substring(1).replaceAll(",", "")));
+            lambdaUpdateWrapper.set(FaBCoin::getCaiChangepercent, new BigDecimal(tr.getElementsByClass("subtitle3").get(1).text().replaceAll("/+", "").replaceAll("%", "")));
+            String caiVolumeUsdt = tr.getElementsByClass("body2").get(1).text().substring(1).replaceAll(",", "");
+            if (caiVolumeUsdt.contains("B")) {
+                caiVolumeUsdt = caiVolumeUsdt.replaceAll("B", "");
+                lambdaUpdateWrapper.set(FaBCoin::getCaiVolumeUsdt, new BigDecimal(caiVolumeUsdt).multiply(new BigDecimal(1000000000)));
+            } else if (caiVolumeUsdt.contains("M")) {
+                caiVolumeUsdt = caiVolumeUsdt.replaceAll("M", "");
+                lambdaUpdateWrapper.set(FaBCoin::getCaiVolumeUsdt, new BigDecimal(caiVolumeUsdt).multiply(new BigDecimal(1000000)));
+            } else {
+                lambdaUpdateWrapper.set(FaBCoin::getCaiVolumeUsdt, new BigDecimal(caiVolumeUsdt));
+            }
+            lambdaUpdateWrapper.set(FaBCoin::getUpdateTime, new Date());
+            iFaBCoinService.update(lambdaUpdateWrapper);
+        }
+    }
 
     /**
      * 刷新现货交易对

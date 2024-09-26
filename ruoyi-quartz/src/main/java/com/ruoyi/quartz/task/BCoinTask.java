@@ -23,8 +23,23 @@ public class BCoinTask
     @Autowired
     private BCoinTaskService bCoinTaskService;
 
+    // 刷新B种
+    public void updateBCoin() throws JobExecutionException
+    {
+        log.info("刷新B种--开始");
+        try {
+            if (checkProd()) {
+                bCoinTaskService.updateBCoin();
+            }
+        } catch (Exception e) {
+            log.error("刷新B种--失败", e);
+            throw new JobExecutionException(e);
+        }
+        log.info("刷新B种--结束");
+    }
+
     // 刷新现货交易对
-    public void updateChinaStock() throws JobExecutionException
+    public void updateBCoinSpot() throws JobExecutionException
     {
         log.info("刷新现货交易对--开始");
         try {

@@ -10,8 +10,13 @@ public interface BCoinTaskService
 {
 
     /**
+     * 刷新B种
+     * @throws Exception
+     */
+    void updateBCoin() throws Exception;
+
+    /**
      * 刷新现货交易对
      */
     void updateBCoinSpot() throws Exception;
-
 }
