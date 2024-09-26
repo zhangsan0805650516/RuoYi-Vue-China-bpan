@@ -1,19 +1,27 @@
 package com.ruoyi.coin.BCoinSpot.service.impl;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
 import com.ruoyi.coin.BCoinSpot.mapper.FaBCoinSpotMapper;
 import com.ruoyi.coin.BCoinSpot.service.IFaBCoinSpotService;
+import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.http.BCoinUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -224,5 +232,32 @@ public class FaBCoinSpotServiceImpl extends ServiceImpl<FaBCoinSpotMapper, FaBCo
     @Override
     public String[] getBCoinSpotCodeList(int start, int end) throws Exception {
         return faBCoinSpotMapper.getBCoinSpotCodeList(start, end);
+    }
+
+    /**
+     * 获取实时价
+     * @param entrust
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception {
+        BigDecimal currentPrice = BigDecimal.ZERO;
+        FaBCoinSpot faBCoinSpot = this.getById(entrust.getCoinId());
+        if (ObjectUtils.isNotEmpty(faBCoinSpot)) {
+            String result = BCoinUtils.sendGet("https://data-api.binance.vision/api/v3/ticker/price?symbol=" + faBCoinSpot.getCoinCode());
+            if (StringUtils.isNotEmpty(result)) {
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("price")) {
+                    currentPrice = jsonObject.getBigDecimal("price");
+                    LambdaUpdateWrapper<FaBCoinSpot> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                    lambdaUpdateWrapper.eq(FaBCoinSpot::getId, faBCoinSpot.getId());
+                    lambdaUpdateWrapper.set(FaBCoinSpot::getCaiPrice, currentPrice);
+                    lambdaUpdateWrapper.set(FaBCoinSpot::getUpdateTime, new Date());
+                    this.update(lambdaUpdateWrapper);
+                }
+            }
+        }
+        return currentPrice;
     }
 }

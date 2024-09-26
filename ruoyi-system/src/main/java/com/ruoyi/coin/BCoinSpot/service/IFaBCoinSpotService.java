@@ -3,7 +3,9 @@ package com.ruoyi.coin.BCoinSpot.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
+import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -77,4 +79,12 @@ public interface IFaBCoinSpotService extends IService<FaBCoinSpot>
      * @return
      */
     String[] getBCoinSpotCodeList(int start, int end) throws Exception;
+
+    /**
+     * 获取实时价
+     * @param entrust
+     * @return
+     * @throws Exception
+     */
+    BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception;
 }

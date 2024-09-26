@@ -13,6 +13,7 @@ import com.ruoyi.biz.riskConfig.service.IFaRiskConfigService;
 import com.ruoyi.biz.stockTrading.domain.FaStockTrading;
 import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
+import com.ruoyi.coin.BExchange.service.BExchangeService;
 import com.ruoyi.coin.BHoldDetail.domain.FaBHoldDetail;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.HttpStatus;
@@ -42,6 +43,9 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
 
     @Autowired
     private IFaRiskConfigService iFaRiskConfigService;
+
+    @Autowired
+    private BExchangeService bExchangeService;
 
     /**
      * 查询委托
@@ -162,21 +166,11 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         // 交易类型(1币 2现货 3合约 4理财)
         entrust.setCoinType(faBEntrust.getCoinType());
         // 委托价格
-        switch (entrust.getCoinType()) {
-            case 1:
-                entrust.setEntrustPrice(faBEntrust.getFaBCoin().getCaiPrice());
-                break;
-            case 2:
-                entrust.setEntrustPrice(faBEntrust.getFaBCoinSpot().getCaiPrice());
-                break;
-            case 3:
-                entrust.setEntrustPrice(faBEntrust.getFaBCoinContract().getCaiPrice());
-                break;
-            case 4:
-                break;
-            default:
-                break;
+        entrust.setEntrustPrice(bExchangeService.getCurrentPrice(entrust));
+        if (entrust.getEntrustPrice().compareTo(BigDecimal.ZERO) == 0) {
+            throw new ServiceException(MessageUtils.message("stock.price.error"), HttpStatus.ERROR);
         }
+
         // 委托数量
         entrust.setEntrustNumber(faBEntrust.getEntrustNumber());
         // 委托金额
@@ -253,21 +247,11 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         // 交易类型(1币 2现货 3合约 4理财)
         entrust.setCoinType(faBHoldDetail.getCoinType());
         // 委托价格
-        switch (entrust.getCoinType()) {
-            case 1:
-                entrust.setEntrustPrice(faBHoldDetail.getFaBCoin().getCaiPrice());
-                break;
-            case 2:
-                entrust.setEntrustPrice(faBHoldDetail.getFaBCoinSpot().getCaiPrice());
-                break;
-            case 3:
-                entrust.setEntrustPrice(faBHoldDetail.getFaBCoinContract().getCaiPrice());
-                break;
-            case 4:
-                break;
-            default:
-                break;
+        entrust.setEntrustPrice(bExchangeService.getCurrentPrice(entrust));
+        if (entrust.getEntrustPrice().compareTo(BigDecimal.ZERO) == 0) {
+            throw new ServiceException(MessageUtils.message("stock.price.error"), HttpStatus.ERROR);
         }
+
         entrust.setEntrustPrice(faBHoldDetail.getFaBCoin().getCaiPrice());
         // 委托数量
         entrust.setEntrustNumber(faBHoldDetail.getHoldNumber());

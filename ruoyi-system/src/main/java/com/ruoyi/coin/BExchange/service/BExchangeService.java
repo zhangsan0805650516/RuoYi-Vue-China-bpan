@@ -3,6 +3,8 @@ package com.ruoyi.coin.BExchange.service;
 import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 import com.ruoyi.coin.BHoldDetail.domain.FaBHoldDetail;
 
+import java.math.BigDecimal;
+
 /**
  * B交易Service接口
  *
@@ -53,4 +55,12 @@ public interface BExchangeService
      * @throws Exception
      */
     void sellBCoinContract(FaBHoldDetail faBHoldDetail) throws Exception;
+
+    /**
+     * 获取实时价
+     * @param entrust
+     * @return
+     * @throws Exception
+     */
+    BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception;
 }

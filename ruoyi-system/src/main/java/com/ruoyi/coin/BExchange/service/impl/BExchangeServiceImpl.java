@@ -415,4 +415,31 @@ public class BExchangeServiceImpl implements BExchangeService
         // 流水
         iFaCapitalLogService.createCapitalLog(faBTrading);
     }
+
+    /**
+     * 获取实时价
+     * @param entrust
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception {
+        BigDecimal currentPrice = BigDecimal.ZERO;
+        switch (entrust.getCoinType()) {
+            case 1:
+//                entrust.setEntrustPrice(faBEntrust.getFaBCoin().getCaiPrice());
+                break;
+            case 2:
+                currentPrice = iFaBCoinSpotService.getCurrentPrice(entrust);
+                break;
+            case 3:
+//                entrust.setEntrustPrice(faBEntrust.getFaBCoinContract().getCaiPrice());
+                break;
+            case 4:
+                break;
+            default:
+                break;
+        }
+        return currentPrice;
+    }
 }
