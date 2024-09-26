@@ -1,10 +1,12 @@
 package com.ruoyi.coin.BCoinContract.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.coin.BCoinContract.domain.FaBCoinContract;
+import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 
 /**
  * 合约交易Service接口
@@ -69,4 +71,12 @@ public interface IFaBCoinContractService extends IService<FaBCoinContract>
      * @throws Exception
      */
     IPage<FaBCoinContract> getBCoinContractList(FaBCoinContract faBCoinContract) throws Exception;
+
+    /**
+     * 获取实时价
+     * @param entrust
+     * @return
+     * @throws Exception
+     */
+    BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception;
 }

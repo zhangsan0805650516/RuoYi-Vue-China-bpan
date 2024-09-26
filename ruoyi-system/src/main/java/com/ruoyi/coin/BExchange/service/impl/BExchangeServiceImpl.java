@@ -433,7 +433,7 @@ public class BExchangeServiceImpl implements BExchangeService
                 currentPrice = iFaBCoinSpotService.getCurrentPrice(entrust);
                 break;
             case 3:
-//                entrust.setEntrustPrice(faBEntrust.getFaBCoinContract().getCaiPrice());
+                currentPrice = iFaBCoinContractService.getCurrentPrice(entrust);
                 break;
             case 4:
                 break;

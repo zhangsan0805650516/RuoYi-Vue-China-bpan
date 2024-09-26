@@ -1,19 +1,27 @@
 package com.ruoyi.coin.BCoinContract.service.impl;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.coin.BCoinContract.domain.FaBCoinContract;
 import com.ruoyi.coin.BCoinContract.mapper.FaBCoinContractMapper;
 import com.ruoyi.coin.BCoinContract.service.IFaBCoinContractService;
+import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.http.BCoinUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -213,5 +221,32 @@ public class FaBCoinContractServiceImpl extends ServiceImpl<FaBCoinContractMappe
         lambdaQueryWrapper.orderByDesc(FaBCoinContract::getCreateTime);
         IPage<FaBCoinContract> faBCoinContractIPage = this.page(new Page<>(faBCoinContract.getPage(), faBCoinContract.getSize()), lambdaQueryWrapper);
         return faBCoinContractIPage;
+    }
+
+    /**
+     * 获取实时价
+     * @param entrust
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception {
+        BigDecimal currentPrice = BigDecimal.ZERO;
+        FaBCoinContract faBCoinContract = this.getById(entrust.getCoinId());
+        if (ObjectUtils.isNotEmpty(faBCoinContract)) {
+            String result = BCoinUtils.sendGet("https://www.binance.com/fapi/v1/ticker/price?symbol=" + faBCoinContract.getCoinCode());
+            if (StringUtils.isNotEmpty(result)) {
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("price")) {
+                    currentPrice = jsonObject.getBigDecimal("price");
+                    LambdaUpdateWrapper<FaBCoinContract> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                    lambdaUpdateWrapper.eq(FaBCoinContract::getId, faBCoinContract.getId());
+                    lambdaUpdateWrapper.set(FaBCoinContract::getCaiPrice, currentPrice);
+                    lambdaUpdateWrapper.set(FaBCoinContract::getUpdateTime, new Date());
+                    this.update(lambdaUpdateWrapper);
+                }
+            }
+        }
+        return currentPrice;
     }
 }
