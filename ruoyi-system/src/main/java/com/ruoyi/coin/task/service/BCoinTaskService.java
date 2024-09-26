@@ -19,4 +19,10 @@ public interface BCoinTaskService
      * 刷新现货交易对
      */
     void updateBCoinSpot() throws Exception;
+
+    /**
+     * 刷新合约交易对
+     * @throws Exception
+     */
+    void updateBCoinContract() throws Exception;
 }

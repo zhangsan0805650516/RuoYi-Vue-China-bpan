@@ -53,6 +53,21 @@ public class BCoinTask
         log.info("刷新现货交易对--结束");
     }
 
+    // 刷新合约交易对
+    public void updateBCoinContract() throws JobExecutionException
+    {
+        log.info("刷新合约交易对--开始");
+        try {
+            if (checkProd()) {
+                bCoinTaskService.updateBCoinContract();
+            }
+        } catch (Exception e) {
+            log.error("刷新合约交易对--失败", e);
+            throw new JobExecutionException(e);
+        }
+        log.info("刷新合约交易对--结束");
+    }
+
     /**
      * 检查是否prod环境
      * @return

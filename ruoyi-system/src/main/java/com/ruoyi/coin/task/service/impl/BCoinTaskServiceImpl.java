@@ -8,6 +8,8 @@ import com.ruoyi.biz.shengou.domain.FaNewStock;
 import com.ruoyi.biz.strategy.service.impl.ChinaStrategyServiceImpl;
 import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.coin.BCoin.service.IFaBCoinService;
+import com.ruoyi.coin.BCoinContract.domain.FaBCoinContract;
+import com.ruoyi.coin.BCoinContract.service.IFaBCoinContractService;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
 import com.ruoyi.coin.BCoinSpot.service.IFaBCoinSpotService;
 import com.ruoyi.coin.task.service.BCoinTaskService;
@@ -42,6 +44,9 @@ public class BCoinTaskServiceImpl implements BCoinTaskService
 
     @Autowired
     private IFaBCoinSpotService iFaBCoinSpotService;
+
+    @Autowired
+    private IFaBCoinContractService iFaBCoinContractService;
 
     /**
      * 刷新B种
@@ -142,6 +147,33 @@ public class BCoinTaskServiceImpl implements BCoinTaskService
                 }
             }
         };
+    }
+
+    /**
+     * 刷新合约交易对
+     * @throws Exception
+     */
+    @Override
+    public void updateBCoinContract() throws Exception {
+        String result = BCoinUtils.sendGet("https://www.binance.com/fapi/v1/exchangeInfo?showall=true");
+        if (StringUtils.isNotEmpty(result)) {
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("symbols")) {
+                JSONArray jsonArray = jsonObject.getJSONArray("symbols");
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JSONObject object = jsonArray.getJSONObject(i);
+                    if (ObjectUtils.isNotEmpty(object) && object.containsKey("contractType") && "PERPETUAL".equals(object.getString("contractType"))) {
+                        FaBCoinContract faBCoinContract = new FaBCoinContract();
+                        faBCoinContract.setCoinName(object.getString("symbol"));
+                        faBCoinContract.setCoinCode(object.getString("symbol"));
+                        faBCoinContract.setBaseAsset(object.getString("baseAsset"));
+                        faBCoinContract.setQuoteAsset(object.getString("quoteAsset"));
+                        faBCoinContract.setCreateTime(new Date());
+                        iFaBCoinContractService.save(faBCoinContract);
+                    }
+                }
+            }
+        }
     }
 
 }
