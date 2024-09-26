@@ -214,4 +214,15 @@ public class FaBCoinSpotServiceImpl extends ServiceImpl<FaBCoinSpotMapper, FaBCo
         IPage<FaBCoinSpot> faBCoinSpotIPage = this.page(new Page<>(faBCoinSpot.getPage(), faBCoinSpot.getSize()), lambdaQueryWrapper);
         return faBCoinSpotIPage;
     }
+
+    /**
+     * 现货代码集合
+     * @param start
+     * @param end
+     * @return
+     */
+    @Override
+    public String[] getBCoinSpotCodeList(int start, int end) throws Exception {
+        return faBCoinSpotMapper.getBCoinSpotCodeList(start, end);
+    }
 }

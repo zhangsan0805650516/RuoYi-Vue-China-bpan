@@ -69,4 +69,12 @@ public interface IFaBCoinSpotService extends IService<FaBCoinSpot>
      * @throws Exception
      */
     IPage<FaBCoinSpot> getBCoinSpotList(FaBCoinSpot faBCoinSpot) throws Exception;
+
+    /**
+     * 现货代码集合
+     * @param start
+     * @param end
+     * @return
+     */
+    String[] getBCoinSpotCodeList(int start, int end) throws Exception;
 }

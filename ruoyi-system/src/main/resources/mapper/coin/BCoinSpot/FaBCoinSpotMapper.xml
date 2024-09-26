@@ -99,7 +99,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectFaBCoinSpotVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertFaBCoinSpot" parameterType="FaBCoinSpot" useGeneratedKeys="true" keyProperty="id">
         insert into fa_b_coin_spot
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -239,4 +239,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="getBCoinSpotCodeList">
+        select bcs.coin_code from fa_b_coin_spot bcs limit #{start} , #{end}
+    </select>
+
 </mapper>

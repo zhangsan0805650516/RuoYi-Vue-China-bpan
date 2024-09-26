@@ -3,6 +3,7 @@ package com.ruoyi.coin.BCoinSpot.mapper;
 import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 现货交易Mapper接口
@@ -59,4 +60,12 @@ public interface FaBCoinSpotMapper extends BaseMapper<FaBCoinSpot>
      * @return 结果
      */
     public int deleteFaBCoinSpotByIds(Integer[] ids);
+
+    /**
+     * 现货代码集合
+     * @param start
+     * @param end
+     * @return
+     */
+    String[] getBCoinSpotCodeList(@Param("start") int start, @Param("end") int end) throws Exception;
 }
