@@ -9,6 +9,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="coinName"    column="coin_name"    />
         <result property="coinNameEn"    column="coin_name_en"    />
         <result property="coinCode"    column="coin_code"    />
+        <result property="baseAsset"    column="base_asset"    />
+        <result property="quoteAsset"    column="quote_asset"    />
         <result property="coinDescribe"    column="coin_describe"    />
         <result property="coinIcon"    column="coin_icon"    />
         <result property="coinSort"    column="coin_sort"    />
@@ -57,6 +59,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="coinName != null  and coinName != ''"> and coin_name like concat('%', #{coinName}, '%')</if>
             <if test="coinNameEn != null  and coinNameEn != ''"> and coin_name_en = #{coinNameEn}</if>
             <if test="coinCode != null  and coinCode != ''"> and coin_code = #{coinCode}</if>
+            <if test="baseAsset != null  and baseAsset != ''"> and base_asset = #{baseAsset}</if>
+            <if test="quoteAsset != null  and quoteAsset != ''"> and quote_asset = #{quoteAsset}</if>
             <if test="coinDescribe != null  and coinDescribe != ''"> and coin_describe = #{coinDescribe}</if>
             <if test="coinIcon != null  and coinIcon != ''"> and coin_icon = #{coinIcon}</if>
             <if test="coinSort != null "> and coin_sort = #{coinSort}</if>
@@ -106,6 +110,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="coinName != null">coin_name,</if>
             <if test="coinNameEn != null">coin_name_en,</if>
             <if test="coinCode != null">coin_code,</if>
+            <if test="baseAsset != null">base_asset,</if>
+            <if test="quoteAsset != null">quote_asset,</if>
             <if test="coinDescribe != null">coin_describe,</if>
             <if test="coinIcon != null">coin_icon,</if>
             <if test="coinSort != null">coin_sort,</if>
@@ -146,6 +152,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="coinName != null">#{coinName},</if>
             <if test="coinNameEn != null">#{coinNameEn},</if>
             <if test="coinCode != null">#{coinCode},</if>
+            <if test="baseAsset != null">#{baseAsset},</if>
+            <if test="quoteAsset != null">#{quoteAsset},</if>
             <if test="coinDescribe != null">#{coinDescribe},</if>
             <if test="coinIcon != null">#{coinIcon},</if>
             <if test="coinSort != null">#{coinSort},</if>
@@ -190,6 +198,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="coinName != null">coin_name = #{coinName},</if>
             <if test="coinNameEn != null">coin_name_en = #{coinNameEn},</if>
             <if test="coinCode != null">coin_code = #{coinCode},</if>
+            <if test="baseAsset != null">base_asset = #{baseAsset},</if>
+            <if test="quoteAsset != null">quote_asset = #{quoteAsset},</if>
             <if test="coinDescribe != null">coin_describe = #{coinDescribe},</if>
             <if test="coinIcon != null">coin_icon = #{coinIcon},</if>
             <if test="coinSort != null">coin_sort = #{coinSort},</if>

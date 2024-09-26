@@ -62,6 +62,18 @@ public class FaBCoinContract extends BaseEntity {
     @TableField("coin_code")
     private String coinCode;
 
+    /** 基础币 */
+    @ApiModelProperty(value = "基础币")
+    @Excel(name = "基础币")
+    @TableField("base_asset")
+    private String baseAsset;
+
+    /** 报价币 */
+    @ApiModelProperty(value = "报价币")
+    @Excel(name = "报价币")
+    @TableField("quote_asset")
+    private String quoteAsset;
+
     /** 币种介绍 */
     @ApiModelProperty(value = "币种介绍")
     @Excel(name = "币种介绍")
