@@ -428,7 +428,7 @@ public class BExchangeServiceImpl implements BExchangeService
         BigDecimal currentPrice = BigDecimal.ZERO;
         switch (entrust.getCoinType()) {
             case 1:
-//                entrust.setEntrustPrice(faBEntrust.getFaBCoin().getCaiPrice());
+                currentPrice = iFaBCoinService.getCurrentPrice(entrust);
                 break;
             case 2:
                 currentPrice = iFaBCoinSpotService.getCurrentPrice(entrust);

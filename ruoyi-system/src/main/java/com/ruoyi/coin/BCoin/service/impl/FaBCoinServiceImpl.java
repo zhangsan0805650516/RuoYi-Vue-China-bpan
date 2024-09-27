@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.coin.BCoin.mapper.FaBCoinMapper;
 import com.ruoyi.coin.BCoin.service.IFaBCoinService;
+import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
@@ -18,6 +19,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -244,7 +246,7 @@ public class FaBCoinServiceImpl extends ServiceImpl<FaBCoinMapper, FaBCoin> impl
      * @param faBCoin
      * @throws Exception
      */
-    private void updateBCoinDetail(FaBCoin faBCoin) throws Exception {
+    private BigDecimal updateBCoinDetail(FaBCoin faBCoin) throws Exception {
         Document doc = Jsoup.connect("https://www.binance.com/zh-CN/price/" + faBCoin.getCoinCode())
                 //设置爬取超时时间
                 .timeout(10000)
@@ -253,6 +255,7 @@ public class FaBCoinServiceImpl extends ServiceImpl<FaBCoinMapper, FaBCoin> impl
 
         LambdaUpdateWrapper<FaBCoin> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(FaBCoin::getId, faBCoin.getId());
+        BigDecimal currentPrice = new BigDecimal(doc.getElementsByClass("css-1bwgsh3").get(0).text().replace("/$", "").replaceAll(",", "").trim());
         lambdaUpdateWrapper.set(FaBCoin::getCaiPrice, doc.getElementsByClass("css-1bwgsh3").get(0).text().replace("/$", "").replaceAll(",", "").trim());
         lambdaUpdateWrapper.set(FaBCoin::getCaiPricechange, doc.getElementsByClass("css-1tu5w8v").get(0).text().replace("/$", "").replaceAll(",", "").trim());
         lambdaUpdateWrapper.set(FaBCoin::getCaiChangepercent, doc.getElementsByClass("css-12i542z").get(0).text().replace("/+", "").replaceAll("%", "").trim());
@@ -260,6 +263,21 @@ public class FaBCoinServiceImpl extends ServiceImpl<FaBCoinMapper, FaBCoin> impl
         lambdaUpdateWrapper.set(FaBCoin::getCaiHigh, doc.getElementsByClass("css-7g4hlk").get(2).text().replace("高: $", "").replaceAll(",", "").trim());
         lambdaUpdateWrapper.set(FaBCoin::getUpdateTime, new Date());
         this.update(lambdaUpdateWrapper);
+        return currentPrice;
+    }
+
+    /**
+     * 获取实时价
+     * @param entrust
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception {
+        BigDecimal currentPrice = BigDecimal.ZERO;
+        FaBCoin faBCoin = this.getById(entrust.getCoinId());
+        currentPrice = updateBCoinDetail(faBCoin);
+        return currentPrice;
     }
 
 }
