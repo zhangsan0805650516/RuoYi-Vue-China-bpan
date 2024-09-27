@@ -2,6 +2,7 @@ package com.ruoyi.coin.BCoin.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -87,4 +88,12 @@ public interface IFaBCoinService extends IService<FaBCoin>
      * @throws Exception
      */
     BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception;
+
+    /**
+     * 查询B种K线
+     * @param faBCoin
+     * @return
+     * @throws Exception
+     */
+    List<Map<String, String>> getBCoinKline(FaBCoin faBCoin) throws Exception;
 }

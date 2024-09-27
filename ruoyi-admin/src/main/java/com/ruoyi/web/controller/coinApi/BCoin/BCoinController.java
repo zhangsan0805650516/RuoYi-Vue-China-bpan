@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 币种Controller
  * 
@@ -84,6 +87,29 @@ public class BCoinController extends BaseController
             return AjaxResult.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             logger.error("getBCoinDetail", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询B种K线
+     */
+    @ApiOperation("查询B种K线")
+    @AppLog(title = "查询B种K线", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "B种id", required = true, dataType = "Integer"),
+    })
+    @PostMapping("/getBCoinKline")
+    public AjaxResult getBCoinKline(@RequestBody FaBCoin faBCoin)
+    {
+        try {
+            List<Map<String, String>> list = faBCoinService.getBCoinKline(faBCoin);
+            return AjaxResult.success(list);
+        } catch (ServiceException e) {
+            logger.error("getBCoinKline", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getBCoinKline", e);
             return AjaxResult.error();
         }
     }

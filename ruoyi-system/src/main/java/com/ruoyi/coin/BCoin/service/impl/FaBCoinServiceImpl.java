@@ -1,5 +1,7 @@
 package com.ruoyi.coin.BCoin.service.impl;
 
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,6 +15,9 @@ import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.http.BCoinUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -20,8 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 币种Service业务层处理
@@ -278,6 +284,61 @@ public class FaBCoinServiceImpl extends ServiceImpl<FaBCoinMapper, FaBCoin> impl
         FaBCoin faBCoin = this.getById(entrust.getCoinId());
         currentPrice = updateBCoinDetail(faBCoin);
         return currentPrice;
+    }
+
+    /**
+     * 查询B种K线
+     * @param faBCoin
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<Map<String, String>> getBCoinKline(FaBCoin faBCoin) throws Exception {
+        List<Map<String, String>> list = new ArrayList<>();
+        String result = BCoinUtils.sendGet("https://www.binance.com/bapi/composite/v1/public/promo/cmc/cryptocurrency/detail/chart?id=2&range=1D");
+        if (StringUtils.isNotEmpty(result)) {
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("code") && "000000".equals(jsonObject.getString("000000")) && jsonObject.containsKey("data")) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                jsonObject = jsonObject.getJSONObject("data");
+                if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("body")) {
+                    jsonObject = jsonObject.getJSONObject("body");
+                    if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("data")) {
+                        jsonObject = jsonObject.getJSONObject("data");
+                        if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("points")) {
+                            jsonObject = jsonObject.getJSONObject("points");
+                            if (ObjectUtils.isNotEmpty(jsonObject)) {
+                                for (String key : jsonObject.keySet()) {
+                                    JSONObject object = jsonObject.getJSONObject(key);
+                                    if (ObjectUtils.isNotEmpty(object) && object.containsKey("c")) {
+                                        JSONArray jsonArray = object.getJSONArray("c");
+                                        if (!jsonArray.isEmpty()) {
+                                            String price = jsonArray.getBigDecimal(0).setScale(2, RoundingMode.HALF_UP).toString();
+
+                                            Map<String, String> map = new HashMap<>();
+                                            map.put("close", price);
+                                            map.put("datetime", sdf.format(new Date(key)));
+                                            map.put("high", price);
+                                            map.put("low", price);
+                                            map.put("open", price);
+                                            map.put("timestamp", key);
+//                                            map.put("volume", object.getString("vl"));
+                                            list.add(map);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return list;
+    }
+
+    public static void main(String[] args) throws Exception {
+
     }
 
 }
