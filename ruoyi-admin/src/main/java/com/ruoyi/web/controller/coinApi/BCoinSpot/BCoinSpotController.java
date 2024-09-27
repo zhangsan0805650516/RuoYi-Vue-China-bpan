@@ -65,4 +65,27 @@ public class BCoinSpotController extends BaseController
         }
     }
 
+    /**
+     * 查询现货详情
+     */
+    @ApiOperation("查询现货详情")
+    @AppLog(title = "查询现货详情", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "现货id", required = true, dataType = "Integer"),
+    })
+    @PostMapping("/getBCoinSpotDetail")
+    public AjaxResult getBCoinSpotDetail(@RequestBody FaBCoinSpot faBCoinSpot)
+    {
+        try {
+            faBCoinSpot = faBCoinSpotService.getBCoinSpotDetail(faBCoinSpot);
+            return AjaxResult.success(faBCoinSpot);
+        } catch (ServiceException e) {
+            logger.error("getBCoinSpotDetail", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getBCoinSpotDetail", e);
+            return AjaxResult.error();
+        }
+    }
+
 }

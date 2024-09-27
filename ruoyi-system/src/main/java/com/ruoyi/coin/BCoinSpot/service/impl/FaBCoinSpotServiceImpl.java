@@ -1,11 +1,13 @@
 package com.ruoyi.coin.BCoinSpot.service.impl;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.coin.BCoin.domain.FaBCoin;
 import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
 import com.ruoyi.coin.BCoinSpot.mapper.FaBCoinSpotMapper;
 import com.ruoyi.coin.BCoinSpot.service.IFaBCoinSpotService;
@@ -16,7 +18,10 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.BCoinUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -232,6 +237,52 @@ public class FaBCoinSpotServiceImpl extends ServiceImpl<FaBCoinSpotMapper, FaBCo
     @Override
     public String[] getBCoinSpotCodeList(int start, int end) throws Exception {
         return faBCoinSpotMapper.getBCoinSpotCodeList(start, end);
+    }
+
+    /**
+     * 查询现货详情
+     * @param faBCoinSpot
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FaBCoinSpot getBCoinSpotDetail(FaBCoinSpot faBCoinSpot) throws Exception {
+        if (null == faBCoinSpot.getId()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+
+        faBCoinSpot = this.getById(faBCoinSpot.getId());
+        // 更新价格信息
+        updateBCoinSpotDetail(faBCoinSpot);
+        faBCoinSpot = this.getById(faBCoinSpot.getId());
+        return faBCoinSpot;
+    }
+
+    /**
+     * 更新价格信息
+     * @param faBCoinSpot
+     * @throws Exception
+     */
+    private void updateBCoinSpotDetail(FaBCoinSpot faBCoinSpot) throws Exception {
+        String result = BCoinUtils.sendGet("https://data-api.binance.vision/api/v3/ticker?symbol=" + faBCoinSpot.getCoinCode());
+        if (StringUtils.isNotEmpty(result)) {
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            if (ObjectUtils.isNotEmpty(jsonObject)) {
+                LambdaUpdateWrapper<FaBCoinSpot> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                lambdaUpdateWrapper.eq(FaBCoinSpot::getCoinCode, jsonObject.getString("symbol"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getCaiPrice, jsonObject.getBigDecimal("lastPrice"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getCaiPricechange, jsonObject.getBigDecimal("priceChange"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getCaiChangepercent, jsonObject.getBigDecimal("priceChangePercent"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getCaiSettlement, jsonObject.getBigDecimal("lastPrice"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getCaiOpen, jsonObject.getBigDecimal("openPrice"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getCaiHigh, jsonObject.getBigDecimal("highPrice"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getCaiLow, jsonObject.getBigDecimal("lowPrice"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getCaiVolume, jsonObject.getBigDecimal("volume"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getCaiVolumeUsdt, jsonObject.getBigDecimal("quoteVolume"));
+                lambdaUpdateWrapper.set(FaBCoinSpot::getUpdateTime, new Date());
+                SpringUtils.getBean(IFaBCoinSpotService.class).update(lambdaUpdateWrapper);
+            }
+        }
     }
 
     /**

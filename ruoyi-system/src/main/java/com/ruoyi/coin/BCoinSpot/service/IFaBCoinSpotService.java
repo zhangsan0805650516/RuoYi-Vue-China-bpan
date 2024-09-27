@@ -81,10 +81,19 @@ public interface IFaBCoinSpotService extends IService<FaBCoinSpot>
     String[] getBCoinSpotCodeList(int start, int end) throws Exception;
 
     /**
+     * 查询现货详情
+     * @param faBCoinSpot
+     * @return
+     * @throws Exception
+     */
+    FaBCoinSpot getBCoinSpotDetail(FaBCoinSpot faBCoinSpot) throws Exception;
+
+    /**
      * 获取实时价
      * @param entrust
      * @return
      * @throws Exception
      */
     BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception;
+
 }
