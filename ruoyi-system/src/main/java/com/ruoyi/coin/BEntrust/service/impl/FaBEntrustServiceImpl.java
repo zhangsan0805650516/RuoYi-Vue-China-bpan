@@ -280,7 +280,7 @@ public class FaBEntrustServiceImpl extends ServiceImpl<FaBEntrustMapper, FaBEntr
         // 买卖(1买 2卖)
         entrust.setTradingType(Constants.SELL);
         // 方向(1买涨 2买跌)
-        entrust.setTradeDirect(Constants.BUY_UP);
+        entrust.setTradeDirect(faBHoldDetail.getTradeDirect());
         entrust.setCreateTime(new Date());
         this.save(entrust);
         return entrust;

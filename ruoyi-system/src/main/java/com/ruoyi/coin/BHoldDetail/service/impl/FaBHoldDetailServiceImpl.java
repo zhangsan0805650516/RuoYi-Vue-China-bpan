@@ -280,6 +280,14 @@ public class FaBHoldDetailServiceImpl extends ServiceImpl<FaBHoldDetailMapper, F
 
         // 盈亏
         BigDecimal profitLose = faBHoldDetail.getSellPrice().subtract(faBHoldDetail.getBuyPrice()).multiply(faBHoldDetail.getTradingNumber());
+        // 买涨,涨了增加
+        if (1 == faBHoldDetail.getTradeDirect()) {
+            profitLose = profitLose;
+        }
+        // 买跌，跌了增加
+        else if (2 == faBHoldDetail.getTradeDirect()) {
+            profitLose = profitLose.multiply(new BigDecimal(-1));
+        }
         faBHoldDetail.setProfitLose(profitLose);
 
         faBHoldDetail.setUpdateTime(new Date());

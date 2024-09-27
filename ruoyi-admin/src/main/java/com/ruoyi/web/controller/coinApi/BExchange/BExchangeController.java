@@ -157,6 +157,7 @@ public class BExchangeController extends BaseController
     @ApiImplicitParams({
             @ApiImplicitParam(name = "coinId", value = "交易品id", required = true, dataType = "Integer"),
             @ApiImplicitParam(name = "entrustNumber", value = "委托数量", required = true, dataType = "decimal"),
+            @ApiImplicitParam(name = "tradeDirect", value = "方向(1买涨 2买跌)", required = true, dataType = "Integer"),
     })
     @PostMapping("/buyBCoinContract")
     public AjaxResult buyBCoinContract(@RequestBody FaBEntrust faBEntrust)
@@ -166,7 +167,6 @@ public class BExchangeController extends BaseController
             faBEntrust.setUserId(loginMember.getFaMember().getId());
             faBEntrust.setCoinType(Constants.COIN_TYPE_CONTRACT);
             faBEntrust.setTradingType(Constants.BUY);
-            faBEntrust.setTradeDirect(Constants.BUY_UP);
             bExchangeService.buyBCoinContract(faBEntrust);
             return AjaxResult.success();
         } catch (ServiceException e) {

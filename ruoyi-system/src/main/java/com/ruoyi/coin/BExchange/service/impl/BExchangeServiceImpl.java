@@ -306,7 +306,8 @@ public class BExchangeServiceImpl implements BExchangeService
     public void buyBCoinContract(FaBEntrust faBEntrust) throws Exception {
         // 参数判断
         if (null == faBEntrust.getUserId() || null == faBEntrust.getCoinType() || null == faBEntrust.getCoinId() ||
-                null == faBEntrust.getEntrustNumber() || faBEntrust.getEntrustNumber().compareTo(BigDecimal.ZERO) <= 0) {
+                null == faBEntrust.getEntrustNumber() || faBEntrust.getEntrustNumber().compareTo(BigDecimal.ZERO) <= 0 ||
+                null == faBEntrust.getTradeDirect()) {
             throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
         }
 
