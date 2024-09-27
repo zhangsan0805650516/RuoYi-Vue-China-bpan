@@ -46,3 +46,4 @@ nbdist/
 !*/build/*.html
 !*/build/*.xml
 /ruoyi-ui/admin/
+/ruoyi-ui/badmin/
