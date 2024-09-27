@@ -3,7 +3,6 @@ package com.ruoyi.web.controller.coinApi.BCoinContract;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.coin.BCoinContract.domain.FaBCoinContract;
 import com.ruoyi.coin.BCoinContract.service.IFaBCoinContractService;
-import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
 import com.ruoyi.common.annotation.AppLog;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -18,6 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 合约交易Controller
@@ -85,6 +87,29 @@ public class BCoinContractController extends BaseController
             return AjaxResult.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             logger.error("getBCoinContractDetail", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询合约K线
+     */
+    @ApiOperation("查询合约K线")
+    @AppLog(title = "查询合约K线", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "合约id", required = true, dataType = "Integer"),
+    })
+    @PostMapping("/getBCoinContractKline")
+    public AjaxResult getBCoinContractKline(@RequestBody FaBCoinContract faBCoinContract)
+    {
+        try {
+            List<Map<String, String>> list = faBCoinContractService.getBCoinContractKline(faBCoinContract);
+            return AjaxResult.success(list);
+        } catch (ServiceException e) {
+            logger.error("getBCoinContractKline", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getBCoinContractKline", e);
             return AjaxResult.error();
         }
     }
