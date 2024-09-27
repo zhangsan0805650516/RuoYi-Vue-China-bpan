@@ -65,4 +65,27 @@ public class BCoinController extends BaseController
         }
     }
 
+    /**
+     * 查询B种详情
+     */
+    @ApiOperation("查询B种详情")
+    @AppLog(title = "查询B种详情", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "B种id", required = true, dataType = "Integer"),
+    })
+    @PostMapping("/getBCoinDetail")
+    public AjaxResult getBCoinDetail(@RequestBody FaBCoin faBCoin)
+    {
+        try {
+            faBCoin = faBCoinService.getBCoinDetail(faBCoin);
+            return AjaxResult.success(faBCoin);
+        } catch (ServiceException e) {
+            logger.error("getBCoinDetail", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getBCoinDetail", e);
+            return AjaxResult.error();
+        }
+    }
+
 }

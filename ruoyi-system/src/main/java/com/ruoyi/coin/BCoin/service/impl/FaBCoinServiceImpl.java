@@ -1,6 +1,7 @@
 package com.ruoyi.coin.BCoin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,9 +12,13 @@ import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.MessageUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -214,4 +219,47 @@ public class FaBCoinServiceImpl extends ServiceImpl<FaBCoinMapper, FaBCoin> impl
         IPage<FaBCoin> faBCoinIPage = this.page(new Page<>(faBCoin.getPage(), faBCoin.getSize()), lambdaQueryWrapper);
         return faBCoinIPage;
     }
+
+    /**
+     * 查询B种详情
+     * @param faBCoin
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FaBCoin getBCoinDetail(FaBCoin faBCoin) throws Exception {
+        if (null == faBCoin.getId()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+
+        faBCoin = this.getById(faBCoin.getId());
+        // 更新价格信息
+        updateBCoinDetail(faBCoin);
+        faBCoin = this.getById(faBCoin.getId());
+        return faBCoin;
+    }
+
+    /**
+     * 更新价格信息
+     * @param faBCoin
+     * @throws Exception
+     */
+    private void updateBCoinDetail(FaBCoin faBCoin) throws Exception {
+        Document doc = Jsoup.connect("https://www.binance.com/zh-CN/price/" + faBCoin.getCoinCode())
+                //设置爬取超时时间
+                .timeout(10000)
+                //get请求
+                .get();
+
+        LambdaUpdateWrapper<FaBCoin> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(FaBCoin::getId, faBCoin.getId());
+        lambdaUpdateWrapper.set(FaBCoin::getCaiPrice, doc.getElementsByClass("css-1bwgsh3").get(0).text().replace("/$", "").replaceAll(",", "").trim());
+        lambdaUpdateWrapper.set(FaBCoin::getCaiPricechange, doc.getElementsByClass("css-1tu5w8v").get(0).text().replace("/$", "").replaceAll(",", "").trim());
+        lambdaUpdateWrapper.set(FaBCoin::getCaiChangepercent, doc.getElementsByClass("css-12i542z").get(0).text().replace("/+", "").replaceAll("%", "").trim());
+        lambdaUpdateWrapper.set(FaBCoin::getCaiLow, doc.getElementsByClass("css-7g4hlk").get(1).text().replace("低: $", "").replaceAll(",", "").trim());
+        lambdaUpdateWrapper.set(FaBCoin::getCaiHigh, doc.getElementsByClass("css-7g4hlk").get(2).text().replace("高: $", "").replaceAll(",", "").trim());
+        lambdaUpdateWrapper.set(FaBCoin::getUpdateTime, new Date());
+        this.update(lambdaUpdateWrapper);
+    }
+
 }

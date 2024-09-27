@@ -70,4 +70,11 @@ public interface IFaBCoinService extends IService<FaBCoin>
      */
     IPage<FaBCoin> getBCoinList(FaBCoin faBCoin) throws Exception;
 
+    /**
+     * 查询B种详情
+     * @param faBCoin
+     * @return
+     * @throws Exception
+     */
+    FaBCoin getBCoinDetail(FaBCoin faBCoin) throws Exception;
 }
