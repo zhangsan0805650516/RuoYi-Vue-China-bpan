@@ -1,6 +1,6 @@
 #!/bin/sh
-# ./bry.sh start 启动 stop 停止 restart 重启 status 状态
-AppName=/home/admin/bpan-ruoyi-admin.jar
+# ./ry.sh start 启动 stop 停止 restart 重启 status 状态
+AppName=/home/admin/ruoyi-admin.jar
 
 # JVM参数
 JVM_OPTS="-Dname=$AppName"
