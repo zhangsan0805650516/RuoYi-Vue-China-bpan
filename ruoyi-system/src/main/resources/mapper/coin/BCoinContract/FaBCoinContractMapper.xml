@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectFaBCoinContractVo">
-        select id, coin_name, coin_name_en, coin_code, coin_describe, coin_icon, coin_sort, coin_fx_total_num, coin_lt_total_num, coin_fx_price, coin_fx_time, coin_white_paper_link, coin_official_website_link, coin_withdraw_fee, coin_withdraw_limit_down, coin_withdraw_limit_up, is_show, is_pin, status, create_time, create_by, update_time, update_by, remarks, delete_flag, cai_price, cai_pricechange, cai_changepercent, cai_buy, cai_sell, cai_settlement, cai_open, cai_high, cai_low, cai_volume, cai_volume_usdt, cai_amount, cai_amount_usdt, t_n from fa_b_coin_contract
+        select id, coin_name, coin_name_en, coin_code, base_asset, quote_asset, coin_describe, coin_icon, coin_sort, coin_fx_total_num, coin_lt_total_num, coin_fx_price, coin_fx_time, coin_white_paper_link, coin_official_website_link, coin_withdraw_fee, coin_withdraw_limit_down, coin_withdraw_limit_up, is_show, is_pin, status, create_time, create_by, update_time, update_by, remarks, delete_flag, cai_price, cai_pricechange, cai_changepercent, cai_buy, cai_sell, cai_settlement, cai_open, cai_high, cai_low, cai_volume, cai_volume_usdt, cai_amount, cai_amount_usdt, t_n from fa_b_coin_contract
     </sql>
 
     <select id="selectFaBCoinContractList" parameterType="FaBCoinContract" resultMap="FaBCoinContractResult">
