@@ -7,9 +7,9 @@ spring:
             # 主库数据源
             master:
                 # 中国
-                url: jdbc:mysql://rm-3ns4a71g5k759wj68go.mysql.rds.aliyuncs.com:3306/ry_vue_china_cfzd_prod?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
-                username: gusql
-                password: AccZAm11bcvh!
+                url: jdbc:mysql://rm-3ns1wd9l23696x510co.mysql.rds.aliyuncs.com:3306/ry_vue_china_bpan_prod?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
+                username: cmsj_omg
+                password: Hsjxm234k!@#dfh
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
