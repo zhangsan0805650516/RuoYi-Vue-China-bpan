@@ -294,8 +294,12 @@ public class FaBCoinServiceImpl extends ServiceImpl<FaBCoinMapper, FaBCoin> impl
      */
     @Override
     public List<Map<String, String>> getBCoinKline(FaBCoin faBCoin) throws Exception {
+        if (null == faBCoin.getId()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+
         List<Map<String, String>> list = new ArrayList<>();
-        String result = BCoinUtils.sendGet("https://www.binance.com/bapi/composite/v1/public/promo/cmc/cryptocurrency/detail/chart?id=2&range=1D");
+        String result = BCoinUtils.sendGet("https://www.binance.com/bapi/composite/v1/public/promo/cmc/cryptocurrency/detail/chart?id=" + faBCoin.getId() + "&range=1D");
         if (StringUtils.isNotEmpty(result)) {
             JSONObject jsonObject = JSONObject.parseObject(result);
             if (ObjectUtils.isNotEmpty(jsonObject) && jsonObject.containsKey("code") && "000000".equals(jsonObject.getString("000000")) && jsonObject.containsKey("data")) {
@@ -335,10 +339,6 @@ public class FaBCoinServiceImpl extends ServiceImpl<FaBCoinMapper, FaBCoin> impl
         }
 
         return list;
-    }
-
-    public static void main(String[] args) throws Exception {
-
     }
 
 }

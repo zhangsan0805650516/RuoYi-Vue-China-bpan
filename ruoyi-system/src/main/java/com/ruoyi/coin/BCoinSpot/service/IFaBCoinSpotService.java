@@ -7,6 +7,7 @@ import com.ruoyi.coin.BEntrust.domain.FaBEntrust;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 现货交易Service接口
@@ -96,4 +97,11 @@ public interface IFaBCoinSpotService extends IService<FaBCoinSpot>
      */
     BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception;
 
+    /**
+     * 查询现货K线
+     * @param faBCoinSpot
+     * @return
+     * @throws Exception
+     */
+    List<Map<String, String>> getBCoinSpotKline(FaBCoinSpot faBCoinSpot) throws Exception;
 }

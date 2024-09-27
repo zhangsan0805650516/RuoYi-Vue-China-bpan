@@ -26,8 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 现货交易Service业务层处理
@@ -310,5 +310,37 @@ public class FaBCoinSpotServiceImpl extends ServiceImpl<FaBCoinSpotMapper, FaBCo
             }
         }
         return currentPrice;
+    }
+
+    @Override
+    public List<Map<String, String>> getBCoinSpotKline(FaBCoinSpot faBCoinSpot) throws Exception {
+        if (null == faBCoinSpot.getId()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+
+        faBCoinSpot = this.getById(faBCoinSpot.getId());
+
+        List<Map<String, String>> list = new ArrayList<>();
+        String result = BCoinUtils.sendGet("https://www.binance.com/api/v3/uiKlines?limit=1000&symbol=" + faBCoinSpot.getCoinCode() + "&interval=1m");
+        if (StringUtils.isNotEmpty(result)) {
+            JSONArray jsonArray = JSONArray.parseArray(result);
+            if (!jsonArray.isEmpty()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Map<String, String> map;
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JSONArray array = jsonArray.getJSONArray(i);
+                    map = new HashMap<>();
+                    map.put("close", array.getString(4));
+                    map.put("datetime", sdf.format(new Date(array.getString(0))));
+                    map.put("high", array.getString(2));
+                    map.put("low", array.getString(3));
+                    map.put("open", array.getString(1));
+                    map.put("timestamp", array.getString(0));
+//                    map.put("volume", object.getString("vl"));
+                    list.add(map);
+                }
+            }
+        }
+        return list;
     }
 }

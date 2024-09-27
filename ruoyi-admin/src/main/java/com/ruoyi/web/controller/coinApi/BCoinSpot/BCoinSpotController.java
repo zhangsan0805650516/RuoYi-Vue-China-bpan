@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 现货交易Controller
  * 
@@ -84,6 +87,29 @@ public class BCoinSpotController extends BaseController
             return AjaxResult.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             logger.error("getBCoinSpotDetail", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询现货K线
+     */
+    @ApiOperation("查询现货K线")
+    @AppLog(title = "查询现货K线", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "现货id", required = true, dataType = "Integer"),
+    })
+    @PostMapping("/getBCoinSpotKline")
+    public AjaxResult getBCoinSpotKline(@RequestBody FaBCoinSpot faBCoinSpot)
+    {
+        try {
+            List<Map<String, String>> list = faBCoinSpotService.getBCoinSpotKline(faBCoinSpot);
+            return AjaxResult.success(list);
+        } catch (ServiceException e) {
+            logger.error("getBCoinSpotKline", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getBCoinSpotKline", e);
             return AjaxResult.error();
         }
     }
