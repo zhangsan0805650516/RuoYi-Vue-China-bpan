@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.coinApi.BCoinContract;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.ruoyi.coin.BCoinContract.domain.FaBCoinContract;
 import com.ruoyi.coin.BCoinContract.service.IFaBCoinContractService;
+import com.ruoyi.coin.BCoinSpot.domain.FaBCoinSpot;
 import com.ruoyi.common.annotation.AppLog;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -61,6 +62,29 @@ public class BCoinContractController extends BaseController
             return AjaxResult.error(e.getCode(), e.getMessage());
         } catch (Exception e) {
             logger.error("getBCoinContractList", e);
+            return AjaxResult.error();
+        }
+    }
+
+    /**
+     * 查询合约详情
+     */
+    @ApiOperation("查询合约详情")
+    @AppLog(title = "查询合约详情", businessType = BusinessType.OTHER)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "合约id", required = true, dataType = "Integer"),
+    })
+    @PostMapping("/getBCoinContractDetail")
+    public AjaxResult getBCoinContractDetail(@RequestBody FaBCoinContract faBCoinContract)
+    {
+        try {
+            faBCoinContract = faBCoinContractService.getBCoinContractDetail(faBCoinContract);
+            return AjaxResult.success(faBCoinContract);
+        } catch (ServiceException e) {
+            logger.error("getBCoinContractDetail", e);
+            return AjaxResult.error(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            logger.error("getBCoinContractDetail", e);
             return AjaxResult.error();
         }
     }

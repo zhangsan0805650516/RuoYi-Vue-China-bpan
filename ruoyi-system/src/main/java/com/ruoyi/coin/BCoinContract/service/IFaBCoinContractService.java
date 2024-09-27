@@ -73,10 +73,19 @@ public interface IFaBCoinContractService extends IService<FaBCoinContract>
     IPage<FaBCoinContract> getBCoinContractList(FaBCoinContract faBCoinContract) throws Exception;
 
     /**
+     * 查询合约详情
+     * @param faBCoinContract
+     * @return
+     * @throws Exception
+     */
+    FaBCoinContract getBCoinContractDetail(FaBCoinContract faBCoinContract) throws Exception;
+
+    /**
      * 获取实时价
      * @param entrust
      * @return
      * @throws Exception
      */
     BigDecimal getCurrentPrice(FaBEntrust entrust) throws Exception;
+
 }

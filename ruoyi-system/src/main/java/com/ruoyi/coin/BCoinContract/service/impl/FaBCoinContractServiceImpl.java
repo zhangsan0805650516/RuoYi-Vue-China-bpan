@@ -1,5 +1,6 @@
 package com.ruoyi.coin.BCoinContract.service.impl;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -221,6 +223,53 @@ public class FaBCoinContractServiceImpl extends ServiceImpl<FaBCoinContractMappe
         lambdaQueryWrapper.orderByDesc(FaBCoinContract::getCreateTime);
         IPage<FaBCoinContract> faBCoinContractIPage = this.page(new Page<>(faBCoinContract.getPage(), faBCoinContract.getSize()), lambdaQueryWrapper);
         return faBCoinContractIPage;
+    }
+
+    /**
+     * 查询合约详情
+     * @param faBCoinContract
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public FaBCoinContract getBCoinContractDetail(FaBCoinContract faBCoinContract) throws Exception {
+        if (null == faBCoinContract.getId()) {
+            throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
+        }
+
+        faBCoinContract = this.getById(faBCoinContract.getId());
+        // 更新价格信息
+        updateBCoinContractDetail(faBCoinContract);
+        faBCoinContract = this.getById(faBCoinContract.getId());
+        return faBCoinContract;
+    }
+
+    /**
+     * 更新价格信息
+     * @param faBCoinContract
+     * @throws Exception
+     */
+    private void updateBCoinContractDetail(FaBCoinContract faBCoinContract) throws Exception {
+        String result = BCoinUtils.sendGet("https://www.binance.com/fapi/v1/continuousKlines?limit=1000&pair=" + faBCoinContract.getCoinCode() + "&contractType=PERPETUAL&interval=1d");
+        if (StringUtils.isNotEmpty(result)) {
+            JSONArray jsonArray = JSONArray.parseArray(result);
+            if (!jsonArray.isEmpty()) {
+                JSONArray array = jsonArray.getJSONArray(jsonArray.size() - 1);
+                if (!array.isEmpty()) {
+                    LambdaUpdateWrapper<FaBCoinContract> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+                    lambdaUpdateWrapper.eq(FaBCoinContract::getId, faBCoinContract.getId());
+                    lambdaUpdateWrapper.set(FaBCoinContract::getCaiPrice, array.getBigDecimal(4));
+                    lambdaUpdateWrapper.set(FaBCoinContract::getCaiOpen, array.getBigDecimal(1));
+                    lambdaUpdateWrapper.set(FaBCoinContract::getCaiHigh, array.getBigDecimal(2));
+                    lambdaUpdateWrapper.set(FaBCoinContract::getCaiLow, array.getBigDecimal(3));
+                    lambdaUpdateWrapper.set(FaBCoinContract::getCaiPricechange, array.getBigDecimal(4).subtract(array.getBigDecimal(1)));
+                    lambdaUpdateWrapper.set(FaBCoinContract::getCaiPricechange, array.getBigDecimal(4).subtract(array.getBigDecimal(1)).divide(array.getBigDecimal(1), 2, RoundingMode.HALF_UP));
+                    lambdaUpdateWrapper.set(FaBCoinContract::getUpdateTime, new Date());
+                    this.update(lambdaUpdateWrapper);
+                }
+            }
+        }
+
     }
 
     /**
