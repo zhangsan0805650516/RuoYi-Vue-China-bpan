@@ -106,6 +106,16 @@
   }
 }
 
+/** 表头可复制 **/
+.el-table th.el-table__cell {
+  overflow: hidden;
+  /* -webkit-user-select: none; */
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: initial;
+  background-color: #FFFFFF;
+}
+
 /** 表单布局 **/
 .form-header {
   font-size: 15px;
