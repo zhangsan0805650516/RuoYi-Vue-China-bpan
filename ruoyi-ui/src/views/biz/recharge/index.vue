@@ -135,6 +135,11 @@
         </template>
       </el-table-column>
       <el-table-column :label="$t('充值金额')" align="center" prop="money" />
+      <el-table-column :label="$t('通道')" align="center" prop="sysbank" width="150">
+        <template slot-scope="scope">
+          {{ scope.row.faSysbank?scope.row.faSysbank.tdName:'' }}
+        </template>
+      </el-table-column>
       <el-table-column :label="$t('状态')" align="center" prop="isPay" >
         <template slot-scope="scope">
           <el-tag v-if="scope.row.isPay === 0">{{ $t('未付款') }}</el-tag>

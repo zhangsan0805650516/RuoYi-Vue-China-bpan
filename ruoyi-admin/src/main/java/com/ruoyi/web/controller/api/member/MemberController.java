@@ -377,7 +377,8 @@ public class MemberController extends BaseController
     @ApiOperation("充值申请")
     @AppLog(title = "充值申请", businessType = BusinessType.UPDATE)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "amount", value = "金额", required = true, dataType = "BigDecimal")
+            @ApiImplicitParam(name = "amount", value = "金额", required = true, dataType = "BigDecimal"),
+            @ApiImplicitParam(name = "sysbankId", value = "通道id", required = true, dataType = "Integer"),
     })
     @PostMapping("/rechargeApply")
     public AjaxResult rechargeApply(HttpServletRequest request, @RequestBody FaMember faMember) throws Exception

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.biz.sysbank.domain.FaSysbank;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.entity.FaMember;
 import io.swagger.annotations.ApiModel;
@@ -30,6 +31,10 @@ import com.ruoyi.common.core.domain.BaseEntity;
 public class FaRecharge extends BaseEntity {
 
     private static final long serialVersionUID=1L;
+
+    /** 通道 */
+    @TableField(exist = false)
+    private FaSysbank faSysbank;
 
     @TableField(exist = false)
     private String weiyima;

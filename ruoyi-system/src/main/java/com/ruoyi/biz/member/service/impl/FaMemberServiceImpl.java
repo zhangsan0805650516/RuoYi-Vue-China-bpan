@@ -38,7 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -943,7 +942,7 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
     @Transactional
     @Override
     public String rechargeApply(FaMember faMember, String ip) throws Exception {
-        if (null == faMember.getId() || null == faMember.getAmount()) {
+        if (null == faMember.getId() || null == faMember.getAmount() || null == faMember.getSysbankId()) {
             throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
         }
 
@@ -979,6 +978,9 @@ public class FaMemberServiceImpl extends ServiceImpl<FaMemberMapper, FaMember> i
 
         // 风控校验
         iFaRiskConfigService.checkRecharge(faRecharge);
+
+        // 关联通道
+        faRecharge.setSysbankid(faMember.getSysbankId());
 
         iFaRechargeService.save(faRecharge);
 

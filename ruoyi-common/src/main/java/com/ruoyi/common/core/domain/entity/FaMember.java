@@ -32,6 +32,9 @@ public class FaMember extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @TableField(exist = false)
+    private Integer sysbankId;
+
+    @TableField(exist = false)
     private Integer fromAccount;
 
     @TableField(exist = false)

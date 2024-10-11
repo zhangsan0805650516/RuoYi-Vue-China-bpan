@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.biz.recharge.mapper.FaRechargeMapper">
-    
+
     <resultMap type="FaRecharge" id="FaRechargeResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
@@ -31,6 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remarks"    column="remarks"    />
 
         <association property="faMember" columnPrefix="m_" resultMap="com.ruoyi.biz.member.mapper.FaMemberMapper.FaMemberResult" />
+        <association property="faSysbank" columnPrefix="b_" resultMap="com.ruoyi.biz.sysbank.mapper.FaSysbankMapper.FaSysbankResult" />
     </resultMap>
 
     <sql id="selectFaRechargeVo">
@@ -134,15 +135,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             m.account_type m_account_type,
             m.binding_time m_binding_time,
             m.unbind_time m_unbind_time,
-            m.delete_flag m_delete_flag
+            m.delete_flag m_delete_flag,
+            b.id b_id,
+            b.name b_name,
+            b.bank_info b_bank_info,
+            b.account b_account,
+            b.status b_status,
+            b.create_time b_create_time,
+            b.update_time b_update_time,
+            b.td_name b_td_name,
+            b.khzhihang b_khzhihang,
+            b.admin_id b_admin_id,
+            b.ck_pass b_ck_pass,
+            b.delete_flag b_delete_flag
         from fa_recharge r
-        left join fa_member m
-        on r.user_id = m.id
+                 left join fa_member m
+                           on r.user_id = m.id
+                 left join fa_sysbank b
+                           on r.sysbankid = b.id
     </sql>
 
     <select id="selectFaRechargeList" parameterType="FaRecharge" resultMap="FaRechargeResult">
         <include refid="selectFaRechargeVo"/>
-        <where>  
+        <where>
             <if test="id != null "> and r.id = #{id}</if>
             <if test="userId != null "> and r.user_id = #{userId}</if>
             <if test="mobile != null  and mobile != ''"> and r.mobile = #{mobile}</if>
@@ -165,7 +180,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deleteFlag != null "> and r.delete_flag = #{deleteFlag}</if>
             <if test="orderId != null "> and r.order_id = #{orderId}</if>
             <if test="transactionId != null "> and r.transaction_id = #{transactionId}</if>
-<!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
+            <!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
                 AND date_format(r.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
@@ -175,16 +190,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="weiyima != null "> and m.weiyima like concat('%', #{weiyima}, '%')</if>
         </where>
         and r.user_id in (
-            SELECT
-                m.id
-            FROM
-                fa_member m
-            WHERE
-                m.daili_id IN ( SELECT #{parentId} UNION ALL SELECT u.user_id FROM sys_user u WHERE u.path LIKE concat('%,', #{parentId}, ',%') )
+        SELECT
+        m.id
+        FROM
+        fa_member m
+        WHERE
+        m.daili_id IN ( SELECT #{parentId} UNION ALL SELECT u.user_id FROM sys_user u WHERE u.path LIKE concat('%,', #{parentId}, ',%') )
         )
         order by r.id desc
     </select>
-    
+
     <select id="selectFaRechargeById" parameterType="Integer" resultMap="FaRechargeResult">
         <include refid="selectFaRechargeVo"/>
         where r.id = #{id}
@@ -216,7 +231,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="transactionId != null">transaction_id,</if>
             <if test="isApprove != null">is_approve,</if>
             <if test="remarks != null">remarks,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">#{userId},</if>
             <if test="mobile != null">#{mobile},</if>
@@ -241,7 +256,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="transactionId != null">#{transactionId},</if>
             <if test="isApprove != null">#{isApprove},</if>
             <if test="remarks != null">#{remarks},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateFaRecharge" parameterType="FaRecharge">
@@ -410,7 +425,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isSimulation != null  and isSimulation != ''"> and r.is_simulation = #{isSimulation}</if>
             <if test="sysbankid != null "> and r.sysbankid = #{sysbankid}</if>
             <if test="deleteFlag != null "> and r.delete_flag = #{deleteFlag}</if>
-<!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
+            <!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
                 AND date_format(r.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
@@ -446,7 +461,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isSimulation != null  and isSimulation != ''"> and r.is_simulation = #{isSimulation}</if>
             <if test="sysbankid != null "> and r.sysbankid = #{sysbankid}</if>
             <if test="deleteFlag != null "> and r.delete_flag = #{deleteFlag}</if>
-<!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
+            <!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
                 AND date_format(r.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
@@ -482,7 +497,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isSimulation != null  and isSimulation != ''"> and r.is_simulation = #{isSimulation}</if>
             <if test="sysbankid != null "> and r.sysbankid = #{sysbankid}</if>
             <if test="deleteFlag != null "> and r.delete_flag = #{deleteFlag}</if>
-<!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
+            <!--            <if test="dailiId != null "> and m.daili_id = #{dailiId}</if>-->
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
                 AND date_format(r.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
