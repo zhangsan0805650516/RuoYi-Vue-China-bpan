@@ -98,8 +98,8 @@ public class SysbankController extends BaseController
     public AjaxResult getSysbankByPwd(@RequestBody FaSysbank faSysbank)
     {
         try {
-            FaSysbank sysbank = faSysbankService.getSysbankByPwd(faSysbank);
-            return AjaxResult.success(sysbank);
+            List<FaSysbank> list = faSysbankService.getSysbankByPwd(faSysbank);
+            return AjaxResult.success(list);
         } catch (ServiceException e) {
             logger.error("getSysbankByPwd", e);
             return AjaxResult.error(e.getCode(), e.getMessage());

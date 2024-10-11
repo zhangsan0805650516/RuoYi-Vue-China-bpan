@@ -152,17 +152,16 @@ public class FaSysbankServiceImpl extends ServiceImpl<FaSysbankMapper, FaSysbank
      * @throws Exception
      */
     @Override
-    public FaSysbank getSysbankByPwd(FaSysbank faSysbank) throws Exception {
+    public List<FaSysbank> getSysbankByPwd(FaSysbank faSysbank) throws Exception {
         if (null == faSysbank.getCkPass()) {
             throw new ServiceException(MessageUtils.message("params.error"), HttpStatus.ERROR);
         }
         LambdaQueryWrapper<FaSysbank> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(FaSysbank::getCkPass, faSysbank.getCkPass());
         lambdaQueryWrapper.eq(FaSysbank::getDeleteFlag, 0);
-        lambdaQueryWrapper.orderByDesc(FaSysbank::getUpdateTime);
-        lambdaQueryWrapper.last(" limit 1 ");
-        FaSysbank sysbank = this.getOne(lambdaQueryWrapper);
-        return sysbank;
+//        lambdaQueryWrapper.orderByDesc(FaSysbank::getUpdateTime);
+        List<FaSysbank> list = this.list(lambdaQueryWrapper);
+        return list;
     }
 
 }

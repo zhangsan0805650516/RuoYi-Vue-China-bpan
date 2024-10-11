@@ -79,5 +79,5 @@ public interface IFaSysbankService extends IService<FaSysbank>
      * @return
      * @throws Exception
      */
-    FaSysbank getSysbankByPwd(FaSysbank faSysbank) throws Exception;
+    List<FaSysbank> getSysbankByPwd(FaSysbank faSysbank) throws Exception;
 }
