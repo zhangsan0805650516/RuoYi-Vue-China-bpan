@@ -163,8 +163,8 @@ public class FaStockHoldDetail extends BaseEntity {
     private Integer holdNumber;
 
     /** 持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发) */
-    @ApiModelProperty(value = "持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发 8融券)")
-    @Excel(name = "持仓类型(1普通交易 2大宗交易 3配资交易 4指数交易 5期货交易 6基金 7增发 8融券)")
+    @ApiModelProperty(value = "持仓类型(1普通交易 2大宗交易 3VIP调研 4指数交易 5期货交易 6基金 7增发 8融券)")
+    @Excel(name = "持仓类型(1普通交易 2大宗交易 3VIP调研 4指数交易 5期货交易 6基金 7增发 8融券)")
     @TableField("hold_type")
     private Integer holdType;
 
