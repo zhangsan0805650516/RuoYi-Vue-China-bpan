@@ -31,7 +31,7 @@ public class UrlFilter extends OncePerRequestFilter {
     }
 
     private String modifyPath(String path) {
-        if(path.contains("api") && path.contains("hl32zd")){
+        if((path.contains("api") || path.contains("coinApi")) && path.contains("hl32zd")){
             String result = "";
             String[] uris = path.split("/");
             for (String str : uris) {
