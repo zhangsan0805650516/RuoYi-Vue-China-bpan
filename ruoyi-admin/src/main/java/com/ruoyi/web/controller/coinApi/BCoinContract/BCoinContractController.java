@@ -57,6 +57,12 @@ public class BCoinContractController extends BaseController
             if (null == faBCoinContract.getSize()) {
                 faBCoinContract.setSize(10);
             }
+            if (null == faBCoinContract.getSortBy()) {
+                faBCoinContract.setSortBy(1);
+            }
+            if (null == faBCoinContract.getSort()) {
+                faBCoinContract.setSort(1);
+            }
             IPage<FaBCoinContract> faBCoinContractIPage = faBCoinContractService.getBCoinContractList(faBCoinContract);
             return AjaxResult.success(faBCoinContractIPage);
         } catch (ServiceException e) {

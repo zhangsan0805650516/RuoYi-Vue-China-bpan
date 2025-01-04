@@ -57,6 +57,12 @@ public class BCoinController extends BaseController
             if (null == faBCoin.getSize()) {
                 faBCoin.setSize(10);
             }
+            if (null == faBCoin.getSortBy()) {
+                faBCoin.setSortBy(1);
+            }
+            if (null == faBCoin.getSort()) {
+                faBCoin.setSort(1);
+            }
             IPage<FaBCoin> faBCoinIPage = faBCoinService.getBCoinList(faBCoin);
             return AjaxResult.success(faBCoinIPage);
         } catch (ServiceException e) {
